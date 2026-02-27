@@ -1,0 +1,72 @@
+# ========================
+# ANDROID
+# ========================
+*.iml
+.gradle/
+local.properties
+.idea/
+.DS_Store
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+google-services.json
+
+# ========================
+# PHP
+# ========================
+vendor/
+composer.lock
+.env
+.env.local
+.env.*.local
+*.log
+cache/
+tmp/
+temp/
+
+# ========================
+# MYSQL / BASE DE DATOS
+# ========================
+*.sql.gz
+*.dump
+db_backup/
+database/backups/
+.mysql_history
+
+# ========================
+# macOS
+# ========================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# ========================
+# IDEs (VSCode, Eclipse, Android Studio)
+# ========================
+.vscode/
+.eclipse/
+.settings/
+.classpath
+.project
+*.swp
+*.swo
+*.class
+
+# ========================
+# LOGS Y ARCHIVOS TEMPORALES
+# ========================
+*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+
