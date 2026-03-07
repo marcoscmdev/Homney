@@ -50,4 +50,4 @@ homney/
 
 ##  Autor
 
-**Marcos Castro M** — Estudiante DAM · TESDAI Santiago de Compostela
+**Marcos CM** — Estudiante DAM · TESDAI Santiago de Compostela
