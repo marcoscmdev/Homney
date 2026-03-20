@@ -1,79 +1,86 @@
 ## Convencion
-PK  -> Clave primaria
-FK  -> Foreign Key
-NN  -> Not Null
-UQ  -> Unique
-AI  -> Auto incremental
+PK -> Clave primaria
+FK -> Foreign Key
+NN -> Not Null
+UQ -> Unique
+AI -> Auto incremental
 U -> Unsigned
-### USUARIO
+
+
+### HOGAR
+id_hogar INT U AI PK
+clave_inv VARCHAR (255) U 
+
+### USUARIO 
 id_usuario INT U AI PK
 nombre VARCHAR(100) NN
 email VARCHAR(150) UQ NN
-clave VARCHAR(255) NN 
+telefono_movil VARCHAR(20) UQ NN # Whatsapp, etc
+clave VARCHAR(255) NN # Recuerda encriptar la clave
 fecha_nacimiento DATE
 avatar VARCHAR(255) 
+id_hogar INT U FK       # Suponemos que el usuario sólo estará en un hogar
+rol ENUM (admin, miembro) NN
+
+
+### CATEGORIA Ej. alimentacion, vivienda, facturas [(hijas:)luz, agua, butano], menaje, salud, ocio, transporte, otros
+nombre varchar(50) PK
+categ_padre varchar(50) FK DEFAULT NULL # NULL cuando es categoría padre
+descripcion varchar(100) 
 
 ### GASTO
 id_gasto INT U AI PK
+fecha DATETIME NN
+Categoria VARCHAR(50) FK NN
 Concepto VARCHAR(255) NN 
-Modo ENUM(efectivo, bancario)
-Tipo ENUM (fijo, variable)NN
-Importe DECIMAL (10,2) NN 
-Categoria ENUM(alimentacion, vivienda, facturas, menaje, salud, ocio, transporte, otros)
-Subcategoria VARCHAR(50)
-Pendiente BOOLEAN NN
-id_hogar INT  U FK
+Modo ENUM(efectivo, transferencia, tarjeta, bizum)
+Tipo ENUM (fijo, ocasional) NN
+Importe DECIMAL (10,3) NN # Siempre un decimal + para redondear un resultado final, ej: 45,689 -> 45,69 € 
+id_hogar INT U FK
+id_usuario_pagador INT U  FK # asumimos que uno hace el pago y el resto le dan la parte correspondiete por bizum, en mano...
+
+
+### REPARTO_GASTO (Lo calcularía la aplicación)
+id_gasto INT U FK
+id_usuario INT U FK
+pagador BOOLEAN NN
+importe DECIMAL(10,3) NN # Un decimal + siempre para poder redendear cálculos
+abonado BOOLEAN NN DEFAULT FALSE # Solo lo puede poner a true el pagador
+PK(id_gasto, id_usuario)
 
 ### TAREA
 id_tarea INT U AI PK
 nombre VARCHAR(150) NN
-duracion TINYINT 
-recurrencia TINYINT NN 
-estado ENUM (pendiente, en_progreso, finalizada) NN
-id_usuario INT U FK
-id_hogar INT  FK
+duracion TINYINT
+frecuencia ENUM(dia,semana,mes,variable)
+num_veces TINYINT NN
+explicacion_frecuencia_variable VARCHAR(255)
+id_habitacion INT U FK #Puede ser nulo, ej: tirar la basura
 
-### HABITACION
+
+### ASIGNACION_TAREA
+id_tarea INT U FK
+id_usuario INT U FK
+observaciones VARCHAR(255)
+PK(id_tarea,id_usuario)
+
+### TAREAS_REALIZADAS
+id_tarea INT U FK 
+id_usuario INT U FK
+fecha_realizacion DATETIME NN
+observaciones VARCHAR(255)
+duracion_real TINYINT
+PK(id_tarea,id_usuario,fecha_realizacion)
+
+### HABITACION/ESTANCIA
 id_habitacion INT U AI  PK
-nombre VARCHAR(100)NN
-tipo ENUM(cocina,generica,aseo,garaje,exterior)NN
+nombre VARCHAR(100) NN
+tipo ENUM(cocina,generica,aseo,garaje,exterior) NN
 id_hogar INT U  FK
-### HOGAR
-id_hogar INT U AI PK
-clave_inv VARCHAR (255) U 
+
 ### MURO
-id_muro INT U AI PK 
+id_pub INT U AI PK 
 fecha_pub DATETIME NN
 titulo VARCHAR (50) NN
 cuerpo TEXT NN
-id_hogar INT U  FK
-### USUARIO_REALIZA_GASTO
-id_usuario  INT U  FK
-id_gasto INT U FK
-fecha DATETIME 
-PK (id_usuario, id_gasto)
-
-### USUARIO_RESPONSABLE_HABITACION
-id_usuario  INT U  FK
-id_habitacion INT U FK
-PK (id_usuario, id_habitacion)
-### USUARIO_HOGAR
-id_usuario INT U FK
-id_hogar INT U FK
-rol ENUM (admin, miembro) NN
-PK (id_usuario, id_hogar)
-
-### REPARTO_GASTO
-id_usuario INT U FK
-id_gasto INT U FK
-importe DECIMAL(10,2)NN
-pagador BOOLEAN NN
-PK(id_usuario, id_gasto)
-
-### TAREA_REALIZADA
-id_tarea INT U FK
-id_usuario INT U FK
-fecha DATETIME NN
-duracion_real TINYINT
-PK(id_tarea, id_usuario, fecha)
-
+id_usuario INT U FK NN
