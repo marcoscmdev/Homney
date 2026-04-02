@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homney 🐝 — Tu hogar compartido</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ══════════════════ TOAST ══════════════════ -->
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════════════════
+     LOGIN / REGISTRO
+══════════════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+
+    <div class="login-logo">
+      <div class="logo-wrap">🐝</div>
+      <h1>Homney</h1>
+      <p>Tu hogar compartido, organizado con dulzura 🍯</p>
+    </div>
+
+    <div class="login-box">
+      <!-- Tabs -->
+      <div class="login-tabs">
+        <div class="login-tab active" data-tab="login"    onclick="switchAuthTab('login')">Iniciar sesión</div>
+        <div class="login-tab"        data-tab="registro" onclick="switchAuthTab('registro')">Crear cuenta</div>
+      </div>
+
+      <!-- Panel login -->
+      <div id="panel-login">
+        <div class="field">
+          <label>Correo electrónico</label>
+          <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Contraseña</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary" id="btn-login" onclick="doLogin()" style="width:100%;padding:13px;font-size:1rem;border-radius:12px;margin-top:6px">
+          🐝 Entrar
+        </button>
+      </div>
+
+      <!-- Panel registro -->
+      <div id="panel-registro" class="hidden">
+        <div class="grid-form grid-form-2">
+          <div class="field" style="grid-column:1/-1">
+            <label>Nombre completo *</label>
+            <input type="text" id="reg-nombre" placeholder="Tu nombre">
+          </div>
+          <div class="field">
+            <label>Email *</label>
+            <input type="email" id="reg-email" placeholder="tu@email.com">
+          </div>
+          <div class="field">
+            <label>Teléfono *</label>
+            <input type="tel" id="reg-telefono" placeholder="612345678">
+          </div>
+          <div class="field">
+            <label>Contraseña *</label>
+            <input type="password" id="reg-pass" placeholder="••••••••">
+          </div>
+          <div class="field">
+            <label>Sexo *</label>
+            <select id="reg-sexo">
+              <option value="hombre">Hombre</option>
+              <option value="mujer">Mujer</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label>¿Qué quieres hacer?</label>
+            <select id="reg-modo" onchange="onRegModoChange()">
+              <option value="nuevo">🏠 Crear un hogar nuevo</option>
+              <option value="unirse">🔑 Unirme a un hogar existente</option>
+            </select>
+          </div>
+          <div class="field hidden" id="reg-clave-wrap" style="grid-column:1/-1">
+            <label>Clave de invitación del hogar</label>
+            <input type="text" id="reg-clave" placeholder="Ej: HABC12" style="text-transform:uppercase">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btn-register" onclick="doRegister()" style="width:100%;padding:13px;font-size:1rem;border-radius:12px;margin-top:6px">
+          🏠 Crear cuenta
+        </button>
+      </div>
+    </div>
+
+    <div class="login-footer">
+      Homney 🐝 · Hogar · Miel · Colmena
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     APP SHELL
+══════════════════════════════════════════════════════ -->
+<div id="app" class="hidden">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mini">🐝</div>
+      <div>
+        <div class="brand">Homney</div>
+        <div class="brand-sub">Tu colmena 🍯</div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-label">Principal</div>
+      <button class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard">
+        <span class="icon">⊞</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="navigate('hogar')" data-page="hogar">
+        <span class="icon">🏠</span> Mi Hogar
+      </button>
+      <button class="nav-item" onclick="navigate('tareas')" data-page="tareas">
+        <span class="icon">✅</span> Tareas
+      </button>
+      <button class="nav-item" onclick="navigate('cartera')" data-page="cartera">
+        <span class="icon">💰</span> Mi Cartera
+      </button>
+      <button class="nav-item" onclick="navigate('muro')" data-page="muro">
+        <span class="icon">📢</span> Muro
+      </button>
+      <button class="nav-item" onclick="navigate('perfil')" data-page="perfil">
+        <span class="icon">👤</span> Mi Perfil
+      </button>
+
+      <div class="nav-label">Crear</div>
+      <button class="nav-item" onclick="openModalTarea()">
+        <span class="icon">＋</span> Nueva Tarea
+      </button>
+      <button class="nav-item" onclick="openModalGasto()">
+        <span class="icon">＋</span> Nuevo Gasto
+      </button>
+      <button class="nav-item" onclick="openModalPub()">
+        <span class="icon">＋</span> Publicar en muro
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-chip" id="user-dropdown-wrap" onclick="toggleDropdown()">
+        <div class="avatar" id="sidebar-avatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-name">—</div>
+          <div class="user-role" id="sidebar-role">—</div>
+        </div>
+        <span style="color:var(--muted);font-size:.75rem">▾</span>
+        <div class="dropdown-menu" id="user-dropdown">
+          <div class="dropdown-item" onclick="navigate('perfil')">👤 Mi cuenta</div>
+          <div class="dropdown-item" onclick="navigate('cartera')">💰 Mi cartera</div>
+          <div class="dropdown-item red" onclick="doLogout()">⏻ Cerrar sesión</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <button class="btn btn-icon btn-sm" onclick="toggleSidebar()" style="display:none" id="btn-menu">☰</button>
+      <h2 id="topbar-title">Dashboard</h2>
+      <div class="topbar-actions" id="topbar-actions"></div>
+      <div class="avatar" id="topbar-avatar" onclick="toggleDropdown()" style="cursor:pointer" title="Mi perfil">?</div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     MODALES
+════════════════════════════════════════════════════════ -->
+
+<!-- GASTO -->
+<div class="modal-overlay" id="modal-gasto">
+  <div class="modal">
+    <h3 id="modal-gasto-title">💰 Nuevo Gasto</h3>
+    <div class="grid-form grid-form-2">
+      <div class="field" style="grid-column:1/-1">
+        <label>Concepto *</label>
+        <input type="text" id="g-concepto" placeholder="Ej: Compra supermercado">
+      </div>
+      <div class="field">
+        <label>Importe (€) *</label>
+        <input type="number" id="g-importe" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label>Fecha *</label>
+        <input type="date" id="g-fecha">
+      </div>
+      <div class="field">
+        <label>Categoría *</label>
+        <select id="g-categoria"><option value="">Cargando...</option></select>
+      </div>
+      <div class="field">
+        <label>Modo de pago</label>
+        <select id="g-modo">
+          <option value="efectivo">💵 Efectivo</option>
+          <option value="transferencia">🏦 Transferencia</option>
+          <option value="tarjeta">💳 Tarjeta</option>
+          <option value="bizum">📱 Bizum</option>
+        </select>
+      </div>
+      <div class="field" style="grid-column:1/-1">
+        <label>Tipo</label>
+        <select id="g-tipo">
+          <option value="fijo">Fijo (mensual/recurrente)</option>
+          <option value="ocasional">Ocasional</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-gasto')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-submit-gasto" onclick="submitGasto()">💰 Registrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAREA -->
+<div class="modal-overlay" id="modal-tarea">
+  <div class="modal">
+    <h3 id="modal-tarea-title">✅ Nueva Tarea</h3>
+    <div class="field">
+      <label>Nombre de la tarea *</label>
+      <input type="text" id="t-nombre" placeholder="Ej: Limpiar el baño">
+    </div>
+    <div class="grid-form grid-form-2">
+      <div class="field">
+        <label>Duración (min)</label>
+        <input type="number" id="t-duracion" placeholder="20" min="1">
+      </div>
+      <div class="field">
+        <label>Nº veces</label>
+        <input type="number" id="t-numveces" value="1" min="1">
+      </div>
+      <div class="field">
+        <label>Frecuencia *</label>
+        <select id="t-frecuencia" onchange="onFrecuenciaChange()">
+          <option value="dia">Diaria</option>
+          <option value="semana">Semanal</option>
+          <option value="mes">Mensual</option>
+          <option value="variable">Variable</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Habitación</label>
+        <select id="t-habitacion"><option value="">Sin habitación</option></select>
+      </div>
+    </div>
+    <div class="field hidden" id="t-expl-wrap">
+      <label>Explicación frecuencia variable</label>
+      <textarea id="t-explicacion" placeholder="Describe cuándo se realiza..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-tarea')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-submit-tarea" onclick="submitTarea()">✅ Crear y asignarme</button>
+    </div>
+  </div>
+</div>
+
+<!-- HABITACION -->
+<div class="modal-overlay" id="modal-hab">
+  <div class="modal">
+    <h3 id="modal-hab-title">🛋️ Nueva Habitación</h3>
+    <div class="field">
+      <label>Nombre *</label>
+      <input type="text" id="h-nombre" placeholder="Ej: Salón, Habitación 1...">
+    </div>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="h-tipo">
+        <option value="generica">🛋️ Genérica</option>
+        <option value="cocina">🍳 Cocina</option>
+        <option value="aseo">🚿 Aseo / Baño</option>
+        <option value="garaje">🚗 Garaje</option>
+        <option value="exterior">🌿 Exterior / Jardín</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-hab')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-submit-hab" onclick="submitHabitacion()">🛋️ Crear</button>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLICACION MURO -->
+<div class="modal-overlay" id="modal-pub">
+  <div class="modal">
+    <h3 id="modal-pub-title">📢 Nueva publicación</h3>
+    <div class="field">
+      <label>Título *</label>
+      <input type="text" id="p-titulo" placeholder="Ej: Lista de la compra, Aviso importante...">
+    </div>
+    <div class="field">
+      <label>Contenido *</label>
+      <textarea id="p-cuerpo" placeholder="Escribe aquí tu mensaje para el hogar..." style="min-height:100px"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-pub')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-submit-pub" onclick="submitPub()">📢 Publicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERFIL — editar -->
+<div class="modal-overlay" id="modal-perfil">
+  <div class="modal">
+    <h3>👤 Editar mi perfil</h3>
+    <div class="grid-form grid-form-2">
+      <div class="field" style="grid-column:1/-1">
+        <label>Nombre *</label>
+        <input type="text" id="ep-nombre" placeholder="Tu nombre">
+      </div>
+      <div class="field">
+        <label>Email *</label>
+        <input type="email" id="ep-email" placeholder="tu@email.com">
+      </div>
+      <div class="field">
+        <label>Teléfono *</label>
+        <input type="tel" id="ep-telefono" placeholder="612345678">
+      </div>
+      <div class="field">
+        <label>Sexo</label>
+        <select id="ep-sexo">
+          <option value="hombre">Hombre</option>
+          <option value="mujer">Mujer</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Fecha de nacimiento</label>
+        <input type="date" id="ep-fecha">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-perfil')">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitPerfil()">💾 Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── JS ──────────────────────────────────────────────────── -->
+<script src="js/app.js"></script>
+<script>
+  // Atajos de teclado en login
+  document.getElementById('login-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+  document.getElementById('login-email').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-pass').focus();
+  });
+
+  // Mostrar botón menú en móvil
+  if (window.innerWidth <= 768) {
+    document.getElementById('btn-menu').style.display = 'inline-flex';
+  }
+  window.addEventListener('resize', () => {
+    document.getElementById('btn-menu').style.display =
+      window.innerWidth <= 768 ? 'inline-flex' : 'none';
+  });
+</script>
+</body>
+</html>
