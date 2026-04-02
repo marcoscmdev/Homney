@@ -10,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     $datos_recibidos = sanarDatos($conexion, $datos_recibidos);
 
     /* ********************************** */
-    // nombre y descripcion obligatorios; categ_padre opcional (NULL = categoría padre)
     if (!isset($datos_recibidos->nombre)      || $datos_recibidos->nombre == null ||
         !isset($datos_recibidos->descripcion) || $datos_recibidos->descripcion == null) {
         die_por_fallo_en_sintaxis_peticion();
@@ -19,15 +18,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     $value_categ_padre = (isset($datos_recibidos->categ_padre) && $datos_recibidos->categ_padre != null)
         ? "'$datos_recibidos->categ_padre'" : "NULL";
 
-    $consulta = "INSERT INTO `CATEGORIA` (`nombre`, `categ_padre`, `descripcion`)
-                 VALUES ('$datos_recibidos->nombre', $value_categ_padre, '$datos_recibidos->descripcion')";
+    // tipo: gasto | tarea | ambas (por defecto: ambas)
+    $value_tipo = (isset($datos_recibidos->tipo) && in_array($datos_recibidos->tipo, ['gasto','tarea','ambas']))
+        ? "'$datos_recibidos->tipo'" : "'ambas'";
+
+    $consulta = "INSERT INTO `CATEGORIA` (`nombre`, `tipo`, `categ_padre`, `descripcion`)
+                 VALUES ('$datos_recibidos->nombre', $value_tipo, $value_categ_padre, '$datos_recibidos->descripcion')";
     /* ********************************** */
 
     $resultado_consulta = @mysqli_query($conexion, $consulta);
     if (!$resultado_consulta) die_por_fallo_en_consulta($consulta, $conexion);
 
     $respuesta[STATUS] = SUCCESS;
-    // CATEGORIA no tiene AUTO_INCREMENT (PK es el nombre)
     $respuesta[DATA] = array("num_filas" => mysqli_affected_rows($conexion));
 
     header("Content-type: application/json");
@@ -50,8 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     $value_categ_padre = (isset($datos_recibidos->categ_padre) && $datos_recibidos->categ_padre != null)
         ? "'$datos_recibidos->categ_padre'" : "NULL";
 
+
+
     $consulta_update = "UPDATE `CATEGORIA`
-                        SET `categ_padre`  = $value_categ_padre,
+                        SET 
+                            `categ_padre`  = $value_categ_padre,
                             `descripcion`  = '$datos_recibidos->descripcion'
                         WHERE `nombre` = '$datos_recibidos->nombre'";
     /* ********************************** */
@@ -103,10 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
-    $consulta = "SELECT c.nombre, c.categ_padre, c.descripcion
+    $consulta = "SELECT c.nombre, c.tipo, c.categ_padre, c.descripcion
                  FROM CATEGORIA c
                  $where
-                 ORDER BY c.categ_padre, c.nombre";
+                 ORDER BY c.tipo, c.nombre";
     /* ********************************** */
 
     $resultado_consulta = @mysqli_query($conexion, $consulta);

@@ -37,6 +37,7 @@ homney/
 ├── android/        # Proyecto Android Studio
 ├── backend/        # API REST en PHP
 ├── database/       # Scripts SQL
+├── frontend/       # Capa de usuario
 └── docs/           # Documentación
 ```
 

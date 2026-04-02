@@ -22,23 +22,13 @@ SET time_zone = "+00:00";
 --
 
 --
--- Volcado de datos para la tabla `CATEGORIA`
---
-
-INSERT INTO `CATEGORIA` (`nombre`, `categ_padre`, `descripcion`) VALUES
-('Alimentacion', 'Alimentacion', 'Compras en supermercado'),
-('compra semanal', 'Alimentacion', 'Imperecederos y kinder bueno'),
-('Fenosa', 'Servicios', 'Nos han crujido con la calefacción'),
-('Servicios', 'Servicios', 'Facturas varias ');
-
---
 -- Volcado de datos para la tabla `GASTO`
 --
 
 INSERT INTO `GASTO` (`id_gasto`, `fecha`, `categoria`, `concepto`, `modo`, `tipo`, `importe`, `id_hogar`, `id_usuario_pagador`) VALUES
-(1, '2026-03-18 13:08:57', 'compra semanal', 'total compra', 'tarjeta', 'ocasional', 130.000, 1, 1),
-(4, '2026-03-20 13:13:48', 'Fenosa', 'factura del mes de diciembre', 'transferencia', 'ocasional', 120.000, 1, 1),
-(5, '2026-03-01 14:13:48', 'Servicios', 'Alquiler', 'transferencia', 'fijo', 500.000, 2, 4);
+(1, '2026-03-18 13:08:57', 'Alimentación', 'total compra', 'tarjeta', 'ocasional', 130.000, 1, 1),
+(4, '2026-03-20 13:13:48', 'Suministros', 'factura del mes de diciembre', 'transferencia', 'ocasional', 120.000, 1, 1),
+(5, '2026-03-01 14:13:48', 'Alquiler / Hipoteca', 'Alquiler', 'transferencia', 'fijo', 500.000, 2, 4);
 
 --
 -- Volcado de datos para la tabla `HABITACION`
@@ -78,9 +68,9 @@ INSERT INTO `REPARTO_GASTO` (`id_gasto`, `id_usuario`, `pagador`, `importe`, `ab
 -- Volcado de datos para la tabla `TAREA`
 --
 
-INSERT INTO `TAREA` (`id_tarea`, `nombre`, `duracion`, `frecuencia`, `num_veces`, `explicacion_frecuencia_variable`, `id_habitacion`) VALUES
-(1, 'Fregar platos', NULL, 'dia', 2, 'Despues de comer y despues de cenar', 3),
-(2, 'Pasar el aspirador', 30, 'semana', 2, 'Sobre todo en el salon', 1);
+INSERT INTO `TAREA` (`id_tarea`, `nombre`, `duracion`, `frecuencia`, `num_veces`, `explicacion_frecuencia_variable`, `id_habitacion`, `id_hogar`) VALUES
+(1, 'Fregar platos', NULL, 'dia', 2, 'Despues de comer y despues de cenar', 3, 1),
+(2, 'Pasar el aspirador', 30, 'semana', 2, 'Sobre todo en el salon', 1, 1);
 
 --
 -- Volcado de datos para la tabla `TAREAS_REALIZADAS`

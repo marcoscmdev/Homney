@@ -34,6 +34,11 @@ define('ERROR','error'); // Error grave del servidor al intentar procesar la pet
 		   define('CODE','code'); // Código de error HTTP (opcional).
 					define('ERROR_EN_SINTAXIS_PETICION',400); // Código de ejemplo
 
+// Evitar que se impriman warnings/deprecations como HTML en la salida JSON
+ini_set('display_errors', '0');
+ini_set('display_startup_errors', '0');
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
+
  /**** Functiones de error uso habitual ****/
  function die_por_fallo_en_sintaxis_peticion() { // Error en los parámetros.
 	  header("Content-type: application/json");
@@ -136,7 +141,7 @@ function ajustaColumnasFormatoJSON(mysqli_result $resultado, array &$fila): void
  $clave="root"; // Contraseña del usuario MySQL
  $base_de_datos="homney_dev"; // Base de datos del $servidor al que queremos conectarnos
 
- mysqli_report(MYSQLI_REPORT_ERROR); // evitamos generar errores con excepciones, asi podemos controlar el error en mysqli: if ($resultado_consulta....
+ mysqli_report(MYSQLI_REPORT_OFF); // Sin excepciones: controlamos errores manualmente con if(!$resultado) die_por_fallo_en_consulta(...)
 
  $conexion=@mysqli_connect ($servidor, $usuario, $clave, $base_de_datos); //@ para evitar que se emita el error.
  if (!$conexion)  {
@@ -167,8 +172,14 @@ function ajustaColumnasFormatoJSON(mysqli_result $resultado, array &$fila): void
         }
         return $data;
     } else {
-        // Aplica mysqli_real_escape_string si el valor no es un array ni un objeto. false lo convierte a ""
-        return mysqli_real_escape_string($conexion,$data===false?0:$data);
+        // Evitar warnings de mysqli_real_escape_string con nulls
+        if ($data === null) {
+            return null;
+        }
+        if ($data === false) {
+            return '0';
+        }
+        return mysqli_real_escape_string($conexion, $data);
     }
  }
 
