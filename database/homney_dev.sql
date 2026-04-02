@@ -22,7 +22,7 @@ SET time_zone = "+00:00";
 --
 -- Eliminar la base de datos si existe y crearla de nuevo
 DROP DATABASE IF EXISTS `homney_dev`;
-CREATE DATABASE `homney_dev` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE DATABASE `homney_dev`;
 USE `homney_dev`;
 
 -- --------------------------------------------------------
@@ -34,20 +34,8 @@ USE `homney_dev`;
 CREATE TABLE `ASIGNACION_TAREA` (
   `id_tarea` int UNSIGNED NOT NULL,
   `id_usuario` int UNSIGNED NOT NULL,
-  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `CATEGORIA`
---
-
-CREATE TABLE `CATEGORIA` (
-  `nombre` varchar(50) NOT NULL,
-  `categ_padre` varchar(50) DEFAULT NULL,
-  `descripcion` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `observaciones` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -58,14 +46,14 @@ CREATE TABLE `CATEGORIA` (
 CREATE TABLE `GASTO` (
   `id_gasto` int UNSIGNED NOT NULL,
   `fecha` datetime NOT NULL,
-  `categoria` varchar(50) NOT NULL,
+  `categoria` varchar(50) DEFAULT NULL,
   `concepto` varchar(255) NOT NULL,
   `modo` enum('efectivo','transferencia','tarjeta','bizum') NOT NULL,
   `tipo` enum('fijo','ocasional') NOT NULL,
   `importe` decimal(10,3) NOT NULL,
   `id_hogar` int UNSIGNED NOT NULL,
   `id_usuario_pagador` int UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -78,7 +66,7 @@ CREATE TABLE `HABITACION` (
   `nombre` varchar(100) NOT NULL,
   `tipo` enum('generica','cocina','aseo','garaje','exterior') NOT NULL,
   `id_hogar` int UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -89,7 +77,7 @@ CREATE TABLE `HABITACION` (
 CREATE TABLE `HOGAR` (
   `id_hogar` int UNSIGNED NOT NULL,
   `clave_inv` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -103,7 +91,7 @@ CREATE TABLE `MURO` (
   `titulo` varchar(50) NOT NULL,
   `cuerpo` text NOT NULL,
   `id_usuario` int UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -117,7 +105,7 @@ CREATE TABLE `REPARTO_GASTO` (
   `pagador` tinyint(1) NOT NULL,
   `importe` decimal(10,3) NOT NULL,
   `abonado` tinyint(1) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -132,8 +120,9 @@ CREATE TABLE `TAREA` (
   `frecuencia` enum('dia','semana','mes','variable') NOT NULL,
   `num_veces` tinyint NOT NULL,
   `explicacion_frecuencia_variable` varchar(255) DEFAULT NULL,
-  `id_habitacion` int UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id_habitacion` int UNSIGNED DEFAULT NULL,
+  `id_hogar` int UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -147,7 +136,7 @@ CREATE TABLE `TAREAS_REALIZADAS` (
   `fecha_realizacion` datetime NOT NULL,
   `observaciones` varchar(255) DEFAULT NULL,
   `duracion_real` tinyint UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -167,7 +156,7 @@ CREATE TABLE `USUARIO` (
   `id_hogar` int UNSIGNED NOT NULL,
   `rol` enum('admin','miembro') NOT NULL,
   `fecha_registro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 --
 -- Índices para tablas volcadas
@@ -181,20 +170,12 @@ ALTER TABLE `ASIGNACION_TAREA`
   ADD KEY `fk_asigna_usuario` (`id_usuario`);
 
 --
--- Indices de la tabla `CATEGORIA`
---
-ALTER TABLE `CATEGORIA`
-  ADD PRIMARY KEY (`nombre`),
-  ADD KEY `categoria_padre` (`categ_padre`);
-
---
 -- Indices de la tabla `GASTO`
 --
 ALTER TABLE `GASTO`
   ADD PRIMARY KEY (`id_gasto`),
   ADD KEY `fk_gasto_hogar` (`id_hogar`),
-  ADD KEY `fk_gasto_usuario` (`id_usuario_pagador`),
-  ADD KEY `fk_gasto_categoria` (`categoria`);
+  ADD KEY `fk_gasto_usuario` (`id_usuario_pagador`);
 
 --
 -- Indices de la tabla `HABITACION`
@@ -229,7 +210,8 @@ ALTER TABLE `REPARTO_GASTO`
 --
 ALTER TABLE `TAREA`
   ADD PRIMARY KEY (`id_tarea`),
-  ADD KEY `fk_tarea_habitacion` (`id_habitacion`);
+  ADD KEY `fk_tarea_habitacion` (`id_habitacion`),
+  ADD KEY `fk_tarea_hogar` (`id_hogar`);
 
 --
 -- Indices de la tabla `TAREAS_REALIZADAS`
@@ -299,16 +281,9 @@ ALTER TABLE `ASIGNACION_TAREA`
   ADD CONSTRAINT `fk_asigna_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `USUARIO` (`id_usuario`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
--- Filtros para la tabla `CATEGORIA`
---
-ALTER TABLE `CATEGORIA`
-  ADD CONSTRAINT `fk_categoria_padre` FOREIGN KEY (`categ_padre`) REFERENCES `CATEGORIA` (`nombre`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
 -- Filtros para la tabla `GASTO`
 --
 ALTER TABLE `GASTO`
-  ADD CONSTRAINT `fk_gasto_categoria` FOREIGN KEY (`categoria`) REFERENCES `CATEGORIA` (`nombre`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_gasto_hogar` FOREIGN KEY (`id_hogar`) REFERENCES `HOGAR` (`id_hogar`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_gasto_usuario` FOREIGN KEY (`id_usuario_pagador`) REFERENCES `USUARIO` (`id_usuario`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -335,7 +310,8 @@ ALTER TABLE `REPARTO_GASTO`
 -- Filtros para la tabla `TAREA`
 --
 ALTER TABLE `TAREA`
-  ADD CONSTRAINT `fk_tarea_habitacion` FOREIGN KEY (`id_habitacion`) REFERENCES `HABITACION` (`id_habitacion`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_tarea_habitacion` FOREIGN KEY (`id_habitacion`) REFERENCES `HABITACION` (`id_habitacion`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_tarea_hogar` FOREIGN KEY (`id_hogar`) REFERENCES `HOGAR` (`id_hogar`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `TAREAS_REALIZADAS`

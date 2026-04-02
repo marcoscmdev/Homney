@@ -90,18 +90,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     extract($_GET);
 
     /* ********************************** */
+    $join = '';
     if (count($_GET) == 0) {
         $where = '';
     } elseif (count($_GET) == 1 && isset($id_pub) && $id_pub != null) {
         $where = " WHERE m.id_pub = '$id_pub'";
     } elseif (count($_GET) == 1 && isset($id_usuario) && $id_usuario != null) {
         $where = " WHERE m.id_usuario = '$id_usuario'";
+    } elseif (count($_GET) == 1 && isset($id_hogar) && $id_hogar != null) {
+        // Filtrar publicaciones del muro solo del hogar indicado
+        $join  = " JOIN USUARIO u ON m.id_usuario = u.id_usuario";
+        $where = " WHERE u.id_hogar = '$id_hogar'";
     } else {
         die_por_fallo_en_sintaxis_peticion();
     }
 
     $consulta = "SELECT m.id_pub, m.fecha_pub, m.titulo, m.cuerpo, m.id_usuario
                  FROM MURO m
+                 $join
                  $where
                  ORDER BY m.fecha_pub DESC";
     /* ********************************** */

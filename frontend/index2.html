@@ -7,16 +7,13 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 <style>
-
-  /* ── LOGIN — SPLIT LAYOUT ───────────────────────────────── */
+  /* ── LOGIN SPLIT LAYOUT ─────────────────────────────────── */
   #login-screen {
     min-height: 100vh;
     display: grid;
     grid-template-columns: 1fr 1fr;
     background: var(--bg);
   }
-
-  /* Panel izquierdo: branding */
   .login-hero {
     background:
       radial-gradient(ellipse 80% 60% at 30% 40%, rgba(245,197,24,.22) 0%, transparent 65%),
@@ -84,11 +81,10 @@
     flex-shrink: 0;
   }
   .hero-feature-icon.yellow { background: var(--accent-bg); }
-  .hero-feature-icon.green  { background: var(--green-bg);  }
+  .hero-feature-icon.green  { background: var(--green-bg); }
   .hero-feature-text { font-size: .85rem; font-weight: 600; color: var(--text); }
   .hero-feature-sub  { font-size: .74rem; color: var(--muted); margin-top: 1px; }
 
-  /* Panel derecho: formulario */
   .login-form-side {
     display: flex;
     flex-direction: column;
@@ -263,19 +259,18 @@
 
   /* ── RESPONSIVE ─────────────────────────────────────────── */
   @media (max-width: 768px) {
-    #login-screen      { grid-template-columns: 1fr; }
-    .login-hero        { display: none; }
-    .login-form-side   { padding: 32px 24px; min-height: 100vh; }
-    #bottom-nav        { display: flex; }
-    #content           { padding-bottom: 80px; }
-    .grid-form-2       { grid-template-columns: 1fr; }
+    #login-screen { grid-template-columns: 1fr; }
+    .login-hero   { display: none; }
+    .login-form-side { padding: 32px 24px; min-height: 100vh; }
+    #bottom-nav   { display: flex; }
+    #content      { padding-bottom: 80px; }
+    .grid-form-2  { grid-template-columns: 1fr; }
   }
   @media (min-width: 769px) and (max-width: 1024px) {
-    .login-hero        { padding: 32px 28px; }
-    .hero-title        { font-size: 2rem; }
-    .hero-features     { display: none; }
+    .login-hero   { padding: 32px 28px; }
+    .hero-title   { font-size: 2rem; }
+    .hero-features { display: none; }
   }
-
 </style>
 </head>
 <body>
@@ -324,7 +319,7 @@
           </div>
           <div>
             <div class="hero-feature-text">Gastos compartidos</div>
-            <div class="hero-feature-sub">Controla quien debe que a quien en todo momento</div>
+            <div class="hero-feature-sub">Lleva la cuenta de quien debe que a quien</div>
           </div>
         </div>
         <div class="hero-feature">
@@ -527,6 +522,13 @@
 
       <!-- Solo admin -->
       <div class="nav-label admin-only hidden" id="nav-label-admin">Admin</div>
+      <button class="nav-item admin-only hidden" id="nav-btn-categorias" onclick="navigate('categorias')">
+        <svg class="nav-svg" viewBox="0 0 20 20" fill="none">
+          <path d="M3 5h14M3 10h10M3 15h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          <circle cx="16" cy="15" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Categorias
+      </button>
     </div>
 
     <div class="sidebar-footer">
@@ -591,7 +593,6 @@
       <svg viewBox="0 0 20 20" fill="none">
         <rect x="2" y="5" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.7"/>
         <path d="M2 9h16" stroke="currentColor" stroke-width="1.7"/>
-        <path d="M6 13h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
       </svg>
       Cartera
     </button>
@@ -609,17 +610,16 @@
       Perfil
     </button>
   </nav>
-
 </div>
 
-<!-- ════════════════════════════════════════════════════════
+<!-- ══════════════════════════════════════════════════════════
      MODALES
-════════════════════════════════════════════════════════ -->
+══════════════════════════════════════════════════════════ -->
 
 <!-- GASTO -->
 <div class="modal-overlay" id="modal-gasto">
   <div class="modal">
-    <h3>
+    <h3 id="modal-gasto-title">
       <span class="modal-icon yellow">
         <svg viewBox="0 0 18 18" fill="none">
           <rect x="2" y="4" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.8"/>
@@ -627,7 +627,7 @@
           <path d="M5 12h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
       </span>
-      <span id="modal-gasto-title">Nuevo Gasto</span>
+      Nuevo Gasto
     </h3>
     <div class="grid-form grid-form-2">
       <div class="field" style="grid-column:1/-1">
@@ -643,21 +643,15 @@
         <input type="date" id="g-fecha">
       </div>
       <div class="field">
-        <label>Categoria</label>
-        <select id="g-categoria">
-          <option value="">Sin categoria</option>
-          <option value="Alimentación">Alimentacion</option>
-          <option value="Suministros">Suministros (luz, agua, gas)</option>
-          <option value="Alquiler / Hipoteca">Alquiler / Hipoteca</option>
-          <option value="Transporte">Transporte</option>
-          <option value="Ocio / Entretenimiento">Ocio / Entretenimiento</option>
-          <option value="Salud / Farmacia">Salud / Farmacia</option>
-          <option value="Limpieza / Hogar">Limpieza / Hogar</option>
-          <option value="Ropa / Calzado">Ropa / Calzado</option>
-          <option value="Tecnologia">Tecnologia</option>
-          <option value="Educación">Educacion</option>
-          <option value="Otros">Otros</option>
-        </select>
+        <label>Categoria *</label>
+        <div style="display:flex;gap:6px">
+          <select id="g-categoria" style="flex:1"><option value="">Cargando...</option></select>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="navigate('categorias')" title="Gestionar categorias">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 3.5h10M2 7h7M2 10.5h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="field">
         <label>Modo de pago</label>
@@ -686,14 +680,14 @@
 <!-- TAREA -->
 <div class="modal-overlay" id="modal-tarea">
   <div class="modal">
-    <h3>
+    <h3 id="modal-tarea-title">
       <span class="modal-icon green">
         <svg viewBox="0 0 18 18" fill="none">
           <rect x="2" y="2" width="14" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/>
           <path d="M5 9l3 3 5-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </span>
-      <span id="modal-tarea-title">Nueva Tarea</span>
+      Nueva Tarea
     </h3>
     <div class="field">
       <label>Nombre de la tarea *</label>
@@ -740,14 +734,14 @@
 <!-- HABITACION -->
 <div class="modal-overlay" id="modal-hab">
   <div class="modal">
-    <h3>
+    <h3 id="modal-hab-title">
       <span class="modal-icon blue">
         <svg viewBox="0 0 18 18" fill="none">
           <path d="M2 9.5L9 3l7 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M4 7.5v7a1 1 0 001 1h3v-3.5h2v3.5h3a1 1 0 001-1v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </span>
-      <span id="modal-hab-title">Nueva Habitacion</span>
+      Nueva Habitacion
     </h3>
     <div class="field">
       <label>Nombre *</label>
@@ -773,13 +767,13 @@
 <!-- PUBLICACION MURO -->
 <div class="modal-overlay" id="modal-pub">
   <div class="modal">
-    <h3>
+    <h3 id="modal-pub-title">
       <span class="modal-icon orange">
         <svg viewBox="0 0 18 18" fill="none">
           <path d="M16 11a2 2 0 01-2 2H5l-3 3V3a2 2 0 012-2h10a2 2 0 012 2v8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
         </svg>
       </span>
-      <span id="modal-pub-title">Nueva publicacion</span>
+      Nueva publicacion
     </h3>
     <div class="field">
       <label>Titulo *</label>
@@ -849,7 +843,41 @@
   </div>
 </div>
 
-<!-- ─── JS ──────────────────────────────────────────────────── -->
+<!-- CATEGORIA — crear/editar -->
+<div class="modal-overlay" id="modal-categoria">
+  <div class="modal">
+    <h3 id="modal-cat-title">
+      <span class="modal-icon yellow">
+        <svg viewBox="0 0 18 18" fill="none">
+          <path d="M2 5h14M2 9h10M2 13h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Nueva Categoria
+    </h3>
+    <div class="field">
+      <label>Nombre *</label>
+      <input type="text" id="cat-nombre" placeholder="Ej: Alimentacion, Limpieza...">
+    </div>
+    <div class="field">
+      <label>Tipo *</label>
+      <select id="cat-tipo">
+        <option value="ambas">Para gastos y tareas</option>
+        <option value="gasto">Solo para gastos</option>
+        <option value="tarea">Solo para tareas</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Descripcion *</label>
+      <input type="text" id="cat-descripcion" placeholder="Breve descripcion de la categoria">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-categoria')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-submit-cat" onclick="submitCategoria()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
 <script src="js/app.js"></script>
 <script>
   // Atajos de teclado en login
@@ -860,14 +888,13 @@
     if (e.key === 'Enter') document.getElementById('login-pass').focus();
   });
 
-  // Mostrar boton menu en movil
-  if (window.innerWidth <= 768) {
-    document.getElementById('btn-menu').style.display = 'inline-flex';
-  }
-  window.addEventListener('resize', () => {
+  // Boton menu en movil
+  function updateMenuBtn() {
     document.getElementById('btn-menu').style.display =
       window.innerWidth <= 768 ? 'inline-flex' : 'none';
-  });
+  }
+  updateMenuBtn();
+  window.addEventListener('resize', updateMenuBtn);
 </script>
 </body>
 </html>
