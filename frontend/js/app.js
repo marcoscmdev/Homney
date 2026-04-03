@@ -51,7 +51,7 @@ const sha256 = async (msg) => {
 let _toastTimer;
 function showToast(msg, type = 'ok') {
   const t = document.getElementById('toast');
-  const icons = { ok: '✅', err: '❌', warn: '⚠️' };
+  const icons = { ok: '[OK]', err: '[ERR]', warn: '[!]' };
   t.innerHTML = `<span>${icons[type] || ''}</span><span>${msg}</span>`;
   t.className = `show ${type}`;
   clearTimeout(_toastTimer);
@@ -103,7 +103,7 @@ async function doLogin() {
   const hash = await sha256(pass);
   const res  = await api('usuario.php', 'GET', null, { email });
 
-  btn.innerHTML = '🐝 Entrar'; btn.disabled = false;
+  btn.innerHTML = 'Entrar'; btn.disabled = false;
 
   if (res.status !== 'success' || !res.data) {
     showToast('Usuario no encontrado', 'err'); return;
@@ -128,6 +128,10 @@ async function doRegister() {
     showToast('Rellena todos los campos obligatorios', 'err'); return;
   }
 
+  if (!/^[6-9]\d{8}$/.test(telefono)) {
+    showToast('Teléfono inválido: 9 dígitos, empieza por 6-9', 'err'); return;
+  }
+
   const btn = document.getElementById('btn-register');
   btn.innerHTML = '<span class="spinner"></span> Registrando...'; btn.disabled = true;
 
@@ -139,16 +143,16 @@ async function doRegister() {
     const rHogar = await api('hogar.php', 'POST', { clave_inv: clave });
     if (rHogar.status !== 'success') {
       showToast('Error creando el hogar: ' + (rHogar.data || ''), 'err');
-      btn.innerHTML = '🏠 Crear cuenta'; btn.disabled = false; return;
+      btn.innerHTML = 'Crear cuenta'; btn.disabled = false; return;
     }
     id_hogar = rHogar.data.autoincrement;
     showToast(`Hogar creado. Tu clave de invitación: ${clave}`, 'warn');
   } else {
-    if (!claveInv) { showToast('Introduce la clave de invitación', 'err'); btn.innerHTML = '🏠 Crear cuenta'; btn.disabled = false; return; }
+    if (!claveInv) { showToast('Introduce la clave de invitación', 'err'); btn.innerHTML = 'Crear cuenta'; btn.disabled = false; return; }
     const rHogar = await api('hogar.php', 'GET', null, { clave_inv: claveInv.toUpperCase() });
     if (rHogar.status !== 'success' || !rHogar.data) {
       showToast('Clave de invitación no válida', 'err');
-      btn.innerHTML = '🏠 Crear cuenta'; btn.disabled = false; return;
+      btn.innerHTML = 'Crear cuenta'; btn.disabled = false; return;
     }
     const h = Array.isArray(rHogar.data) ? rHogar.data[0] : rHogar.data;
     id_hogar = h.id_hogar;
@@ -159,13 +163,13 @@ async function doRegister() {
     clave: hash, sexo, id_hogar, rol: modo === 'nuevo' ? 'admin' : 'miembro'
   });
 
-  btn.innerHTML = '🏠 Crear cuenta'; btn.disabled = false;
+  btn.innerHTML = 'Crear cuenta'; btn.disabled = false;
 
   if (rUser.status !== 'success') {
     showToast('Error al crear usuario: ' + (rUser.data || ''), 'err'); return;
   }
 
-  showToast('¡Cuenta creada! Inicia sesión 🎉', 'ok');
+  showToast('¡Cuenta creada! Inicia sesión', 'ok');
   switchAuthTab('login');
   document.getElementById('login-email').value = email;
 }
@@ -211,7 +215,7 @@ function updateSidebar() {
   const u = state.user;
   document.getElementById('sidebar-name').textContent = u.nombre;
   document.getElementById('sidebar-role').textContent =
-    u.rol === 'admin' ? '👑 Admin' : '🧑 Miembro';
+    u.rol === 'admin' ? ' Admin' : ' Miembro';
 
   // Avatar en sidebar
   setAvatarElement(
@@ -252,12 +256,12 @@ function doLogout() {
    NAVEGACIÓN
 ══════════════════════════════════════════════════════════════ */
 const PAGE_TITLES = {
-  dashboard:  '🐝 Dashboard',
-  hogar:      '🏠 Mi Hogar',
-  tareas:     '✅ Tareas',
-  cartera:    '💰 Mi Cartera',
-  muro:       '📢 Muro del Hogar',
-  perfil:     '👤 Mi Perfil',
+  dashboard:  ' Dashboard',
+  hogar:      ' Mi Hogar',
+  tareas:     ' Tareas',
+  cartera:    'Mi Cartera',
+  muro:       'Muro del Hogar',
+  perfil:     'Mi Perfil',
 };
 
 function navigate(page) {
@@ -295,8 +299,8 @@ function fmtAmt(n) {
   return isNaN(v) ? '0,00 €' : v.toLocaleString('es-ES', { minimumFractionDigits:2, maximumFractionDigits:2 }) + ' €';
 }
 
-const ICONOS_HAB  = { cocina:'🍳', aseo:'🚿', garaje:'🚗', exterior:'🌿', generica:'🛋️' };
-const ICONOS_MODO = { efectivo:'💵', transferencia:'🏦', tarjeta:'💳', bizum:'📱' };
+const ICONOS_HAB  = { cocina:'C', aseo:'A', garaje:'G', exterior:'E', generica:'H' };
+const ICONOS_MODO = { efectivo:'E', transferencia:'T', tarjeta:'B', bizum:'Z' };
 const FREQ_LABEL  = { dia:'Diaria', semana:'Semanal', mes:'Mensual', variable:'Variable' };
 
 /* Paleta de colores por usuario para el calendario */
@@ -304,6 +308,36 @@ const USER_COLORS = [
   '#f59e0b','#10b981','#3b82f6','#ef4444',
   '#8b5cf6','#ec4899','#06b6d4','#84cc16'
 ];
+
+/* ══════════════════════════════════════════════════════════════
+   PRÓXIMA FECHA DE TAREA
+══════════════════════════════════════════════════════════════ */
+function nextDueLabel(frecuencia) {
+  const now   = new Date();
+  const today = now.getDate();
+  const dnames = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const mnames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const fmt  = d => dnames[d.getDay()] + ' ' + d.getDate() + ' ' + mnames[d.getMonth()];
+  switch (frecuencia) {
+    case 'dia':
+      return 'Hoy · ' + today + ' ' + mnames[now.getMonth()];
+    case 'semana': {
+      // El calendario coloca tareas semanales en días 1,8,15,22,29
+      const nextDay = [1,8,15,22,29].find(d => d >= today);
+      const d = nextDay
+        ? new Date(now.getFullYear(), now.getMonth(), nextDay)
+        : new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      return fmt(d);
+    }
+    case 'mes': {
+      const d = today <= 1
+        ? now
+        : new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      return fmt(d);
+    }
+    default: return '';
+  }
+}
 
 /* ══════════════════════════════════════════════════════════════
    CALENDARIO — componente reutilizable
@@ -315,7 +349,7 @@ const USER_COLORS = [
  * @param {Array} usuarios - array de {id_usuario, nombre}
  * @param {Object} userColorMap - { id_usuario: '#hexcolor' }
  */
-function buildCalendarHTML(tareas, asignaciones, usuarios, userColorMap) {
+function buildCalendarHTML(tareas, asignaciones, usuarios, userColorMap, realizadas = []) {
   const now   = new Date();
   const year  = now.getFullYear();
   const month = now.getMonth();
@@ -333,7 +367,17 @@ function buildCalendarHTML(tareas, asignaciones, usuarios, userColorMap) {
 
   // Generar eventos por día
   const dayEvents = {};
-  for (let d = 1; d <= daysInMonth; d++) dayEvents[d] = [];
+  const doneEvents = {};
+  for (let d = 1; d <= daysInMonth; d++) { dayEvents[d] = []; doneEvents[d] = []; }
+
+  // Tareas completadas en este mes
+  realizadas.forEach(r => {
+    const f = new Date(r.fecha_realizacion);
+    if (f.getMonth() === month && f.getFullYear() === year) {
+      const tarea = tareaMap[r.id_tarea];
+      if (tarea) doneEvents[f.getDate()].push(tarea);
+    }
+  });
 
   asignaciones.forEach(asig => {
     const tarea = tareaMap[asig.id_tarea];
@@ -389,6 +433,7 @@ function buildCalendarHTML(tareas, asignaciones, usuarios, userColorMap) {
     const events  = dayEvents[d];
     const shown   = events.slice(0, 3);
     const extra   = events.length - 3;
+    const doneDots = doneEvents[d];
     return `
       <div class="cal-cell${isToday ? ' cal-today' : ''}">
         <div class="cal-day-num">${d}</div>
@@ -400,13 +445,14 @@ function buildCalendarHTML(tareas, asignaciones, usuarios, userColorMap) {
             </div>`).join('')}
           ${extra > 0 ? `<div class="cal-more">+${extra} más</div>` : ''}
         </div>
+        ${doneDots.length > 0 ? `<div class="cal-done-row">${doneDots.slice(0,4).map(t=>`<span class="cal-done-dot" title="${escHtml(t.nombre)} — completada"></span>`).join('')}</div>` : ''}
       </div>`;
   }).join('');
 
   return `
     <div class="calendar-wrap">
       <div class="calendar-header-row">
-        <span class="calendar-month-title">📅 ${monthNames[month]} ${year}</span>
+        <span class="calendar-month-title">${monthNames[month]} ${year}</span>
       </div>
       <div class="cal-legend">${legendHTML}</div>
       <div class="calendar-grid">
@@ -418,27 +464,44 @@ function buildCalendarHTML(tareas, asignaciones, usuarios, userColorMap) {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   HELPER — tareas por hogar (tarea.php no soporta id_hogar,
+   hay que ir a través de las habitaciones)
+══════════════════════════════════════════════════════════════ */
+async function getTareasDelHogar(id_hogar) {
+  const rHabs = await api('habitacion.php', 'GET', null, { id_hogar });
+  const habs  = getData(rHabs);
+  if (habs.length === 0) return { status: 'success', data: null };
+  const results = await Promise.all(
+    habs.map(h => api('tarea.php', 'GET', null, { id_habitacion: h.id_habitacion }))
+  );
+  const tareas = results.flatMap(r => getData(r));
+  return { status: 'success', data: tareas.length > 0 ? tareas : null };
+}
+
+/* ══════════════════════════════════════════════════════════════
    DASHBOARD
 ══════════════════════════════════════════════════════════════ */
 async function dashboard() {
   const uid      = state.user.id_usuario;
   const id_hogar = state.user.id_hogar;
 
-  const [rGastos, rAsig, rPubs, rAllAsig, rTareas, rUsuarios] = await Promise.all([
-    api('gasto.php',            'GET', null, { id_hogar }),
-    api('asignacion_tarea.php', 'GET', null, { id_usuario: uid }),
-    api('muro.php',             'GET', null, { id_hogar }),
-    api('asignacion_tarea.php', 'GET', null, {}),
-    api('tarea.php',            'GET', null, { id_hogar }),
-    api('usuario.php',          'GET', null, { id_hogar }),
+  const [rGastos, rAsig, rPubs, rAllAsig, rTareas, rUsuarios, rRealizadas] = await Promise.all([
+    api('gasto.php',             'GET', null, { id_hogar }),
+    api('asignacion_tarea.php',  'GET', null, { id_usuario: uid }),
+    api('muro.php',              'GET', null, { id_hogar }),
+    api('asignacion_tarea.php',  'GET', null, {}),
+    getTareasDelHogar(id_hogar),
+    api('usuario.php',           'GET', null, { id_hogar }),
+    api('tareas_realizadas.php', 'GET', null, { id_usuario: uid }),
   ]);
 
-  const gastos   = getData(rGastos);
-  const asig     = getData(rAsig);
-  const pubs     = getData(rPubs);
-  const allAsig  = getData(rAllAsig);
-  const tareas   = getData(rTareas);
-  const usuarios = getData(rUsuarios);
+  const gastos    = getData(rGastos);
+  const asig      = getData(rAsig);
+  const pubs      = getData(rPubs);
+  const allAsig   = getData(rAllAsig);
+  const tareas    = getData(rTareas);
+  const usuarios  = getData(rUsuarios);
+  const realizadas = getData(rRealizadas);
 
   const totalGasto = gastos.reduce((s,g) => s + parseFloat(g.importe||0), 0);
   const ultG  = gastos.slice(0,4);
@@ -453,11 +516,11 @@ async function dashboard() {
   const asigDelHogar = allAsig.filter(a => tareaIds.has(a.id_tarea));
 
   document.getElementById('topbar-actions').innerHTML = `
-    <button class="btn btn-ghost btn-sm" onclick="openModalTarea()">＋ Tarea</button>
-    <button class="btn btn-primary btn-sm" onclick="openModalGasto()">💰 Gasto</button>
+    <button class="btn btn-ghost btn-sm" onclick="openModalTarea()">+ Tarea</button>
+    <button class="btn btn-primary btn-sm" onclick="openModalGasto()">Gasto</button>
   `;
 
-  const calendarHTML = buildCalendarHTML(tareas, asigDelHogar, usuarios, userColorMap);
+  const calendarHTML = buildCalendarHTML(tareas, asigDelHogar, usuarios, userColorMap, realizadas);
   const userMap = Object.fromEntries(usuarios.map(u => [u.id_usuario, u]));
 
   set(`
@@ -466,24 +529,24 @@ async function dashboard() {
     <!-- STATS -->
     <div class="grid-3 section-gap">
       <div class="stat-card">
-        <div class="stat-icon">💸</div>
+        <div class="stat-icon"></div>
         <div class="stat-value">${fmtAmt(totalGasto)}</div>
         <div class="stat-label">Gasto total del hogar</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">✅</div>
+        <div class="stat-icon"></div>
         <div class="stat-value">${asig.length}</div>
         <div class="stat-label">Tareas asignadas a ti</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">📢</div>
+        <div class="stat-icon"></div>
         <div class="stat-value">${pubs.length}</div>
         <div class="stat-label">Publicaciones del hogar</div>
       </div>
     </div>
 
     <!-- CALENDARIO -->
-    <div class="section-title">📅 Calendario del hogar</div>
+    <div class="section-title">Calendario del hogar</div>
     ${calendarHTML}
 
     <!-- GRID -->
@@ -491,14 +554,14 @@ async function dashboard() {
       <!-- Últimos gastos -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">💸 Últimos gastos</span>
+          <span class="card-title"> Últimos gastos</span>
           <span class="card-action" onclick="navigate('cartera')">Ver todos →</span>
         </div>
         ${ultG.length === 0
-          ? '<div class="empty"><span class="empty-icon">📭</span><p>Sin gastos aún</p></div>'
+          ? '<div class="empty"><span class="empty-icon"></span><p>Sin gastos aun</p></div>'
           : ultG.map(g => `
             <div class="list-item">
-              <div class="list-item-icon">${ICONOS_MODO[g.modo]||'💰'}</div>
+              <div class="list-item-icon">${ICONOS_MODO[g.modo]||''}</div>
               <div class="list-item-body">
                 <div class="list-item-title">${g.concepto}</div>
                 <div class="list-item-sub">${g.categoria||'—'} · ${fmtDate(g.fecha)}</div>
@@ -509,18 +572,18 @@ async function dashboard() {
             </div>`).join('')
         }
         <div style="margin-top:14px">
-          <button class="btn btn-ghost btn-sm" onclick="openModalGasto()">＋ Nuevo gasto</button>
+          <button class="btn btn-ghost btn-sm" onclick="openModalGasto()">+ Nuevo gasto</button>
         </div>
       </div>
 
       <!-- Mis tareas -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">✅ Mis tareas</span>
+          <span class="card-title">Mis tareas</span>
           <span class="card-action" onclick="navigate('tareas')">Ver todas →</span>
         </div>
         ${asig.length === 0
-          ? '<div class="empty"><span class="empty-icon">🎉</span><p>¡Sin tareas pendientes!</p></div>'
+          ? '<div class="empty"><span class="empty-icon"></span><p>Sin tareas pendientes</p></div>'
           : asig.slice(0,4).map(a => {
               const t = tareas.find(t => t.id_tarea == a.id_tarea);
               return `
@@ -534,15 +597,15 @@ async function dashboard() {
             }).join('')
         }
         <div style="margin-top:14px">
-          <button class="btn btn-ghost btn-sm" onclick="openModalTarea()">＋ Nueva tarea</button>
+          <button class="btn btn-ghost btn-sm" onclick="openModalTarea()">+ Nueva tarea</button>
         </div>
       </div>
     </div>
 
     <!-- MURO -->
-    <div class="section-title">📢 Últimas publicaciones</div>
+    <div class="section-title">Ultimas publicaciones</div>
     ${ultP.length === 0
-      ? '<div class="empty"><span class="empty-icon">📭</span><p>El muro está vacío</p></div>'
+      ? '<div class="empty"><span class="empty-icon"></span><p>El muro esta vacio</p></div>'
       : ultP.map(p => {
           const autor  = userMap[p.id_usuario];
           const ini    = autor ? autor.nombre.charAt(0).toUpperCase() : 'U';
@@ -572,16 +635,20 @@ async function renderHogar() {
   const id_hogar = state.user.id_hogar;
   const isAdmin  = state.user.rol === 'admin';
 
-  const [rHabs, rUsuarios, rAllAsig, rTareas] = await Promise.all([
+  const [rHabs, rUsuarios, rAllAsig] = await Promise.all([
     api('habitacion.php',       'GET', null, { id_hogar }),
     api('usuario.php',          'GET', null, { id_hogar }),
     api('asignacion_tarea.php', 'GET', null, {}),
-    api('tarea.php',            'GET', null, { id_hogar }),
   ]);
   const habs     = getData(rHabs);
   const usuarios = getData(rUsuarios);
   const allAsig  = getData(rAllAsig);
-  const tareas   = getData(rTareas);
+
+  // Fetch tareas reutilizando los id_habitacion ya cargados
+  const tareasArr = habs.length > 0
+    ? (await Promise.all(habs.map(h => api('tarea.php','GET',null,{ id_habitacion: h.id_habitacion })))).flatMap(r => getData(r))
+    : [];
+  const tareas = tareasArr;
 
   // Mapa de colores por usuario
   const userColorMap = {};
@@ -593,7 +660,7 @@ async function renderHogar() {
 
   // Botones topbar: solo admin puede crear habitación
   document.getElementById('topbar-actions').innerHTML = isAdmin
-    ? `<button class="btn btn-primary btn-sm" onclick="openModalHabitacion()">＋ Habitación</button>`
+    ? `<button class="btn btn-primary btn-sm" onclick="openModalHabitacion()">+ Habitacion</button>`
     : '';
 
   const calendarHTML = buildCalendarHTML(tareas, asigDelHogar, usuarios, userColorMap);
@@ -601,7 +668,7 @@ async function renderHogar() {
   set(`
     <!-- Info hogar -->
     <div class="card section-gap" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-      <div style="font-size:2.5rem">🏠</div>
+      <div style="font-size:2.5rem">H</div>
       <div style="flex:1">
         <div style="font-weight:800;font-size:1.05rem">Hogar #${id_hogar}</div>
         <div style="font-size:.82rem;color:var(--muted);margin-top:4px">
@@ -613,11 +680,13 @@ async function renderHogar() {
         </div>
       </div>
       <span class="tag tag-yellow">${usuarios.length} compañero${usuarios.length!==1?'s':''}</span>
-      ${isAdmin ? `<span class="tag tag-green" style="cursor:pointer" onclick="showToast('Comparte la clave de invitación con tus compañeros','ok')">👑 Eres administrador</span>` : ''}
+      ${isAdmin ? `<span class="tag tag-green" style="cursor:pointer" onclick="showToast('Comparte la clave de invitacion con tus companeros','ok')">Admin</span>` : ''}
     </div>
 
-    <!-- Compañeros -->
-    <div class="section-title">🐝 Compañeros de hogar</div>
+
+
+    <!-- Companeros -->
+    <div class="section-title">Companeros de hogar</div>
     <div class="grid-4 section-gap">
       ${usuarios.length === 0
         ? '<div class="empty"><p>Sin compañeros registrados</p></div>'
@@ -635,7 +704,7 @@ async function renderHogar() {
               <span class="tag ${u.rol==='admin'?'tag-yellow':'tag-green'}">${u.rol}</span>
               ${isAdmin && u.id_usuario != state.user.id_usuario ? `
                 <button class="btn btn-ghost btn-sm" onclick="cambiarRol(${u.id_usuario},'${u.rol}')">
-                  ${u.rol==='admin' ? '⬇️ Hacer miembro' : '⬆️ Hacer admin'}
+                  ${u.rol==='admin' ? 'Hacer miembro' : 'Hacer admin'}
                 </button>` : ''}
             </div>`;
           }).join('')
@@ -643,29 +712,29 @@ async function renderHogar() {
     </div>
 
     <!-- Habitaciones -->
-    <div class="section-title">🛋️ Habitaciones</div>
+    <div class="section-title">Habitaciones</div>
     <div class="grid-4 section-gap">
       ${habs.map(h => `
         <div class="hab-card">
-          <div class="hab-icon">${ICONOS_HAB[h.tipo]||'🚪'}</div>
+          <div class="hab-icon">${ICONOS_HAB[h.tipo]||''}</div>
           <div class="hab-name">${escHtml(h.nombre)}</div>
           <div class="hab-meta">${h.tipo}</div>
           ${isAdmin ? `
           <div class="hab-actions">
-            <button class="btn btn-icon btn-sm" onclick="openEditHabitacion(${h.id_habitacion},'${escHtml(h.nombre)}','${h.tipo}')" title="Editar">✏️</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteHabitacion(${h.id_habitacion})" title="Eliminar">🗑️</button>
+            <button class="btn btn-icon btn-sm" onclick="openEditHabitacion(${h.id_habitacion},'${escHtml(h.nombre)}','${h.tipo}')" title="Editar">Editar</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteHabitacion(${h.id_habitacion})" title="Eliminar">Eliminar</button>
           </div>` : ''}
         </div>`).join('')
       }
       ${isAdmin ? `
       <div class="hab-card add-card" onclick="openModalHabitacion()">
-        <div style="font-size:1.6rem;color:var(--muted)">＋</div>
-        <div style="font-size:.8rem;color:var(--muted);font-weight:600">Añadir habitación</div>
+        <div style="font-size:1.6rem;color:var(--muted)">+</div>
+        <div style="font-size:.8rem;color:var(--muted);font-weight:600">Anadir habitacion</div>
       </div>` : ''}
     </div>
 
     <!-- Calendario del hogar -->
-    <div class="section-title">📅 Calendario del hogar — ${new Date().toLocaleDateString('es-ES',{month:'long',year:'numeric'})}</div>
+    <div class="section-title">Calendario del hogar - ${new Date().toLocaleDateString('es-ES',{month:'long',year:'numeric'})}</div>
     ${calendarHTML}
   `);
 }
@@ -675,7 +744,7 @@ async function cambiarRol(id_usuario, rolActual) {
   const nuevoRol = rolActual === 'admin' ? 'miembro' : 'admin';
   if (!confirm(`¿Cambiar rol a ${nuevoRol}?`)) return;
   const res = await api('usuario.php','PUT',{ id_usuario, rol: nuevoRol });
-  if (res.status === 'success') { showToast('Rol actualizado ✓','ok'); renderHogar(); }
+  if (res.status === 'success') { showToast('Rol actualizado','ok'); renderHogar(); }
   else showToast('Error: '+(res.data||''),'err');
 }
 
@@ -687,22 +756,38 @@ async function renderTareas() {
   const id_hogar = state.user.id_hogar;
   const isAdmin  = state.user.rol === 'admin';
 
-  const [rAsig, rHabs, rTareas, rAllAsig, rUsuarios] = await Promise.all([
+  const [rAsig, rHabs, rAllAsig, rUsuarios, rRealizadas] = await Promise.all([
     api('asignacion_tarea.php', 'GET', null, { id_usuario: uid }),
     api('habitacion.php',       'GET', null, { id_hogar }),
-    api('tarea.php',            'GET', null, { id_hogar }),
     api('asignacion_tarea.php', 'GET', null, {}),
     api('usuario.php',          'GET', null, { id_hogar }),
+    api('tareas_realizadas.php','GET', null, { id_usuario: uid }),
   ]);
-  const asig     = getData(rAsig);
-  const habs     = getData(rHabs);
-  const tareas   = getData(rTareas);
-  const allAsig  = getData(rAllAsig);
-  const usuarios = getData(rUsuarios);
+  const asig       = getData(rAsig);
+  const habs       = getData(rHabs);
+  const allAsig    = getData(rAllAsig);
+  const usuarios   = getData(rUsuarios);
+  const realizadas = getData(rRealizadas);
+
+  const tareas = habs.length > 0
+    ? (await Promise.all(habs.map(h => api('tarea.php','GET',null,{ id_habitacion: h.id_habitacion })))).flatMap(r => getData(r))
+    : [];
 
   const userMap = Object.fromEntries(usuarios.map(u => [u.id_usuario, u]));
+  const tareaMap = Object.fromEntries(tareas.map(t => [t.id_tarea, t]));
   const userColorMap = {};
   usuarios.forEach((u, i) => { userColorMap[u.id_usuario] = USER_COLORS[i % USER_COLORS.length]; });
+
+  // Tareas completadas hoy (para marcarlas como hechas en la sección de pendientes)
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const completadasHoy = new Set(
+    realizadas.filter(r => { const d = new Date(r.fecha_realizacion); d.setHours(0,0,0,0); return d.getTime() === hoy.getTime(); })
+              .map(r => r.id_tarea)
+  );
+
+  // Realizadas en los últimos 7 días para la sección de historial
+  const hace7dias = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const realizadasRecientes = realizadas.filter(r => new Date(r.fecha_realizacion) >= hace7dias);
 
   // IDs de tareas asignadas al usuario actual
   const idAsignadasAlMio = new Set(asig.map(a => a.id_tarea));
@@ -715,77 +800,135 @@ async function renderTareas() {
   });
 
   document.getElementById('topbar-actions').innerHTML = `
-    <button class="btn btn-primary btn-sm" onclick="openModalTarea()">＋ Nueva Tarea</button>
+    <button class="btn btn-primary btn-sm" onclick="openModalTarea()">+ Nueva Tarea</button>
   `;
 
   function tareaRow(t, esMia) {
-    const asignados = (asigByTarea[t.id_tarea] || []).map(uid => {
-      const u = userMap[uid];
-      const color = userColorMap[uid] || '#9ca3af';
+    const asignados = (asigByTarea[t.id_tarea] || []).map(u2 => {
+      const u = userMap[u2];
+      const color = userColorMap[u2] || '#9ca3af';
       return u
         ? `<span class="user-badge" style="background:${color}">${u.nombre.charAt(0).toUpperCase()}</span>`
-        : `<span class="user-badge">#${uid}</span>`;
+        : `<span class="user-badge">#${u2}</span>`;
     }).join('');
 
+    const yaHecha  = completadasHoy.has(t.id_tarea);
+    const dueLabel = nextDueLabel(t.frecuencia);
+
     return `
-      <div class="tarea-item">
-        ${esMia ? `<div class="tarea-check" title="Marcar como realizada" onclick="marcarRealizada(${t.id_tarea},this)"></div>` : `<div style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0"></div>`}
+      <div class="tarea-item${yaHecha ? ' completada' : ''}" id="tarea-card-${t.id_tarea}">
+        ${esMia
+          ? `<div class="tarea-check${yaHecha ? ' done' : ''}"
+               title="${yaHecha ? 'Realizada hoy' : 'Marcar como realizada'}"
+               onclick="${yaHecha ? '' : `marcarRealizada(${t.id_tarea},this)`}"
+               style="${yaHecha ? 'cursor:default' : ''}"></div>`
+          : `<div style="width:22px;height:22px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0"></div>`
+        }
         <div class="tarea-body">
           <div class="tarea-name">${escHtml(t.nombre)}</div>
           <div class="tarea-freq">
             ${FREQ_LABEL[t.frecuencia]||t.frecuencia}
             ${t.num_veces > 1 ? '· '+t.num_veces+'x' : ''}
             · ${t.duracion ? t.duracion+' min' : 'Sin duración'}
-            ${t.categoria ? `· <span class="tag tag-yellow" style="font-size:.68rem">${escHtml(t.categoria)}</span>` : ''}
           </div>
+          ${dueLabel ? `<div class="tarea-due">${dueLabel}</div>` : ''}
           <div style="margin-top:4px">${asignados}</div>
         </div>
         <div class="tarea-actions">
-          <span class="tag tag-green">${FREQ_LABEL[t.frecuencia]||t.frecuencia}</span>
+          ${yaHecha
+            ? `<span class="tag tag-green">Hecha hoy</span>`
+            : `<span class="tag tag-muted">${FREQ_LABEL[t.frecuencia]||t.frecuencia}</span>`
+          }
           ${!esMia ? `<button class="btn btn-green btn-sm" onclick="asignarTarea(${t.id_tarea})">Asignarme</button>` : ''}
-          ${isAdmin || esMia ? `<button class="btn btn-icon btn-sm" onclick="openEditTarea(${JSON.stringify(t).replace(/"/g,'&quot;')})" title="Editar">✏️</button>` : ''}
-          ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="deleteTarea(${t.id_tarea})" title="Eliminar">🗑️</button>` : ''}
+          ${isAdmin || esMia ? `<button class="btn btn-icon btn-sm" onclick="openEditTarea(${JSON.stringify(t).replace(/"/g,'&quot;')})">[E]</button>` : ''}
+          ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="deleteTarea(${t.id_tarea})">[X]</button>` : ''}
         </div>
       </div>`;
   }
 
-  const misTareas    = tareas.filter(t => idAsignadasAlMio.has(t.id_tarea));
-  const otrasTareas  = tareas.filter(t => !idAsignadasAlMio.has(t.id_tarea));
+  const misTareas   = tareas.filter(t => idAsignadasAlMio.has(t.id_tarea));
+  const otrasTareas = tareas.filter(t => !idAsignadasAlMio.has(t.id_tarea));
+
+  // Historial de completadas (últimos 7 días)
+  const dnames7 = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const mnames7 = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const ayer = new Date(hoy); ayer.setDate(hoy.getDate() - 1);
+
+  function fechaCompletadaLabel(fechaStr) {
+    const f = new Date(fechaStr); f.setHours(0,0,0,0);
+    if (f.getTime() === hoy.getTime())  return 'Hoy';
+    if (f.getTime() === ayer.getTime()) return 'Ayer';
+    const fd = new Date(fechaStr);
+    return dnames7[fd.getDay()] + ' ' + fd.getDate() + ' ' + mnames7[fd.getMonth()];
+  }
+
+  const completadasRows = realizadasRecientes.map(r => {
+    const t = tareaMap[r.id_tarea];
+    const fd = new Date(r.fecha_realizacion);
+    return `
+      <div class="tarea-item completada" style="opacity:.88">
+        <div class="tarea-check done"></div>
+        <div class="tarea-body">
+          <div class="tarea-name">${escHtml(t ? t.nombre : 'Tarea #'+r.id_tarea)}</div>
+          <div class="tarea-freq">${fechaCompletadaLabel(r.fecha_realizacion)} · ${fd.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</div>
+        </div>
+        <span class="tag tag-green">Completada</span>
+      </div>`;
+  }).join('');
 
   set(`
-    <!-- Mis tareas -->
+    <!-- Mis tareas pendientes -->
     <div class="card section-gap">
       <div class="card-header">
-        <span class="card-title">🐝 Mis tareas asignadas</span>
-        <span class="tag tag-yellow">${misTareas.length} tarea${misTareas.length!==1?'s':''}</span>
+        <span class="card-title">Mis tareas</span>
+        <span class="tag tag-yellow">${misTareas.length} pendiente${misTareas.length!==1?'s':''}</span>
       </div>
       ${misTareas.length === 0
-        ? '<div class="empty"><span class="empty-icon">🎉</span><p>¡Todo al día! Sin tareas pendientes.</p></div>'
+        ? '<div class="empty"><span class="empty-icon"></span><p>Sin tareas pendientes.</p></div>'
         : misTareas.map(t => tareaRow(t, true)).join('')
       }
     </div>
 
     <!-- Otras tareas del hogar -->
-    <div class="section-title">🏠 Otras tareas del hogar</div>
+    <div class="section-title">Otras tareas del hogar</div>
     <div class="card">
       ${otrasTareas.length === 0
-        ? '<div class="empty"><span class="empty-icon">🐝</span><p>No hay más tareas disponibles en el hogar</p></div>'
+        ? '<div class="empty"><span class="empty-icon"></span><p>No hay más tareas disponibles en el hogar.</p></div>'
         : otrasTareas.map(t => tareaRow(t, false)).join('')
+      }
+    </div>
+
+    <!-- Completadas esta semana -->
+    <div class="section-title">Completadas esta semana</div>
+    <div class="card">
+      ${realizadasRecientes.length === 0
+        ? '<div class="empty"><span class="empty-icon"></span><p>Sin tareas completadas en los últimos 7 días.</p></div>'
+        : completadasRows
       }
     </div>
   `);
 }
 
 async function marcarRealizada(id_tarea, el) {
+  const card  = el.closest ? el.closest('.tarea-item') : null;
   const ahora = new Date().toISOString().slice(0,19).replace('T',' ');
+
+  // Animación inmediata antes de esperar la API
+  el.classList.add('done');
+  if (card) card.classList.add('completada');
+
   const res = await api('tareas_realizadas.php','POST',{
     id_tarea, id_usuario: state.user.id_usuario, fecha_realizacion: ahora
   });
   if (res.status === 'success') {
-    el.classList.add('done'); el.textContent = '✓';
-    showToast('¡Tarea marcada como realizada! 🎉','ok');
-    setTimeout(renderTareas, 600);
-  } else showToast('Error al marcar la tarea','err');
+    showToast('¡Tarea completada!','ok');
+    setTimeout(renderTareas, 900);
+  } else {
+    // Revertir animación si falla
+    el.classList.remove('done');
+    if (card) card.classList.remove('completada');
+    showToast('Error al marcar la tarea','err');
+  }
 }
 
 async function asignarTarea(id_tarea) {
@@ -793,7 +936,7 @@ async function asignarTarea(id_tarea) {
     id_tarea, id_usuario: state.user.id_usuario
   });
   if (res.status === 'success') {
-    showToast('Tarea asignada 🐝','ok'); renderTareas();
+    showToast('Tarea asignada','ok'); renderTareas();
   } else showToast('Error: '+(res.data||''),'err');
 }
 
@@ -867,12 +1010,12 @@ async function renderCartera() {
   const balance      = totalMeDeben - totalDebo;
 
   document.getElementById('topbar-actions').innerHTML = `
-    <button class="btn btn-primary btn-sm" onclick="openModalGasto()">💰 Nuevo Gasto</button>
+    <button class="btn btn-primary btn-sm" onclick="openModalGasto()">+ Nuevo Gasto</button>
   `;
 
   function htmlMeDeben() {
     const entries = Object.values(meDebenMap);
-    if (entries.length === 0) return '<div class="empty"><span class="empty-icon">🎉</span><p>¡Nadie te debe dinero!</p></div>';
+    if (entries.length === 0) return '<div class="empty"><span class="empty-icon"></span><p>¡Nadie te debe dinero!</p></div>';
     return entries.map(m => {
       const ini    = m.user ? m.user.nombre.charAt(0).toUpperCase() : '?';
       const nombre = m.user ? m.user.nombre : 'Desconocido';
@@ -894,24 +1037,24 @@ async function renderCartera() {
           <div class="reparto-items">
             ${pendientes.map(i => `
               <div class="reparto-item reparto-pendiente">
-                <div class="reparto-item-icon">${ICONOS_MODO[i.gasto.modo]||'💰'}</div>
+                <div class="reparto-item-icon">${ICONOS_MODO[i.gasto.modo]||'€'}</div>
                 <div class="reparto-item-body">
                   <div class="reparto-item-title">${escHtml(i.gasto.concepto)}</div>
                   <div class="reparto-item-sub">${fmtDate(i.gasto.fecha)} · ${i.gasto.categoria||'—'}</div>
                 </div>
                 <div class="reparto-item-right">
                   <span style="font-weight:700;color:var(--green-dark)">${fmtAmt(i.reparto.importe)}</span>
-                  <button class="btn btn-green btn-sm" onclick="cobrarDeuda(${i.gasto.id_gasto},${i.reparto.id_usuario},${i.reparto.importe})">✅ Cobrado</button>
+                  <button class="btn btn-green btn-sm" onclick="cobrarDeuda(${i.gasto.id_gasto},${i.reparto.id_usuario},${i.reparto.importe})">Cobrado</button>
                 </div>
               </div>`).join('')}
             ${abonados.map(i => `
               <div class="reparto-item reparto-abonado">
-                <div class="reparto-item-icon" style="opacity:.5">${ICONOS_MODO[i.gasto.modo]||'💰'}</div>
+                <div class="reparto-item-icon" style="opacity:.5">${ICONOS_MODO[i.gasto.modo]||'€'}</div>
                 <div class="reparto-item-body">
                   <div class="reparto-item-title" style="color:var(--muted);text-decoration:line-through">${escHtml(i.gasto.concepto)}</div>
                   <div class="reparto-item-sub">${fmtDate(i.gasto.fecha)}</div>
                 </div>
-                <div class="reparto-item-right"><span class="tag tag-green">Cobrado ✓</span></div>
+                <div class="reparto-item-right"><span class="tag tag-green">Cobrado</span></div>
               </div>`).join('')}
           </div>
         </div>`;
@@ -920,7 +1063,7 @@ async function renderCartera() {
 
   function htmlDeboYo() {
     const entries = Object.values(deboMap);
-    if (entries.length === 0) return '<div class="empty"><span class="empty-icon">🎉</span><p>¡No debes nada a nadie!</p></div>';
+    if (entries.length === 0) return '<div class="empty"><span class="empty-icon"></span><p>¡No debes nada a nadie!</p></div>';
     return entries.map(m => {
       const ini    = m.user ? m.user.nombre.charAt(0).toUpperCase() : '?';
       const nombre = m.user ? m.user.nombre : 'Desconocido';
@@ -942,24 +1085,24 @@ async function renderCartera() {
           <div class="reparto-items">
             ${pendientes.map(i => `
               <div class="reparto-item reparto-pendiente">
-                <div class="reparto-item-icon">${ICONOS_MODO[i.gasto.modo]||'💰'}</div>
+                <div class="reparto-item-icon">${ICONOS_MODO[i.gasto.modo]||'€'}</div>
                 <div class="reparto-item-body">
                   <div class="reparto-item-title">${escHtml(i.gasto.concepto)}</div>
                   <div class="reparto-item-sub">${fmtDate(i.gasto.fecha)} · ${i.gasto.categoria||'—'}</div>
                 </div>
                 <div class="reparto-item-right">
                   <span style="font-weight:700;color:var(--danger)">${fmtAmt(i.reparto.importe)}</span>
-                  <button class="btn btn-primary btn-sm" onclick="abonarDeuda(${i.gasto.id_gasto},${uid},${i.reparto.importe})">💸 Ya pagué</button>
+                  <button class="btn btn-primary btn-sm" onclick="abonarDeuda(${i.gasto.id_gasto},${uid},${i.reparto.importe})">Ya pagué</button>
                 </div>
               </div>`).join('')}
             ${abonados.map(i => `
               <div class="reparto-item reparto-abonado">
-                <div class="reparto-item-icon" style="opacity:.5">${ICONOS_MODO[i.gasto.modo]||'💰'}</div>
+                <div class="reparto-item-icon" style="opacity:.5">${ICONOS_MODO[i.gasto.modo]||'€'}</div>
                 <div class="reparto-item-body">
                   <div class="reparto-item-title" style="color:var(--muted);text-decoration:line-through">${escHtml(i.gasto.concepto)}</div>
                   <div class="reparto-item-sub">${fmtDate(i.gasto.fecha)}</div>
                 </div>
-                <div class="reparto-item-right"><span class="tag tag-green">Pagado ✓</span></div>
+                <div class="reparto-item-right"><span class="tag tag-green">Pagado</span></div>
               </div>`).join('')}
           </div>
         </div>`;
@@ -969,17 +1112,17 @@ async function renderCartera() {
   set(`
     <div class="grid-3 section-gap">
       <div class="stat-card">
-        <div class="stat-icon">🍯</div>
+        <div class="stat-icon">+</div>
         <div class="stat-value" style="color:var(--green-dark)">${fmtAmt(totalMeDeben)}</div>
         <div class="stat-label">Te deben a ti (pendiente)</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">📤</div>
+        <div class="stat-icon">-</div>
         <div class="stat-value" style="color:var(--danger)">${fmtAmt(totalDebo)}</div>
         <div class="stat-label">Debes tú (pendiente)</div>
       </div>
       <div class="stat-card" style="border-color:${balance>=0?'var(--green)':'var(--danger)'}">
-        <div class="stat-icon">${balance >= 0 ? '🟢' : '🔴'}</div>
+        <div class="stat-icon">${balance >= 0 ? '+' : '-'}</div>
         <div class="stat-value" style="color:${balance>=0?'var(--green-dark)':'var(--danger)'}">${balance>=0?'+':''}${fmtAmt(balance)}</div>
         <div class="stat-label">Balance neto</div>
       </div>
@@ -987,7 +1130,7 @@ async function renderCartera() {
 
     <div class="reparto-section section-gap">
       <div class="reparto-section-title">
-        <span>🍯 Lo que te deben</span>
+        <span>Lo que te deben</span>
         <span class="tag tag-green">${fmtAmt(totalMeDeben)} pendiente</span>
       </div>
       ${htmlMeDeben()}
@@ -995,7 +1138,7 @@ async function renderCartera() {
 
     <div class="reparto-section section-gap">
       <div class="reparto-section-title">
-        <span>📤 Lo que debes tú</span>
+        <span>Lo que debes tú</span>
         <span class="tag tag-red">${fmtAmt(totalDebo)} pendiente</span>
       </div>
       ${htmlDeboYo()}
@@ -1003,18 +1146,18 @@ async function renderCartera() {
 
     <div class="card">
       <div class="card-header">
-        <span class="card-title">📊 Historial de gastos del hogar</span>
+        <span class="card-title">Historial de gastos del hogar</span>
         <span class="tag tag-yellow">${gastos.length} registro${gastos.length!==1?'s':''}</span>
       </div>
       ${gastos.length === 0
-        ? '<div class="empty"><span class="empty-icon">📭</span><p>Sin gastos registrados</p></div>'
+        ? '<div class="empty"><span class="empty-icon"></span><p>Sin gastos registrados</p></div>'
         : gastos.map(g => {
             const esPropio     = g.id_usuario_pagador == uid;
             const pagadorUser  = userMap[g.id_usuario_pagador];
             const pagadorNombre = pagadorUser ? pagadorUser.nombre : `#${g.id_usuario_pagador}`;
             return `
             <div class="list-item">
-              <div class="list-item-icon">${ICONOS_MODO[g.modo]||'💰'}</div>
+              <div class="list-item-icon">${ICONOS_MODO[g.modo]||'€'}</div>
               <div class="list-item-body">
                 <div class="list-item-title">${escHtml(g.concepto)}</div>
                 <div class="list-item-sub">
@@ -1027,8 +1170,8 @@ async function renderCartera() {
                 <span class="tag ${g.tipo==='fijo'?'tag-yellow':'tag-warn'}">${g.tipo}</span>
               </div>
               <div class="list-item-actions" style="margin-left:8px">
-                <button class="btn btn-icon btn-sm" onclick="openEditGasto(${JSON.stringify(g).replace(/"/g,'&quot;')})" title="Editar">✏️</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteGasto(${g.id_gasto})" title="Eliminar">🗑️</button>
+                <button class="btn btn-icon btn-sm" onclick="openEditGasto(${JSON.stringify(g).replace(/"/g,'&quot;')})" title="Editar">[E]</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteGasto(${g.id_gasto})" title="Eliminar">[X]</button>
               </div>
             </div>`;
           }).join('')
@@ -1045,7 +1188,7 @@ async function abonarDeuda(id_gasto, id_usuario, importe) {
   const res = await api('reparto_gasto.php','PUT',{
     id_gasto, id_usuario, abonado: 1, importe, pagador: 0
   });
-  if (res.status === 'success') { showToast('¡Pago registrado! 💸','ok'); renderCartera(); }
+  if (res.status === 'success') { showToast('¡Pago registrado!','ok'); renderCartera(); }
   else showToast('Error al registrar el pago: '+(res.data||''),'err');
 }
 
@@ -1054,7 +1197,7 @@ async function cobrarDeuda(id_gasto, id_usuario_deudor, importe) {
   const res = await api('reparto_gasto.php','PUT',{
     id_gasto, id_usuario: id_usuario_deudor, abonado: 1, importe, pagador: 0
   });
-  if (res.status === 'success') { showToast('Cobro registrado ✅','ok'); renderCartera(); }
+  if (res.status === 'success') { showToast('Cobro registrado','ok'); renderCartera(); }
   else showToast('Error al registrar el cobro: '+(res.data||''),'err');
 }
 
@@ -1080,13 +1223,13 @@ async function renderMuro() {
   const userMap  = Object.fromEntries(usuarios.map(u => [u.id_usuario, u]));
 
   document.getElementById('topbar-actions').innerHTML = `
-    <button class="btn btn-primary btn-sm" onclick="openModal('modal-pub')">📢 Publicar</button>
+    <button class="btn btn-primary btn-sm" onclick="openModal('modal-pub')">Publicar</button>
   `;
 
   set(`
     <div style="max-width:660px">
       ${pubs.length === 0
-        ? '<div class="empty"><span class="empty-icon">📭</span><p>El muro está vacío. ¡Sé el primero en publicar!</p></div>'
+        ? '<div class="empty"><span class="empty-icon"></span><p>El muro está vacío. ¡Sé el primero en publicar!</p></div>'
         : pubs.map(p => {
             const autor  = userMap[p.id_usuario];
             const ini    = autor ? autor.nombre.charAt(0).toUpperCase() : 'U';
@@ -1106,8 +1249,8 @@ async function renderMuro() {
                 </div>
                 ${esMio ? `
                 <div class="pub-actions">
-                  <button class="btn btn-icon btn-sm" onclick="openEditPub(${p.id_pub},'${escHtml(p.titulo)}','${escHtml(p.cuerpo)}')" title="Editar">✏️</button>
-                  <button class="btn btn-danger btn-sm" onclick="deletePub(${p.id_pub})" title="Eliminar">🗑️</button>
+                  <button class="btn btn-icon btn-sm" onclick="openEditPub(${p.id_pub},'${escHtml(p.titulo)}','${escHtml(p.cuerpo)}')" title="Editar">[E]</button>
+                  <button class="btn btn-danger btn-sm" onclick="deletePub(${p.id_pub})" title="Eliminar">[X]</button>
                 </div>` : ''}
               </div>
               <div class="pub-title">${escHtml(p.titulo)}</div>
@@ -1134,7 +1277,7 @@ async function renderPerfil() {
   const avatarUrl = getAvatarUrl(u);
 
   document.getElementById('topbar-actions').innerHTML = `
-    <button class="btn btn-primary btn-sm" onclick="openEditPerfil()">✏️ Editar perfil</button>
+    <button class="btn btn-primary btn-sm" onclick="openEditPerfil()">Editar perfil</button>
   `;
 
   const avatarHTML = (avatarUrl && u.avatar !== 'uploads/perfiles/default.png')
@@ -1148,11 +1291,11 @@ async function renderPerfil() {
         <div>
           <div style="font-size:1.1rem;font-weight:800">${escHtml(u.nombre)}</div>
           <div style="font-size:.82rem;color:var(--muted)">${escHtml(u.email)}</div>
-          <span class="tag ${u.rol==='admin'?'tag-yellow':'tag-green'}" style="margin-top:6px;display:inline-block">${u.rol === 'admin' ? '👑 Administrador' : '🧑 Miembro'}</span>
+          <span class="tag ${u.rol==='admin'?'tag-yellow':'tag-green'}" style="margin-top:6px;display:inline-block">${u.rol === 'admin' ? 'Administrador' : 'Miembro'}</span>
         </div>
       </div>
       <div class="card">
-        <div class="card-title" style="margin-bottom:14px">📋 Datos personales</div>
+        <div class="card-title" style="margin-bottom:14px">Datos personales</div>
         <div class="grid-2" style="gap:14px">
           <div><div style="font-size:.75rem;color:var(--muted)">Nombre</div><div style="font-weight:600">${escHtml(u.nombre)}</div></div>
           <div><div style="font-size:.75rem;color:var(--muted)">Email</div><div style="font-weight:600">${escHtml(u.email)}</div></div>
@@ -1162,7 +1305,7 @@ async function renderPerfil() {
           <div><div style="font-size:.75rem;color:var(--muted)">Miembro desde</div><div style="font-weight:600">${fmtDate(u.fecha_registro)}</div></div>
         </div>
         <div style="margin-top:18px">
-          <button class="btn btn-primary btn-sm" onclick="openEditPerfil()">✏️ Editar mis datos</button>
+          <button class="btn btn-primary btn-sm" onclick="openEditPerfil()">Editar mis datos</button>
         </div>
       </div>
     </div>
@@ -1202,6 +1345,25 @@ async function submitPerfil() {
 
   if (!nombre || !email || !telefono) { showToast('Nombre, email y teléfono son obligatorios','err'); return; }
 
+  if (!/^[6-9]\d{8}$/.test(telefono)) {
+    showToast('Teléfono inválido: 9 dígitos, empieza por 6-9', 'err'); return;
+  }
+
+  if (fecha) {
+    const fechaNac = new Date(fecha);
+    const hoy = new Date();
+    if (isNaN(fechaNac.getTime())) {
+      showToast('Fecha de nacimiento inválida', 'err'); return;
+    }
+    if (fechaNac > hoy) {
+      showToast('La fecha de nacimiento no puede ser futura', 'err'); return;
+    }
+    const edad = hoy.getFullYear() - fechaNac.getFullYear();
+    if (edad > 120) {
+      showToast('La fecha de nacimiento parece incorrecta', 'err'); return;
+    }
+  }
+
   // Subir avatar si se eligió uno
   const avatarInput = document.getElementById('ep-avatar');
   let avatarPath = state.user.avatar;
@@ -1229,33 +1391,68 @@ async function submitPerfil() {
   if (res.status === 'success') {
     state.user = { ...state.user, nombre, email, telefono_movil: telefono, sexo, fecha_nacimiento: fecha, avatar: avatarPath };
     updateSidebar();
-    showToast('Perfil actualizado ✓','ok');
+    showToast('Perfil actualizado','ok');
     closeModal('modal-perfil');
     renderPerfil();
   } else showToast('Error: '+(res.data||''),'err');
 }
 
 /* ══════════════════════════════════════════════════════════════
-   CATEGORÍAS — lista predefinida
-══════════════════════════════════════════════════════════════ */
-const CATEGORIAS_GASTO = [
-  'Alimentación',
-  'Suministros',
-  'Alquiler / Hipoteca',
-  'Transporte',
-  'Ocio / Entretenimiento',
-  'Salud / Farmacia',
-  'Limpieza / Hogar',
-  'Ropa / Calzado',
-  'Tecnología',
-  'Educación',
-  'Otros',
-];
-
-/* ══════════════════════════════════════════════════════════════
    MODAL — GASTO (POST + PUT)
 ══════════════════════════════════════════════════════════════ */
 let _editGastoId = null;
+
+let _allCategorias = [];
+
+async function loadCategorias(selectCategoriaNombre) {
+  if (_allCategorias.length === 0) {
+    const r = await api('categoria.php','GET');
+    _allCategorias = getData(r) || [];
+  }
+  const padres = _allCategorias.filter(c => !c.categ_padre);
+  const selPadre = document.getElementById('g-categoria-padre');
+  if (!selPadre) return;
+  selPadre.innerHTML = '<option value="">Seleccionar categoria</option>' +
+    padres.map(c => `<option value="${c.nombre}">${c.nombre}</option>`).join('');
+
+  if (selectCategoriaNombre) {
+    // Check if it's a child category
+    const cat = _allCategorias.find(c => c.nombre === selectCategoriaNombre);
+    if (cat && cat.categ_padre) {
+      selPadre.value = cat.categ_padre;
+      await onCategPadreChange(selectCategoriaNombre);
+    } else {
+      selPadre.value = selectCategoriaNombre || '';
+      document.getElementById('g-categoria-hija-wrap').classList.add('hidden');
+    }
+  } else {
+    document.getElementById('g-categoria-hija-wrap').classList.add('hidden');
+  }
+}
+
+async function onCategPadreChange(preselectedChild) {
+  const padre = document.getElementById('g-categoria-padre').value;
+  const hijaWrap = document.getElementById('g-categoria-hija-wrap');
+  const selHija  = document.getElementById('g-categoria-hija');
+
+  if (!padre) { hijaWrap.classList.add('hidden'); return; }
+
+  const hijos = _allCategorias.filter(c => c.categ_padre === padre);
+  if (hijos.length === 0) { hijaWrap.classList.add('hidden'); return; }
+
+  selHija.innerHTML = '<option value="">Sin subcategoria</option>' +
+    hijos.map(c => `<option value="${c.nombre}">${c.nombre}</option>`).join('');
+  if (preselectedChild) selHija.value = preselectedChild;
+  hijaWrap.classList.remove('hidden');
+}
+
+function getCategoria() {
+  const hija     = document.getElementById('g-categoria-hija');
+  const padre    = document.getElementById('g-categoria-padre');
+  const hijaWrap = document.getElementById('g-categoria-hija-wrap');
+  if (hijaWrap && !hijaWrap.classList.contains('hidden') && hija && hija.value) return hija.value;
+  return (padre && padre.value) || 'Otros';
+}
 
 function openModalGasto() {
   _editGastoId = null;
@@ -1266,8 +1463,8 @@ function openModalGasto() {
   document.getElementById('g-fecha').value     = new Date().toISOString().split('T')[0];
   document.getElementById('g-modo').value      = 'efectivo';
   document.getElementById('g-tipo').value      = 'ocasional';
-  document.getElementById('g-categoria').value = '';
   openModal('modal-gasto');
+  loadCategorias(null); // carga categorías en segundo plano mientras el modal ya es visible
 }
 
 function openEditGasto(g) {
@@ -1280,15 +1477,15 @@ function openEditGasto(g) {
   document.getElementById('g-fecha').value     = g.fecha ? g.fecha.split('T')[0] : '';
   document.getElementById('g-modo').value      = g.modo  || 'efectivo';
   document.getElementById('g-tipo').value      = g.tipo  || 'ocasional';
-  document.getElementById('g-categoria').value = g.categoria || '';
   openModal('modal-gasto');
+  loadCategorias(g.categoria || null);
 }
 
 async function submitGasto() {
   const concepto  = document.getElementById('g-concepto').value.trim();
   const importe   = document.getElementById('g-importe').value;
   const fecha     = document.getElementById('g-fecha').value;
-  const categoria = document.getElementById('g-categoria').value;
+  const categoria = getCategoria();
   const modo      = document.getElementById('g-modo').value;
   const tipo      = document.getElementById('g-tipo').value;
 
@@ -1314,7 +1511,7 @@ async function submitGasto() {
   }
 
   if (res.status === 'success') {
-    showToast(_editGastoId ? 'Gasto actualizado ✓' : 'Gasto registrado y repartido 🐝','ok');
+    showToast(_editGastoId ? 'Gasto actualizado' : 'Gasto registrado y repartido','ok');
     closeModal('modal-gasto');
     if (state.page === 'cartera')        renderCartera();
     else if (state.page === 'dashboard') dashboard();
@@ -1400,9 +1597,10 @@ async function loadUsuariosAsignar() {
   const usuarios = getData(rU);
   const sel = document.getElementById('t-asignar-usuario');
   if (!sel) return;
+
   // Por defecto: asignar al usuario actual
   sel.innerHTML = usuarios.map(u =>
-    `<option value="${u.id_usuario}" ${u.id_usuario == state.user.id_usuario ? 'selected' : ''}>${escHtml(u.nombre)} ${u.rol==='admin'?'👑':''}</option>`
+    `<option value="${u.id_usuario}" ${u.id_usuario == state.user.id_usuario ? 'selected' : ''}>${escHtml(u.nombre)} ${u.rol==='admin'?'[A]':''}</option>`
   ).join('');
 }
 
@@ -1474,7 +1672,7 @@ async function submitTarea() {
           }
         }
       }
-      showToast(_editTareaId ? 'Tarea actualizada ✓' : 'Tarea creada y asignada 🐝', 'ok');
+      showToast(_editTareaId ? 'Tarea actualizada' : 'Tarea creada y asignada', 'ok');
       closeModal('modal-tarea');
       if (state.page === 'tareas') renderTareas();
       else if (state.page === 'dashboard') dashboard();
@@ -1526,7 +1724,7 @@ async function submitHabitacion() {
   }
 
   if (res.status === 'success') {
-    showToast(_editHabId ? 'Habitación actualizada ✓' : 'Habitación creada ✓','ok');
+    showToast(_editHabId ? 'Habitación actualizada' : 'Habitación creada','ok');
     closeModal('modal-hab');
     renderHogar();
   } else showToast('Error: '+(res.data||''),'err');
@@ -1576,7 +1774,7 @@ async function submitPub() {
   }
 
   if (res.status === 'success') {
-    showToast(_editPubId ? 'Publicación actualizada ✓' : 'Publicado en el muro 🐝','ok');
+    showToast(_editPubId ? 'Publicación actualizada' : 'Publicado en el muro','ok');
     closeModal('modal-pub');
     if (state.page === 'muro') renderMuro();
     else if (state.page === 'dashboard') dashboard();

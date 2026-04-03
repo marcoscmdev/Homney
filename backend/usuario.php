@@ -21,6 +21,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
+    // Validación teléfono (9 dígitos, empieza por 6-9)
+    if (!preg_match('/^[6-9]\d{8}$/', $datos_recibidos->telefono_movil)) {
+        $respuesta[STATUS] = FAIL;
+        $respuesta[DATA] = 'Teléfono inválido: 9 dígitos, empieza por 6-9';
+        header("Content-type: application/json");
+        echo json_encode($respuesta);
+        exit;
+    }
+
+    // Validación fecha nacimiento (no futura, no anterior a 1900)
+    if (isset($datos_recibidos->fecha_nacimiento) && $datos_recibidos->fecha_nacimiento != null) {
+        $fecha_ts = strtotime($datos_recibidos->fecha_nacimiento);
+        if ($fecha_ts === false || $fecha_ts > time() || date('Y', $fecha_ts) < 1900) {
+            $respuesta[STATUS] = FAIL;
+            $respuesta[DATA] = 'Fecha de nacimiento inválida';
+            header("Content-type: application/json");
+            echo json_encode($respuesta);
+            exit;
+        }
+    }
+
     // Campos opcionales
     $value_fecha_nac = (isset($datos_recibidos->fecha_nacimiento) && $datos_recibidos->fecha_nacimiento != null)
         ? "'$datos_recibidos->fecha_nacimiento'" : "NULL";
@@ -82,6 +103,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         $sets[] = "`rol` = '$datos_recibidos->rol'";
 
     if (count($sets) == 0) die_por_fallo_en_sintaxis_peticion();
+
+    // Validación teléfono (9 dígitos, empieza por 6-9)
+    if (isset($datos_recibidos->telefono_movil) && $datos_recibidos->telefono_movil != null) {
+        if (!preg_match('/^[6-9]\d{8}$/', $datos_recibidos->telefono_movil)) {
+            $respuesta[STATUS] = FAIL;
+            $respuesta[DATA] = 'Teléfono inválido: 9 dígitos, empieza por 6-9';
+            header("Content-type: application/json");
+            echo json_encode($respuesta);
+            exit;
+        }
+    }
+
+    // Validación fecha nacimiento (no futura, no anterior a 1900)
+    if (isset($datos_recibidos->fecha_nacimiento) && $datos_recibidos->fecha_nacimiento != null) {
+        $fecha_ts = strtotime($datos_recibidos->fecha_nacimiento);
+        if ($fecha_ts === false || $fecha_ts > time() || date('Y', $fecha_ts) < 1900) {
+            $respuesta[STATUS] = FAIL;
+            $respuesta[DATA] = 'Fecha de nacimiento inválida';
+            header("Content-type: application/json");
+            echo json_encode($respuesta);
+            exit;
+        }
+    }
 
     $consulta_update = "UPDATE `USUARIO` SET " . implode(', ', $sets) . "
                         WHERE `id_usuario` = '$datos_recibidos->id_usuario'";

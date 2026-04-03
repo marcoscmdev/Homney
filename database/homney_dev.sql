@@ -40,13 +40,25 @@ CREATE TABLE `ASIGNACION_TAREA` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `CATEGORIA`
+--
+
+CREATE TABLE `CATEGORIA` (
+  `nombre` varchar(50) NOT NULL,
+  `categ_padre` varchar(50) DEFAULT NULL,
+  `descripcion` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `GASTO`
 --
 
 CREATE TABLE `GASTO` (
   `id_gasto` int UNSIGNED NOT NULL,
   `fecha` datetime NOT NULL,
-  `categoria` varchar(50) DEFAULT NULL,
+  `categoria` varchar(50) NOT NULL,
   `concepto` varchar(255) NOT NULL,
   `modo` enum('efectivo','transferencia','tarjeta','bizum') NOT NULL,
   `tipo` enum('fijo','ocasional') NOT NULL,
@@ -120,8 +132,7 @@ CREATE TABLE `TAREA` (
   `frecuencia` enum('dia','semana','mes','variable') NOT NULL,
   `num_veces` tinyint NOT NULL,
   `explicacion_frecuencia_variable` varchar(255) DEFAULT NULL,
-  `id_habitacion` int UNSIGNED DEFAULT NULL,
-  `id_hogar` int UNSIGNED NOT NULL
+  `id_habitacion` int UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
 -- --------------------------------------------------------
@@ -170,12 +181,20 @@ ALTER TABLE `ASIGNACION_TAREA`
   ADD KEY `fk_asigna_usuario` (`id_usuario`);
 
 --
+-- Indices de la tabla `CATEGORIA`
+--
+ALTER TABLE `CATEGORIA`
+  ADD PRIMARY KEY (`nombre`),
+  ADD KEY `categoria_padre` (`categ_padre`);
+
+--
 -- Indices de la tabla `GASTO`
 --
 ALTER TABLE `GASTO`
   ADD PRIMARY KEY (`id_gasto`),
   ADD KEY `fk_gasto_hogar` (`id_hogar`),
-  ADD KEY `fk_gasto_usuario` (`id_usuario_pagador`);
+  ADD KEY `fk_gasto_usuario` (`id_usuario_pagador`),
+  ADD KEY `fk_gasto_categoria` (`categoria`);
 
 --
 -- Indices de la tabla `HABITACION`
@@ -210,8 +229,7 @@ ALTER TABLE `REPARTO_GASTO`
 --
 ALTER TABLE `TAREA`
   ADD PRIMARY KEY (`id_tarea`),
-  ADD KEY `fk_tarea_habitacion` (`id_habitacion`),
-  ADD KEY `fk_tarea_hogar` (`id_hogar`);
+  ADD KEY `fk_tarea_habitacion` (`id_habitacion`);
 
 --
 -- Indices de la tabla `TAREAS_REALIZADAS`
@@ -281,9 +299,16 @@ ALTER TABLE `ASIGNACION_TAREA`
   ADD CONSTRAINT `fk_asigna_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `USUARIO` (`id_usuario`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
+-- Filtros para la tabla `CATEGORIA`
+--
+ALTER TABLE `CATEGORIA`
+  ADD CONSTRAINT `fk_categoria_padre` FOREIGN KEY (`categ_padre`) REFERENCES `CATEGORIA` (`nombre`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `GASTO`
 --
 ALTER TABLE `GASTO`
+  ADD CONSTRAINT `fk_gasto_categoria` FOREIGN KEY (`categoria`) REFERENCES `CATEGORIA` (`nombre`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_gasto_hogar` FOREIGN KEY (`id_hogar`) REFERENCES `HOGAR` (`id_hogar`) ON DELETE RESTRICT ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_gasto_usuario` FOREIGN KEY (`id_usuario_pagador`) REFERENCES `USUARIO` (`id_usuario`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -310,8 +335,7 @@ ALTER TABLE `REPARTO_GASTO`
 -- Filtros para la tabla `TAREA`
 --
 ALTER TABLE `TAREA`
-  ADD CONSTRAINT `fk_tarea_habitacion` FOREIGN KEY (`id_habitacion`) REFERENCES `HABITACION` (`id_habitacion`) ON DELETE RESTRICT ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_tarea_hogar` FOREIGN KEY (`id_hogar`) REFERENCES `HOGAR` (`id_hogar`) ON DELETE RESTRICT ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_tarea_habitacion` FOREIGN KEY (`id_habitacion`) REFERENCES `HABITACION` (`id_habitacion`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `TAREAS_REALIZADAS`
