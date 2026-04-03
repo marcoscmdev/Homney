@@ -11,8 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
 
     /* ********************************** */
     if (!isset($datos_recibidos->fecha)               || $datos_recibidos->fecha == null               ||
-        !isset($datos_recibidos->concepto)            || $datos_recibidos->concepto == null            ||
-        !isset($datos_recibidos->modo)                || $datos_recibidos->modo == null                ||
+        !isset($datos_recibidos->categoria)           || $datos_recibidos->categoria == null           ||
+        !isset($datos_recibidos->concepto)             || $datos_recibidos->concepto == null            ||
+        !isset($datos_recibidos->modo)                 || $datos_recibidos->modo == null                ||
         !isset($datos_recibidos->tipo)                || $datos_recibidos->tipo == null                ||
         !isset($datos_recibidos->importe)             || $datos_recibidos->importe == null             ||
         !isset($datos_recibidos->id_hogar)            || $datos_recibidos->id_hogar == null            ||
@@ -20,12 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
-    $value_categoria = (isset($datos_recibidos->categoria) && $datos_recibidos->categoria != '')
-        ? "'$datos_recibidos->categoria'" : "NULL";
-
     $consulta = "INSERT INTO `GASTO` (`fecha`, `categoria`, `concepto`, `modo`, `tipo`,
                                       `importe`, `id_hogar`, `id_usuario_pagador`)
-                 VALUES ('$datos_recibidos->fecha', $value_categoria,
+                 VALUES ('$datos_recibidos->fecha', '$datos_recibidos->categoria',
                          '$datos_recibidos->concepto', '$datos_recibidos->modo',
                          '$datos_recibidos->tipo', '$datos_recibidos->importe',
                          '$datos_recibidos->id_hogar', '$datos_recibidos->id_usuario_pagador')";
@@ -52,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     /* ********************************** */
     if (!isset($datos_recibidos->id_gasto) || $datos_recibidos->id_gasto == null ||
         !isset($datos_recibidos->fecha)     || $datos_recibidos->fecha == null     ||
+        !isset($datos_recibidos->categoria) || $datos_recibidos->categoria == null  ||
         !isset($datos_recibidos->concepto)  || $datos_recibidos->concepto == null  ||
         !isset($datos_recibidos->modo)      || $datos_recibidos->modo == null      ||
         !isset($datos_recibidos->tipo)      || $datos_recibidos->tipo == null      ||
@@ -60,12 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
-    $value_categoria = (isset($datos_recibidos->categoria) && $datos_recibidos->categoria != '')
-        ? "'$datos_recibidos->categoria'" : "NULL";
-
     $consulta_update = "UPDATE `GASTO`
                         SET `fecha`              = '$datos_recibidos->fecha',
-                            `categoria`          = $value_categoria,
+                            `categoria`          = '$datos_recibidos->categoria',
                             `concepto`           = '$datos_recibidos->concepto',
                             `modo`               = '$datos_recibidos->modo',
                             `tipo`               = '$datos_recibidos->tipo',

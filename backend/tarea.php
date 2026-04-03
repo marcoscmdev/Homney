@@ -12,8 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     /* ********************************** */
     if (!isset($datos_recibidos->nombre)     || $datos_recibidos->nombre == null     ||
         !isset($datos_recibidos->frecuencia) || $datos_recibidos->frecuencia == null ||
-        !isset($datos_recibidos->num_veces)  || $datos_recibidos->num_veces == null  ||
-        !isset($datos_recibidos->id_hogar)   || $datos_recibidos->id_hogar == null) {
+        !isset($datos_recibidos->num_veces)  || $datos_recibidos->num_veces == null) {
         die_por_fallo_en_sintaxis_peticion();
     }
 
@@ -26,10 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         ? "'$datos_recibidos->id_habitacion'" : "NULL";
 
     $consulta = "INSERT INTO `TAREA` (`nombre`, `duracion`, `frecuencia`, `num_veces`,
-                                      `explicacion_frecuencia_variable`, `id_habitacion`, `id_hogar`)
+                                      `explicacion_frecuencia_variable`, `id_habitacion`)
                  VALUES ('$datos_recibidos->nombre', $value_duracion,
                          '$datos_recibidos->frecuencia', '$datos_recibidos->num_veces',
-                         $value_expl_variable, $value_id_habitacion, '$datos_recibidos->id_hogar')";
+                         $value_expl_variable, $value_id_habitacion)";
     /* ********************************** */
 
     $resultado_consulta = @mysqli_query($conexion, $consulta);
@@ -115,8 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         $where = '';
     } elseif (count($_GET) == 1 && isset($id_tarea) && $id_tarea != null) {
         $where = " WHERE t.id_tarea = '$id_tarea'";
-    } elseif (count($_GET) == 1 && isset($id_hogar) && $id_hogar != null) {
-        $where = " WHERE t.id_hogar = '$id_hogar'";
     } elseif (count($_GET) == 1 && isset($id_habitacion) && $id_habitacion != null) {
         $where = " WHERE t.id_habitacion = '$id_habitacion'";
     } elseif (count($_GET) == 1 && isset($frecuencia) && $frecuencia != null) {
@@ -126,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     }
 
     $consulta = "SELECT t.id_tarea, t.nombre, t.duracion, t.frecuencia,
-                        t.num_veces, t.explicacion_frecuencia_variable, t.id_habitacion, t.id_hogar
+                        t.num_veces, t.explicacion_frecuencia_variable, t.id_habitacion
                  FROM TAREA t
                  $where
                  ORDER BY t.nombre";
