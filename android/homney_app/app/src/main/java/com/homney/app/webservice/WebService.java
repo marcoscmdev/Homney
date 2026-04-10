@@ -3,12 +3,19 @@ package com.homney.app.webservice;
 
 public class WebService {
     public static final String PROTOCOLO = "http://";
-    public static final String CARPETA ="/web_service";
+    public static final String CARPETA ="/homney/backend";
     public static final String SERVIDOR = "10.0.2.2"; // Localhsot en anfitrión del Emulador
-    public static final String URL_Departamentos =PROTOCOLO + SERVIDOR + CARPETA + "/departamentos.php";
-    public static final String URL_Usuarios =PROTOCOLO + SERVIDOR + CARPETA + "/usuarios.php";
+    public static final String URL_Asignacion_Tarea =PROTOCOLO + SERVIDOR + CARPETA + "/asignacion_tarea.php";
+    public static final String URL_Categoria =PROTOCOLO + SERVIDOR + CARPETA + "/categoria.php";
+    public static final String URL_Gasto =PROTOCOLO + SERVIDOR + CARPETA + "/gasto.php";
+    public static final String URL_Habitacion =PROTOCOLO + SERVIDOR + CARPETA + "/habitacion.php";
+    public static final String URL_Hogar =PROTOCOLO + SERVIDOR + CARPETA + "/hogar.php";
+    public static final String URL_Muro =PROTOCOLO + SERVIDOR + CARPETA + "/muro.php";
+    public static final String URL_RepartoGasto =PROTOCOLO + SERVIDOR + CARPETA + "/reparto_gasto.php";
+    public static final String URL_Tarea =PROTOCOLO + SERVIDOR + CARPETA + "/tarea.php";
+    public static final String URL_Tarea_Realizada =PROTOCOLO + SERVIDOR + CARPETA + "/tarea_realizada.php";
+    public static final String URL_Usuario =PROTOCOLO + SERVIDOR + CARPETA + "/usuario.php";
     public static final String URL_EjemploImagen ="https://tesdai.com/imagenes/logoTESDAI.png";
-    public static final String URL_Datos =  PROTOCOLO + SERVIDOR +  CARPETA + "/datos.php";
 
     public final static class JSON {
         // Constantes para mensajes json. Formato: https://github.com/omniti-labs/jsend

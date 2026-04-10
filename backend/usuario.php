@@ -21,14 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
-    // Validación teléfono (9 dígitos, empieza por 6-9)
-    if (!preg_match('/^[6-9]\d{8}$/', $datos_recibidos->telefono_movil)) {
-        $respuesta[STATUS] = FAIL;
-        $respuesta[DATA] = 'Teléfono inválido: 9 dígitos, empieza por 6-9';
-        header("Content-type: application/json");
-        echo json_encode($respuesta);
-        exit;
-    }
 
     // Validación fecha nacimiento (no futura, no anterior a 1900)
     if (isset($datos_recibidos->fecha_nacimiento) && $datos_recibidos->fecha_nacimiento != null) {
@@ -80,7 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
-    // Construimos el SET solo con los campos que llegan (actualización parcial)
     $sets = array();
 
     if (isset($datos_recibidos->nombre)        && $datos_recibidos->nombre != null)
@@ -104,16 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
 
     if (count($sets) == 0) die_por_fallo_en_sintaxis_peticion();
 
-    // Validación teléfono (9 dígitos, empieza por 6-9)
-    if (isset($datos_recibidos->telefono_movil) && $datos_recibidos->telefono_movil != null) {
-        if (!preg_match('/^[6-9]\d{8}$/', $datos_recibidos->telefono_movil)) {
-            $respuesta[STATUS] = FAIL;
-            $respuesta[DATA] = 'Teléfono inválido: 9 dígitos, empieza por 6-9';
-            header("Content-type: application/json");
-            echo json_encode($respuesta);
-            exit;
-        }
-    }
 
     // Validación fecha nacimiento (no futura, no anterior a 1900)
     if (isset($datos_recibidos->fecha_nacimiento) && $datos_recibidos->fecha_nacimiento != null) {
@@ -180,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
-    // NOTA: la clave (hash) no se devuelve por seguridad
+    // NOTA: la clave (hash) no se devuelve 
     $consulta = "SELECT u.id_usuario, u.nombre, u.email, u.telefono_movil,
                         u.fecha_nacimiento, u.sexo, u.avatar,
                         u.id_hogar, u.rol, u.fecha_registro

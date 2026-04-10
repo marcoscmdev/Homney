@@ -70,3 +70,11 @@ database/backups/
 *.bak
 *.orig
 
+# ========================
+# AGENT / SKILL TOOLS
+# ========================
+.claude/
+.agents/
+skills-lock.json
+.DS_Store
+
