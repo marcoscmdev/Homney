@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_login.xml — Pantalla de Login / Registro
+    Replica la sección #auth-section del index.html frontend.
+    Contiene dos paneles (login / registro) que se alternan con el tab switcher.
+    Control de visibilidad desde LoginActivity.java.
+-->
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true"
+    tools:context=".loginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="64dp"
+        android:paddingBottom="40dp">
+
+        <!-- ══════════════════════════════════════════════
+             ÁREA DEL LOGO  (.auth-logo-area del CSS)
+        ══════════════════════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginBottom="28dp">
+
+            <!-- Badge cuadrado amarillo con el logo (.auth-logo-badge) -->
+            <FrameLayout
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/bg_logo_badge"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_logo_homney"
+                    android:contentDescription="@string/app_name" />
+            </FrameLayout>
+
+            <!-- Título principal -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_title"
+                android:textColor="@color/text"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="-0.02"
+                android:layout_marginBottom="6dp" />
+
+            <!-- Subtítulo muted -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/login_subtitle"
+                style="@style/Homney.Text.Muted"
+                android:textSize="14sp"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- ══════════════════════════════════════════════
+             CAJA AUTH  (.auth-box del CSS)
+        ══════════════════════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_auth_box"
+            android:padding="24dp"
+            android:elevation="8dp">
+
+            <!-- ── TABS  (.login-tabs del CSS) ────────── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_tab_container"
+                android:padding="4dp"
+                android:layout_marginBottom="20dp">
+
+                <!-- Tab: Iniciar sesión (activo por defecto) -->
+                <TextView
+                    android:id="@+id/tab_login"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/tab_login"
+                    android:gravity="center"
+                    android:background="@drawable/bg_tab_active"
+                    android:textColor="@color/text"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <!-- Tab: Crear cuenta (inactivo por defecto) -->
+                <TextView
+                    android:id="@+id/tab_registro"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@string/tab_registro"
+                    android:gravity="center"
+                    android:background="@android:color/transparent"
+                    android:textColor="@color/muted"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+            <!-- ══════════════════════════════════════════
+                 PANEL LOGIN  (#panel-login del HTML)
+            ══════════════════════════════════════════ -->
+            <LinearLayout
+                android:id="@+id/panel_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <!-- Campo: Correo electrónico -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/field_email"
+                    style="@style/Homney.Text.Label"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/login_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:inputType="textEmailAddress"
+                    android:hint="@string/hint_email"
+                    android:textColor="@color/text"
+                    android:textColorHint="@color/muted"
+                    android:textSize="14sp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:layout_marginBottom="14dp"
+                    android:singleLine="true"
+                    android:autofillHints="emailAddress" />
+
+                <!-- Campo: Contraseña -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/field_password"
+                    style="@style/Homney.Text.Label"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/login_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:inputType="textPassword"
+                    android:hint="@string/hint_password"
+                    android:textColor="@color/text"
+                    android:textColorHint="@color/muted"
+                    android:textSize="14sp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:layout_marginBottom="20dp"
+                    android:singleLine="true"
+                    android:autofillHints="password" />
+
+                <!-- Recordar Sesion -->
+
+                <CheckBox
+                    android:id="@+id/cb_recordar_sesion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Recordarme"
+                    style="@style/Homney.Text.Label"
+                    android:layout_marginBottom="6dp"
+                    android:buttonTint="@color/accent" />
+
+                <!-- Botón Entrar -->
+                <Button
+                    android:id="@+id/btn_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    style="@style/Homney.Button.Primary"
+                    android:text="@string/btn_entrar"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <!-- ══════════════════════════════════════════
+                 PANEL REGISTRO  (#panel-registro del HTML)
+                 Oculto por defecto; se muestra al pulsar el tab
+            ══════════════════════════════════════════ -->
+            <LinearLayout
+                android:id="@+id/panel_registro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Nombre completo -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/field_nombre"
+                    style="@style/Homney.Text.Label"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/reg_nombre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:inputType="textPersonName|textCapWords"
+                    android:hint="@string/hint_nombre"
+                    android:textColor="@color/text"
+                    android:textColorHint="@color/muted"
+                    android:textSize="14sp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:layout_marginBottom="14dp"
+                    android:autofillHints="name" />
+
+                <!-- Fila: Email + Teléfono -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="14dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/field_email"
+                            style="@style/Homney.Text.Label"
+                            android:layout_marginBottom="6dp" />
+
+                        <EditText
+                            android:id="@+id/reg_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_input"
+                            android:inputType="textEmailAddress"
+                            android:hint="@string/hint_email"
+                            android:textColor="@color/text"
+                            android:textColorHint="@color/muted"
+                            android:textSize="13sp"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:paddingTop="11dp"
+                            android:paddingBottom="11dp"
+                            android:singleLine="true"
+                            android:autofillHints="emailAddress" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/field_telefono"
+                            style="@style/Homney.Text.Label"
+                            android:layout_marginBottom="6dp" />
+
+                        <EditText
+                            android:id="@+id/reg_telefono"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_input"
+                            android:inputType="phone"
+                            android:hint="@string/hint_telefono"
+                            android:textColor="@color/text"
+                            android:textColorHint="@color/muted"
+                            android:textSize="13sp"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:paddingTop="11dp"
+                            android:paddingBottom="11dp"
+                            android:singleLine="true"
+                            android:autofillHints="phoneNumber" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Fila: Contraseña + Sexo -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="14dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/field_password"
+                            style="@style/Homney.Text.Label"
+                            android:layout_marginBottom="6dp" />
+
+                        <EditText
+                            android:id="@+id/reg_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_input"
+                            android:inputType="textPassword"
+                            android:hint="@string/hint_password"
+                            android:textColor="@color/text"
+                            android:textColorHint="@color/muted"
+                            android:textSize="13sp"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:paddingTop="11dp"
+                            android:paddingBottom="11dp"
+                            android:singleLine="true"
+                            android:autofillHints="newPassword" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/field_sexo"
+                            style="@style/Homney.Text.Label"
+                            android:layout_marginBottom="6dp" />
+
+                        <!-- Spinner de sexo -->
+                        <Spinner
+                            android:id="@+id/reg_sexo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_input"
+                            android:paddingLeft="12dp"
+                            android:paddingRight="12dp"
+                            android:paddingTop="11dp"
+                            android:paddingBottom="11dp"
+                            android:entries="@array/sexo_options"
+                            android:spinnerMode="dropdown" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- ¿Qué quieres hacer? -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/field_modo"
+                    style="@style/Homney.Text.Label"
+                    android:layout_marginBottom="6dp" />
+
+                <Spinner
+                    android:id="@+id/reg_modo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:layout_marginBottom="14dp"
+                    android:entries="@array/modo_options"
+                    android:spinnerMode="dropdown" />
+
+                <!-- Clave de invitación (oculta hasta seleccionar "Unirme") -->
+                <LinearLayout
+                    android:id="@+id/reg_clave_wrap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginBottom="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/field_clave_inv"
+                        style="@style/Homney.Text.Label"
+                        android:layout_marginBottom="6dp" />
+
+                    <EditText
+                        android:id="@+id/reg_clave"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_input"
+                        android:inputType="textCapCharacters"
+                        android:hint="@string/hint_clave_inv"
+                        android:textColor="@color/text"
+                        android:textColorHint="@color/muted"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"
+                        android:paddingLeft="14dp"
+                        android:paddingRight="14dp"
+                        android:paddingTop="12dp"
+                        android:paddingBottom="12dp"
+                        android:singleLine="true" />
+                </LinearLayout>
+
+                <!-- Botón Crear cuenta -->
+                <Button
+                    android:id="@+id/btn_registro"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="6dp"
+                    style="@style/Homney.Button.Primary"
+                    android:text="@string/btn_crear_cuenta"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <!-- fin auth-box -->
+
+        <!-- Footer -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/login_footer"
+            style="@style/Homney.Text.Muted"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item seleccionado en el navigation drawer: fondo accent_bg, esquinas 10dp -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/accent_background" />
+    <corners android:radius="10dp" />
+</shape>

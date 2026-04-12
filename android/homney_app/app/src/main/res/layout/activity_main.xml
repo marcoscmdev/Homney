@@ -22,6 +22,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer" />
+        app:menu="@menu/activity_main_drawer"
+        />
         <!-- nav_header_main cabecera menú deslizante -->
 </androidx.drawerlayout.widget.DrawerLayout>

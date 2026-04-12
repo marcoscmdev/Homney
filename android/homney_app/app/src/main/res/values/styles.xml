@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    HOMNEY — Estilos de componentes
+    Paleta: crema, amarillo miel, verde pastel (idéntica al CSS frontend)
+    Uso: android:theme="@style/..." o style="@style/..." en cada vista
+-->
+<resources>
+
+    <!-- ═══════════════════════════════════════════════════════
+         ESTILOS RAÍZ — necesarios para que AAPT resuelva la
+         herencia implícita por puntos (Homney.X.Y → Homney.X → Homney)
+    ═══════════════════════════════════════════════════════ -->
+    <style name="Homney" parent="" />
+    <style name="Homney.Text" parent="" />
+    <style name="Homney.Tag" parent="" />
+    <style name="Homney.Button" parent="Widget.AppCompat.Button" />
+
+    <!-- ═══════════════════════════════════════════════════════
+         TOOLBAR / ACTION BAR
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Toolbar principal: fondo accent (amarillo), texto e iconos en @color/text (marrón oscuro) -->
+    <style name="Homney.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/accent</item>
+        <item name="titleTextColor">@color/text</item>
+        <item name="subtitleTextColor">@color/text_mid</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <!-- Texto del título de la Toolbar -->
+    <style name="Homney.Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         NAVIGATION DRAWER
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- NavigationView (el panel lateral completo) -->
+    <style name="Homney.NavigationView" parent="Widget.Design.NavigationView">
+        <item name="android:background">@color/surface</item>
+        <item name="itemTextColor">@color/text_mid</item>
+        <item name="itemIconTint">@color/text_mid</item>
+        <!-- Color del item activo/seleccionado -->
+        <item name="itemTextAppearance">@style/Homney.NavigationView.ItemText</item>
+    </style>
+
+    <!-- Texto de items del navigation drawer -->
+    <style name="Homney.NavigationView.ItemText" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_mid</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         BOTONES
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Base compartida por todos los botones -->
+    <style name="Homney.Button.Base" parent="Widget.AppCompat.Button">
+        <item name="android:minHeight">44dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- Botón primario: amarillo miel / texto marrón oscuro -->
+    <style name="Homney.Button.Primary" parent="Homney.Button.Base">
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:textColor">@color/text</item>
+    </style>
+
+    <!-- Botón verde -->
+    <style name="Homney.Button.Green" parent="Homney.Button.Base">
+        <item name="android:background">@drawable/bg_button_green</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- Botón danger: fondo rojo claro, texto rojo -->
+    <style name="Homney.Button.Danger" parent="Homney.Button.Base">
+        <item name="android:background">@drawable/bg_button_danger</item>
+        <item name="android:textColor">@color/danger</item>
+    </style>
+
+    <!-- Botón ghost: borde border, texto muted → accent al presionar -->
+    <style name="Homney.Button.Ghost" parent="Homney.Button.Base">
+        <item name="android:background">@drawable/bg_button_ghost</item>
+        <item name="android:textColor">@color/muted</item>
+    </style>
+
+    <!-- Botón pequeño (btn-sm del CSS) -->
+    <style name="Homney.Button.Small" parent="Homney.Button.Primary">
+        <item name="android:minHeight">34dp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         TEXTOS
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Título de sección / pantalla (h2 del topbar) -->
+    <style name="Homney.Text.Title" parent="Homney.Text">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- Subtítulo / card-title (.card-title del CSS) -->
+    <style name="Homney.Text.Subtitle" parent="Homney.Text">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Cuerpo / texto normal -->
+    <style name="Homney.Text.Body" parent="Homney.Text">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- Texto secundario / text_mid -->
+    <style name="Homney.Text.Mid" parent="Homney.Text">
+        <item name="android:textColor">@color/text_mid</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- Texto muted / hint / metadata -->
+    <style name="Homney.Text.Muted" parent="Homney.Text">
+        <item name="android:textColor">@color/muted</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- Label de campo de formulario (.field label del CSS) -->
+    <style name="Homney.Text.Label" parent="Homney.Text">
+        <item name="android:textColor">@color/muted</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.03</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <!-- Valor stat grande (.stat-value del CSS) -->
+    <style name="Homney.Text.StatValue" parent="Homney.Text">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Importe positivo -->
+    <style name="Homney.Text.AmountPositive" parent="Homney.Text">
+        <item name="android:textColor">@color/green_dark</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Importe negativo -->
+    <style name="Homney.Text.AmountNegative" parent="Homney.Text">
+        <item name="android:textColor">@color/danger</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         EDITTEXT / INPUTS
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Input base: fondo surface_two, borde border, foco → accent -->
+    <style name="Homney.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:textColorHint">@color/muted</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <!-- TextInputLayout (Material) con línea de fondo accent al enfocar -->
+    <style name="Homney.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/border</item>
+        <item name="boxBackgroundColor">@color/surface_two</item>
+        <item name="boxCornerRadiusTopStart">10dp</item>
+        <item name="boxCornerRadiusTopEnd">10dp</item>
+        <item name="boxCornerRadiusBottomStart">10dp</item>
+        <item name="boxCornerRadiusBottomEnd">10dp</item>
+        <item name="hintTextColor">@color/muted</item>
+        <item name="android:textColorHint">@color/muted</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         CARDS
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Card principal: fondo blanco, borde, sombra suave -->
+    <style name="Homney.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/surface</item>
+        <item name="strokeColor">@color/border</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardCornerRadius">14dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="android:padding">20dp</item>
+    </style>
+
+    <!-- Card secundaria: fondo crema (surface_two) -->
+    <style name="Homney.Card.Surface2" parent="Homney.Card">
+        <item name="cardBackgroundColor">@color/surface_two</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         TAGS / CHIPS
+         Uso: style="@style/Homney.Tag.Yellow" en un TextView
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Base de tag -->
+    <style name="Homney.Tag.Base" parent="Homney.Tag">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.04</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+
+    <!-- Tag amarillo: .tag-yellow -->
+    <style name="Homney.Tag.Yellow" parent="Homney.Tag.Base">
+        <item name="android:background">@drawable/bg_tag_yellow</item>
+        <item name="android:textColor">@color/accent_dark</item>
+    </style>
+
+    <!-- Tag verde: .tag-green -->
+    <style name="Homney.Tag.Green" parent="Homney.Tag.Base">
+        <item name="android:background">@drawable/bg_tag_green</item>
+        <item name="android:textColor">@color/green_dark</item>
+    </style>
+
+    <!-- Tag rojo: .tag-red -->
+    <style name="Homney.Tag.Red" parent="Homney.Tag.Base">
+        <item name="android:background">@drawable/bg_tag_red</item>
+        <item name="android:textColor">@color/danger</item>
+    </style>
+
+    <!-- Tag advertencia: .tag-warn -->
+    <style name="Homney.Tag.Warn" parent="Homney.Tag.Base">
+        <item name="android:background">@drawable/bg_tag_warn</item>
+        <item name="android:textColor">@color/warning</item>
+    </style>
+
+    <!-- Tag muted: .tag-muted -->
+    <style name="Homney.Tag.Muted" parent="Homney.Tag.Base">
+        <item name="android:background">@drawable/bg_tag_muted</item>
+        <item name="android:textColor">@color/muted</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         DIÁLOGOS / MODALES
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- AlertDialog con estilo Homney -->
+    <style name="Homney.Dialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorOnPrimary">@color/text</item>
+        <item name="android:colorBackground">@color/surface</item>
+        <item name="android:windowBackground">@drawable/bg_card</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Homney.Button.Primary</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Homney.Button.Ghost</item>
+        <item name="android:textColorPrimary">@color/text</item>
+        <item name="android:textColorSecondary">@color/text_mid</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         DIVIDER / SEPARADOR
+    ═══════════════════════════════════════════════════════ -->
+
+    <style name="Homney.Divider" parent="Homney">
+        <item name="android:background">@color/border</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         LIST ITEMS (RecyclerView / ListView)
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Fondo selector para ítems de lista: normal transparente, presionado surface_two -->
+    <style name="Homney.ListItem" parent="Homney">
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:background">@color/surface</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         BOTTOM NAVIGATION (si se usa en el futuro)
+    ═══════════════════════════════════════════════════════ -->
+
+    <style name="Homney.BottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/surface</item>
+        <item name="itemIconTint">@color/muted</item>
+        <item name="itemTextColor">@color/muted</item>
+        <item name="itemActiveIndicatorStyle">@style/Homney.BottomNavigation.ActiveIndicator</item>
+    </style>
+
+    <!-- Nota: si usas Material3 cambia el parent a Widget.Material3.BottomNavigationView.ActiveIndicator -->
+    <style name="Homney.BottomNavigation.ActiveIndicator">
+        <item name="android:color">@color/accent_background</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SHAPE APPEARANCES (helper)
+    ═══════════════════════════════════════════════════════ -->
+
+    <style name="ShapeAppearance.CornerFull" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="ShapeAppearance.Corner14" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Corner10" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+    </style>
+
+</resources>

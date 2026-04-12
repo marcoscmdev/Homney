@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Spinner: Sexo (registro) -->
+    <string-array name="sexo_options">
+        <item>Hombre</item>
+        <item>Mujer</item>
+        <item>Otro</item>
+    </string-array>
+
+    <!-- Spinner: Modo de hogar (registro) -->
+    <string-array name="modo_options">
+        <item>Crear un hogar nuevo</item>
+        <item>Unirme a un hogar existente</item>
+    </string-array>
+
+</resources>

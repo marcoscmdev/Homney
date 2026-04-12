@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        UtilidadesNavigationDrawer.cambiarCabecera(navigationView,R.drawable.ic_cara_sonriente,"Nombre app", "subtitulo");
+        UtilidadesNavigationDrawer.cambiarCabecera(navigationView,R.drawable.ic_logo_homney,"Homney", "Tu hogar compartido");
 
 
         // Eventos del menú deslizante

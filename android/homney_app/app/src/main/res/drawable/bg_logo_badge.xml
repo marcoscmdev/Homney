@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Badge del logo: gradiente amarillo, esquinas 22dp -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="135"
+        android:startColor="@color/accent"
+        android:endColor="#FFE060"
+        android:type="linear" />
+    <corners android:radius="22dp" />
+</shape>

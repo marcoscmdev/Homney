@@ -76,5 +76,6 @@ database/backups/
 .claude/
 .agents/
 skills-lock.json
+AGENTS.md
 .DS_Store
 

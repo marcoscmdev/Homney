@@ -2,10 +2,32 @@
     <string name="app_name">Homney</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Homney</string>
+    <string name="nav_header_subtitle">Tu colmena organizada</string>
+    <string name="login_welcome">Organiza tu hogar de forma sencilla</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Login / Registro -->
+    <string name="login_title">Bienvenido a Homney</string>
+    <string name="login_subtitle">Organiza tu hogar compartido de forma sencilla</string>
+    <string name="login_footer">Homney · Tu colmena organizada</string>
+    <string name="tab_login">Iniciar sesión</string>
+    <string name="tab_registro">Crear cuenta</string>
+    <string name="field_email">Correo electrónico</string>
+    <string name="field_password">Contraseña</string>
+    <string name="field_nombre">Nombre completo *</string>
+    <string name="field_telefono">Teléfono *</string>
+    <string name="field_sexo">Sexo *</string>
+    <string name="field_modo">¿Qué quieres hacer?</string>
+    <string name="field_clave_inv">Clave de invitación del hogar</string>
+    <string name="hint_email">tu@email.com</string>
+    <string name="hint_password">••••••••</string>
+    <string name="hint_nombre">Tu nombre completo</string>
+    <string name="hint_telefono">612345678</string>
+    <string name="hint_clave_inv">Ej: HABC12</string>
+    <string name="btn_entrar">Entrar</string>
+    <string name="btn_crear_cuenta">Crear cuenta</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_fragmento2">Mi Hogar</string>
