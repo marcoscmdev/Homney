@@ -10,8 +10,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -190,4 +192,10 @@ public class Utilidades {
         return false;
     }
 
+    public static void mostrar_error_peticion(Context contexto,String tag,String mensaje, int method, String endPoint,Exception e) {
+        String[] str_methods= { "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH" };
+        String mensajeError = mensaje + " (" + (e!=null?e.toString():"") + ") " + str_methods[method] + ": " + endPoint ;
+        Toast.makeText(contexto, mensajeError, Toast.LENGTH_SHORT).show();
+        Log.e(tag,mensajeError + "\n" + (e!=null?Log.getStackTraceString(e):""));
+    }
 }

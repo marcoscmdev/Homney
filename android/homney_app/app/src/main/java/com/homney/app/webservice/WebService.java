@@ -15,6 +15,7 @@ public class WebService {
     public static final String URL_Tarea =PROTOCOLO + SERVIDOR + CARPETA + "/tarea.php";
     public static final String URL_Tarea_Realizada =PROTOCOLO + SERVIDOR + CARPETA + "/tarea_realizada.php";
     public static final String URL_Usuario =PROTOCOLO + SERVIDOR + CARPETA + "/usuario.php";
+    public static final String URL_Login   =PROTOCOLO + SERVIDOR + CARPETA + "/login.php";
     public static final String URL_EjemploImagen ="https://tesdai.com/imagenes/logoTESDAI.png";
 
     public final static class JSON {

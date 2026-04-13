@@ -14,7 +14,7 @@ import com.android.volley.toolbox.Volley;
 
 public class PeticionesRed {
     private static PeticionesRed mInstance;
-    private RequestQueue mcolaPeticiones;
+    private static RequestQueue mcolaPeticiones;
     private ImageLoader mImageLoader;
     private static Context mCtx;
 
@@ -46,7 +46,7 @@ public class PeticionesRed {
         return mInstance;
     }
 
-    public RequestQueue getColaPeticiones() {
+    public static RequestQueue getColaPeticiones() {
         if (mcolaPeticiones == null) {
             /* getApplicationContext() es importante, evita perder el objeto si el
               contexto es activity o BroadcastReceiver
@@ -56,7 +56,7 @@ public class PeticionesRed {
         return mcolaPeticiones;
     }
 
-    public <T> void anhadirPeticionACola(Request<T> req) {
+    public static <T> void anhadirPeticionACola(Request<T> req) {
         getColaPeticiones().add(req);
     }
 

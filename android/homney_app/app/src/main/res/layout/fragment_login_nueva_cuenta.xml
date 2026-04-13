@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/panel_registro"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Nombre completo -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/field_nombre"
+        style="@style/Homney.Text.Label"
+        android:layout_marginBottom="6dp" />
+
+    <EditText
+        android:id="@+id/reg_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_input"
+        android:inputType="textPersonName|textCapWords"
+        android:hint="@string/hint_nombre"
+        android:textColor="@color/text"
+        android:textColorHint="@color/muted"
+        android:textSize="14sp"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_marginBottom="14dp"
+        android:autofillHints="name" />
+
+    <!-- Fila: Email + Teléfono -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="14dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/field_email"
+                style="@style/Homney.Text.Label"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/reg_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_input"
+                android:inputType="textEmailAddress"
+                android:hint="@string/hint_email"
+                android:textColor="@color/text"
+                android:textColorHint="@color/muted"
+                android:textSize="13sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="11dp"
+                android:paddingBottom="11dp"
+                android:singleLine="true"
+                android:autofillHints="emailAddress" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/field_telefono"
+                style="@style/Homney.Text.Label"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/reg_telefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_input"
+                android:inputType="phone"
+                android:hint="@string/hint_telefono"
+                android:textColor="@color/text"
+                android:textColorHint="@color/muted"
+                android:textSize="13sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="11dp"
+                android:paddingBottom="11dp"
+                android:singleLine="true"
+                android:autofillHints="phoneNumber" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Fila: Contraseña + Sexo -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="14dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/field_password"
+                style="@style/Homney.Text.Label"
+                android:layout_marginBottom="6dp" />
+
+            <EditText
+                android:id="@+id/reg_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_input"
+                android:inputType="textPassword"
+                android:hint="@string/hint_password"
+                android:textColor="@color/text"
+                android:textColorHint="@color/muted"
+                android:textSize="13sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="11dp"
+                android:paddingBottom="11dp"
+                android:singleLine="true"
+                android:autofillHints="newPassword" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/field_sexo"
+                style="@style/Homney.Text.Label"
+                android:layout_marginBottom="6dp" />
+
+            <!-- Spinner de sexo -->
+            <Spinner
+                android:id="@+id/reg_sexo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_input"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="11dp"
+                android:paddingBottom="11dp"
+                android:entries="@array/sexo_options"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- ¿Qué quieres hacer? -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/field_modo"
+        style="@style/Homney.Text.Label"
+        android:layout_marginBottom="6dp" />
+
+    <Spinner
+        android:id="@+id/reg_modo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_input"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:layout_marginBottom="14dp"
+        android:entries="@array/modo_options"
+        android:spinnerMode="dropdown" />
+
+    <!-- Clave de invitación (oculta hasta seleccionar "Unirme") -->
+    <LinearLayout
+        android:id="@+id/reg_clave_wrap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginBottom="14dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/field_clave_inv"
+            style="@style/Homney.Text.Label"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/reg_clave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_input"
+            android:inputType="textCapCharacters"
+            android:hint="@string/hint_clave_inv"
+            android:textColor="@color/text"
+            android:textColorHint="@color/muted"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.1"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <!-- Botón Crear cuenta -->
+    <Button
+        android:id="@+id/btn_registro"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="6dp"
+        style="@style/Homney.Button.Primary"
+        android:text="@string/btn_crear_cuenta"
+        android:textSize="15sp" />
+
+</LinearLayout>
