@@ -6,7 +6,7 @@
     <string name="nav_header_subtitle">Tu colmena organizada</string>
     <string name="login_welcome">Organiza tu hogar de forma sencilla</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+
 
     <!-- Login / Registro -->
     <string name="login_title">Bienvenido a Homney</string>
@@ -29,10 +29,41 @@
     <string name="btn_entrar">Entrar</string>
     <string name="btn_crear_cuenta">Crear cuenta</string>
 
-    <string name="menu_home">Home</string>
+    <!-- Menu Izquierdo -->
+
+    <string name="menu_home">Panel</string>
     <string name="menu_fragmento2">Mi Hogar</string>
     <string name="menu_fragmento3">Tareas</string>
     <string name="menu_fragmento4">Mi Cartera</string>
     <string name="menu_fragmento5">Muro</string>
-    <string name="exit">Salir</string>
+    <string name="menu_crear_titulo">Crear</string>
+    <string name="menu_crear1">Nueva Tarea</string>
+    <string name="menu_crear2">Nuevo Gasto</string>
+    <string name="menu_crear3">Publicar</string>
+
+    <!-- Menu derecho -->
+    <string name="action_settings">Ajustes</string>
+    <string name="main_menu">Ayuda</string>
+    <string name="main_menu1">Cerrar Sesión</string>
+    <string name="main_menu2">Salir</string>
+    <string name="hint_tarea">Ej: Limpiar el baño</string>
+    <string name="nombre_tarea_nueva">Nombre de la tarea *</string>
+    <string name="habitacion_tarea_nueva">Habitación</string>
+    <string name="duracion_nueva_tarea">Duración (min)</string>
+    <string name="num">Num. veces</string>
+    <string name="num_veces">Num. veces</string>
+    <string name="frecuencia_nueva">Frecuencia *</string>
+    <string name="frecuencia_nueva_tarea">Frecuencia *</string>
+    <string name="asigna_tarea">Asignar a</string>
+    <string name="btn_crear_tarea">Crear tarea</string>
+    <string name="btn_cancelar">Cancelar</string>
+    <string name="concepto">Concepto *</string>
+    <string name="ejemplo_concepto">Ej: Compra supermercado</string>
+    <string name="importe">Importe (euros)*</string>
+    <string name="fecha">Fecha *</string>
+    <string name="categoria">Categoria *</string>
+    <string name="modo_pago">Modo de pago</string>
+    <string name="tipo_pago">Tipo</string>
+    <string name="btn_crear_gasto">Registrar</string>
+
 </resources>

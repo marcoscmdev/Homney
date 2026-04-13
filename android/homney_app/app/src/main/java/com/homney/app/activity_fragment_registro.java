@@ -1,6 +1,8 @@
 package com.homney.app;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +39,10 @@ public class activity_fragment_registro extends Fragment {
     CheckBox cb_recordar_sesion;
     Button btn_login;
     String tagLogCat ="WS";
+    String mail;
+    boolean remember;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
 
     @Nullable
     @Override
@@ -46,6 +52,9 @@ public class activity_fragment_registro extends Fragment {
         et_pass = vista.findViewById(R.id.et_pass);
         cb_recordar_sesion = vista.findViewById(R.id.cb_recordar_sesion);
         btn_login = vista.findViewById(R.id.btn_login);
+
+        preferences = requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        editor = preferences.edit();
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +69,6 @@ public class activity_fragment_registro extends Fragment {
                 }
             }
         });
-
         return vista;
     }
 
@@ -97,6 +105,15 @@ public class activity_fragment_registro extends Fragment {
                                 if (respuestaLogin.data != null && !respuestaLogin.data.isEmpty()) {
                                     // Sacamos el primer usuario de la lista data
                                     Usuario usuario = respuestaLogin.data.get(0);
+
+                                    if (cb_recordar_sesion.isChecked()) {
+                                        editor.putBoolean("remember", true);
+                                        editor.putString("mail", usuario.getEmail());
+                                        editor.apply();
+                                    } else {
+                                        editor.clear();
+                                        editor.apply();
+                                    }
 
                                     Intent intent = new Intent(requireActivity(), MainActivity.class);
                                     intent.putExtra("usuario_id",     usuario.getId_usuario());

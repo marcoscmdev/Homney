@@ -10,19 +10,43 @@
 <!-- Declaración de fragments a visualizar en el menú deslizante -->
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.homney.app.ui.home.HomeFragment"
+        android:name="com.homney.app.ui.fragmento1_panel.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment1_home" />
 
     <fragment
         android:id="@+id/fragmento2"
-        android:name="com.homney.app.ui.fragmento2.Fragmento2"
+        android:name="com.homney.app.ui.fragmento2_mihogar.fragmento_mihogar"
         android:label="@string/menu_fragmento2"
-        tools:layout="@layout/fragment_fragmento2" />
+        tools:layout="@layout/fragment2_hogar" />
 
     <fragment
         android:id="@+id/fragmento3"
-        android:name="com.homney.app.ui.fragmento3.Fragmento3"
+        android:name="com.homney.app.ui.fragmento3_tareas.Fragmento3_tareas"
         android:label="@string/menu_fragmento3"
-        tools:layout="@layout/fragment_fragmento3" />
+        tools:layout="@layout/fragment3_tareas" />
+
+    <fragment
+        android:id="@+id/fragmento4"
+        android:name="com.homney.app.ui.fragmento4_cartera.Fragmento4_cartera"
+        android:label="@string/menu_fragmento4"
+        tools:layout="@layout/fragment4_cartera" />
+
+    <fragment
+        android:id="@+id/fragmento5"
+        android:name="com.homney.app.ui.fragmento5_muro.Fragmento5_muro"
+        android:label="@string/menu_fragmento5"
+        tools:layout="@layout/fragment5_muro" />
+
+    <fragment
+        android:id="@+id/nav_crear_tarea"
+        android:name="com.homney.app.ui.nav_crear_tarea.fragment_crear_tarea"
+        android:label="@string/menu_crear1"
+        tools:layout="@layout/fragment_crear_nueva_tarea" />
+
+    <fragment
+        android:id="@+id/nav_crear_gasto"
+        android:name="com.homney.app.ui.nav_crear_gasto.fragment_crear_gasto"
+        android:label="@string/menu_crear2"
+        tools:layout="@layout/fragment_crear_nuevo_gasto" />
 </navigation>

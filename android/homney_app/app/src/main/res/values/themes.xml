@@ -12,7 +12,7 @@
         <!-- Fondo general: crema -->
         <item name="android:colorBackground">@color/background</item>
         <item name="colorSurface">@color/surface</item>
-        <item name="colorOnSurface">@color/surface_two</item>
+        <item name="colorOnSurface">@color/text</item>
         <!-- Barra de estado -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/accent_dark</item>
     </style>

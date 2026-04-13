@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_auth_box"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" 💳 Nuevo Gasto"
+            style="@style/Homney.Text.Title" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/concepto"
+            style="@style/Homney.Text.Label"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/et_concepto_gasto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_input"
+            android:inputType="textAutoComplete"
+            android:hint="@string/ejemplo_concepto"
+            android:textColor="@color/text"
+            android:textColorHint="@color/muted"
+            android:textSize="14sp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_marginBottom="14dp"
+            android:singleLine="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/importe"
+            style="@style/Homney.Text.Label"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/et_importe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_input"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_marginBottom="14dp"
+            android:inputType="numberDecimal"
+            android:ems="10"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fecha"
+            style="@style/Homney.Text.Label"
+            android:layout_marginBottom="6dp" />
+
+        <EditText
+            android:id="@+id/et_fecha_gasto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:background="@drawable/bg_input"
+            android:textColor="@color/text"
+            android:textColorHint="@color/muted"
+            android:textSize="14sp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_marginBottom="14dp"/>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/categoria"
+            style="@style/Homney.Text.Label"
+            android:layout_marginBottom="6dp" />
+
+        <Spinner
+            android:id="@+id/spinner_categoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="numberSigned"
+            android:background="@drawable/bg_input"
+            android:textColor="@color/text"
+            android:textColorHint="@color/muted"
+            android:textSize="14sp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_marginBottom="14dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/modo_pago"
+            style="@style/Homney.Text.Label"
+            android:layout_marginBottom="6dp" />
+
+        <Spinner
+            android:id="@+id/spinner_modo_pago"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_input"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_marginBottom="14dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tipo_pago"
+            style="@style/Homney.Text.Label"
+            android:layout_marginBottom="6dp" />
+
+        <Spinner
+            android:id="@+id/spinner_tipo_pago"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_input"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_marginBottom="24dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_cancelar_tarea"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                style="@style/Homney.Button.Ghost"
+                android:text="@string/btn_cancelar"
+                android:textSize="15sp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp" />
+
+            <Button
+                android:id="@+id/btn_crear_gasto"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                style="@style/Homney.Button.Primary"
+                android:text="@string/btn_crear_gasto"
+                android:textSize="15sp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

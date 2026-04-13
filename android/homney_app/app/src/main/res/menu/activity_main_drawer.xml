@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+    tools:showIn="navigation_view"
+
+    >
 
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:icon="@drawable/ic_dashboard"
+            android:title="@string/menu_home"
+            />
         <item
             android:id="@+id/fragmento2"
-            android:icon="@drawable/ic_menu_fragmento2"
+            android:icon="@drawable/ic_home2"
             android:title="@string/menu_fragmento2" />
         <item
             android:id="@+id/fragmento3"
-            android:icon="@drawable/ic_menu_fragmento3"
+            android:icon="@drawable/ic_task"
             android:title="@string/menu_fragmento3" />
 
         <item
-            android:id="@+id/nav_salir"
-            android:icon="@android:drawable/ic_delete"
-            android:title="@string/exit" />
+            android:id="@+id/fragmento4"
+            android:icon="@drawable/ic_credit_card"
+            android:title="@string/menu_fragmento4" />
+        <item
+            android:id="@+id/fragmento5"
+            android:icon="@drawable/ic_muro"
+            android:title="@string/menu_fragmento5" />
+
     </group>
+
+    <item android:title="@string/menu_crear_titulo">
+        <menu>
+            <item
+                android:id="@+id/nav_crear_tarea"
+                android:icon="@drawable/ic_add"
+                android:title="@string/menu_crear1" />
+            <item
+                android:id="@+id/nav_crear_gasto"
+                android:icon="@drawable/ic_add"
+                android:title="@string/menu_crear2" />
+            <item
+                android:id="@+id/nav_crear_publicacion"
+                android:icon="@drawable/ic_add"
+                android:title="@string/menu_crear3" />
+        </menu>
+    </item>
+
 </menu>

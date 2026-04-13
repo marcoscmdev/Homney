@@ -23,6 +23,8 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer"
+        android:background="@drawable/bg_card_surface2"
         />
+
         <!-- nav_header_main cabecera menú deslizante -->
 </androidx.drawerlayout.widget.DrawerLayout>

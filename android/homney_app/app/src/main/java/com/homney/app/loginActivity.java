@@ -1,6 +1,9 @@
 package com.homney.app;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +23,12 @@ public class loginActivity extends AppCompatActivity {
 
 Button btn_login;
 TextView tab_login, tab_registro;
+
+SharedPreferences preferences;
+SharedPreferences.Editor editor;
+boolean remember;
+String mail;
+
 
 
     @SuppressLint("MissingInflatedId")
@@ -57,6 +66,24 @@ TextView tab_login, tab_registro;
            }
        });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        preferences = getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        try{
+            remember = preferences.getBoolean("remember",false);
+            mail = preferences.getString("mail", "");
+            if(remember) {
+                Intent intent = new Intent(loginActivity.this, MainActivity.class);
+                intent.putExtra("mail",mail);
+                startActivity(intent);
+                finish();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 }

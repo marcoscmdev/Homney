@@ -53,10 +53,11 @@ public class MainActivity extends AppCompatActivity {
         DrawerLayout drawer = findViewById(R.id.drawer_layout); // Contenedor principal que incluye toda la interfaz con el menú deslizante
         NavigationView navigationView = findViewById(R.id.nav_view); // Menú deslizante
 
-       // IDs fragments(mobile_navigation.xml) y eb menu deslizante(activity_main_drawer.xml)
+        // IDs fragments(mobile_navigation.xml) y eb menu deslizante(activity_main_drawer.xml)
         // a tener en cuenta para visualizar en la barra de acción
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.fragmento2, R.id.fragmento3)
+                R.id.nav_home, R.id.fragmento2, R.id.fragmento3, R.id.fragmento4, R.id.fragmento5,
+                R.id.nav_crear_tarea, R.id.nav_crear_gasto)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -79,13 +80,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                if (menuItem.getItemId() == R.id.nav_salir) {
+                if (menuItem.getItemId() == R.id.nav_view) {
                     finish();
                 }
                 else {
                     Bundle argumentos=null;
                     // Ejemplo para enviar argumentos a un fragmento
                     if (idMenuPrevioSeleccionado == R.id.nav_home && menuItem.getItemId()==R.id.fragmento2) {
+                        argumentos=new Bundle();
+                        argumentos.putString("dato","X-100");
+                    }
+                    if (idMenuPrevioSeleccionado == R.id.fragmento2 && menuItem.getItemId()==R.id.fragmento2) {
                         argumentos=new Bundle();
                         argumentos.putString("dato","X-100");
                     }
@@ -103,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        UtilidadesNavigationDrawer.cambiarCabecera(navigationView,R.drawable.ic_logo_homney,"Homney", "Tu hogar compartido");
 
 
         // Eventos del menú deslizante
