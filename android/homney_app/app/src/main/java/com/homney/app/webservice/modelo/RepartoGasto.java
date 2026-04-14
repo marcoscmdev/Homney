@@ -11,12 +11,12 @@ public class RepartoGasto {
 
     private int id_gasto;
     private int id_usuario;
-    private int pagador;  // 0 = no pagador, 1 = pagador principal
+    private boolean pagador;  // false = no pagador, true = pagador principal
     private double importe;
-    private int abonado;  // 0 = pendiente, 1 = abonado
+    private boolean abonado;  // false = pendiente, true = abonado
 
     /* El constructor para GSON no es necesario */
-    public RepartoGasto(int id_gasto, int id_usuario, int pagador, double importe, int abonado) {
+    public RepartoGasto(int id_gasto, int id_usuario, boolean pagador, double importe, boolean abonado) {
         this.id_gasto = id_gasto;
         this.id_usuario = id_usuario;
         this.pagador = pagador;
@@ -30,12 +30,12 @@ public class RepartoGasto {
     public int getId_usuario() { return id_usuario; }
     public void setId_usuario(int id_usuario) { this.id_usuario = id_usuario; }
 
-    public int getPagador() { return pagador; }
-    public void setPagador(int pagador) { this.pagador = pagador; }
+    public boolean isPagador() { return pagador; }
+    public void setPagador(boolean pagador) { this.pagador = pagador; }
 
     public double getImporte() { return importe; }
     public void setImporte(double importe) { this.importe = importe; }
 
-    public int getAbonado() { return abonado; }
-    public void setAbonado(int abonado) { this.abonado = abonado; }
+    public boolean isAbonado() { return abonado; }
+    public void setAbonado(boolean abonado) { this.abonado = abonado; }
 }

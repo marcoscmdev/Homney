@@ -32,17 +32,6 @@ Button btn_registro;
         reg_sexo = vista.findViewById(R.id.reg_sexo);
         reg_modo = vista.findViewById(R.id.reg_modo);
 
-        ArrayAdapter<CharSequence> adapterSexo = ArrayAdapter.createFromResource(
-                getContext(), R.array.sexo_options, R.layout.item_spinner_selected);
-        adapterSexo.setDropDownViewResource(R.layout.item_spinner_dropdown);
-
-        ArrayAdapter<CharSequence> adapterModo = ArrayAdapter.createFromResource(
-                getContext(), R.array.modo_options, R.layout.item_spinner_selected);
-        adapterModo.setDropDownViewResource(R.layout.item_spinner_dropdown);
-
-        reg_sexo.setAdapter(adapterSexo);
-        reg_modo.setAdapter(adapterModo);
-
 
 
         return vista;

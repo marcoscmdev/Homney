@@ -1,23 +1,309 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragmento3_tareas.Fragmento3_tareas">
+    android:background="@color/background"
+    android:fillViewport="true"
+    tools:context=".ui.fragmento4_cartera.Fragmento4_cartera">
 
-    <TextView
-        android:id="@+id/text_slideshow"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:text="Mi Cartera"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical"
+        android:paddingBottom="32dp">
+
+        <!-- ══════════════════════════════════════════
+             FILA DE 3 TARJETAS STAT (te deben · debes · balance)
+        ══════════════════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp">
+
+            <!-- Stat: Te deben (verde) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="5dp"
+                app:cardBackgroundColor="@color/green_background"
+                app:strokeColor="@color/green"
+                app:strokeWidth="1dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_stat_me_deben"
+                        style="@style/Homney.Text.AmountPositive"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="+12,50 €" />
+
+                    <TextView
+                        style="@style/Homney.Text.Muted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="10sp"
+                        android:layout_marginTop="2dp"
+                        android:text="Te deben a ti" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Stat: Debes tú (rojo) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                app:cardBackgroundColor="@color/danger_background"
+                app:strokeColor="@color/danger"
+                app:strokeWidth="1dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_stat_debo"
+                        style="@style/Homney.Text.AmountNegative"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="-8,00 €" />
+
+                    <TextView
+                        style="@style/Homney.Text.Muted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="10sp"
+                        android:layout_marginTop="2dp"
+                        android:text="Debes tú" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Stat: Balance neto (verde/rojo dinámico) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_stat_balance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="5dp"
+                app:cardBackgroundColor="@color/surface"
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_stat_balance"
+                        style="@style/Homney.Text.Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="+4,50 €" />
+
+                    <TextView
+                        style="@style/Homney.Text.Muted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="10sp"
+                        android:layout_marginTop="2dp"
+                        android:text="Balance neto" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN — LO QUE TE DEBEN
+        ══════════════════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                style="@style/Homney.Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lo que te deben" />
+
+            <TextView
+                android:id="@+id/tag_me_deben"
+                style="@style/Homney.Tag.Green"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="12,50 € PENDIENTE" />
+        </LinearLayout>
+
+        <!-- Contenedor dinámico de bloques de deudores -->
+        <LinearLayout
+            android:id="@+id/container_me_deben"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:id="@+id/tv_sin_me_deben"
+                style="@style/Homney.Text.Muted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Cargando…" />
+        </LinearLayout>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN — LO QUE DEBES TÚ
+        ══════════════════════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                style="@style/Homney.Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lo que debes tú" />
+
+            <TextView
+                android:id="@+id/tag_debo"
+                style="@style/Homney.Tag.Red"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="8,00 € PENDIENTE" />
+        </LinearLayout>
+
+        <!-- Contenedor dinámico de bloques de acreedores -->
+        <LinearLayout
+            android:id="@+id/container_debo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:id="@+id/tv_sin_debo"
+                style="@style/Homney.Text.Muted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Cargando…" />
+        </LinearLayout>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN — HISTORIAL DE GASTOS DEL HOGAR
+        ══════════════════════════════════════════ -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Cabecera historial -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="14dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        style="@style/Homney.Text.Title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Historial de gastos" />
+
+                    <TextView
+                        android:id="@+id/tag_historial"
+                        style="@style/Homney.Tag.Yellow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="5 REGISTROS" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/border" />
+
+                <!-- Contenedor dinámico de filas de gastos -->
+                <LinearLayout
+                    android:id="@+id/container_historial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_sin_historial"
+                        style="@style/Homney.Text.Muted"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="24dp"
+                        android:text="Cargando…" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>

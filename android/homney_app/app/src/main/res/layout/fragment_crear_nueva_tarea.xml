@@ -26,8 +26,8 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="6dp" />
 
-        <EditText
-            android:id="@+id/et_concepto_gasto"
+        <AutoCompleteTextView
+            android:id="@+id/et_nombre_tarea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input"
@@ -69,7 +69,7 @@
             android:layout_marginBottom="6dp" />
 
         <EditText
-            android:id="@+id/editTextNumberSigned"
+            android:id="@+id/et_duracion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -93,7 +93,7 @@
             android:layout_marginBottom="6dp" />
 
         <EditText
-            android:id="@+id/ed_num_veces"
+            android:id="@+id/et_num_veces"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -120,12 +120,15 @@
             android:id="@+id/spinner_frecuencia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp"
             android:background="@drawable/bg_input"
+            android:entries="@array/frecuencia_options"
             android:paddingLeft="14dp"
-            android:paddingRight="14dp"
             android:paddingTop="12dp"
+            android:paddingRight="14dp"
             android:paddingBottom="12dp"
-            android:layout_marginBottom="14dp" />
+            android:popupBackground="@drawable/bg_input"
+            android:spinnerMode="dropdown" />
 
         <TextView
             android:layout_width="wrap_content"

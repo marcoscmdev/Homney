@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Fila de una tarea (mis tareas / otras tareas del hogar / completadas).
+    El checkbox visual (iv_check) se colorea desde Java:
+      - Fondo verde + icono ✓  → realizada hoy
+      - Borde gris, sin fill   → pendiente
+    El contenedor ll_asignados se rellena con badges de iniciales desde Java.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
+
+    <!-- Checkbox visual circular -->
+    <TextView
+        android:id="@+id/tv_check"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginEnd="12dp"
+        android:gravity="center"
+        android:textSize="11sp"
+        android:textColor="@color/surface"
+        android:background="@drawable/bg_tag_muted"
+        tools:text="✓" />
+
+    <!-- Cuerpo de la tarea -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_nombre_tarea"
+            style="@style/Homney.Text.Subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Limpiar el baño" />
+
+        <!-- Frecuencia · Nº veces · Duración -->
+        <TextView
+            android:id="@+id/tv_frecuencia"
+            style="@style/Homney.Text.Muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            tools:text="Semanal · 2x · 30 min" />
+
+        <!-- Badges de usuarios asignados (se añaden dinámicamente) -->
+        <LinearLayout
+            android:id="@+id/ll_asignados"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp" />
+    </LinearLayout>
+
+    <!-- Etiqueta de estado (derecha): "HECHA HOY" o frecuencia -->
+    <TextView
+        android:id="@+id/tv_tag_estado"
+        style="@style/Homney.Tag.Muted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        tools:text="SEMANAL" />
+
+</LinearLayout>

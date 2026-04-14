@@ -1,23 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true"
     tools:context=".ui.fragmento3_tareas.Fragmento3_tareas">
 
-    <TextView
-        android:id="@+id/text_slideshow"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:text="Tareas"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical"
+        android:paddingBottom="32dp">
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN 1 — MIS TAREAS
+             IDs existentes respetados: tareas_pendientes,
+             container_tareas_usuario, tv_sin_tareas_usuario
+        ══════════════════════════════════════════ -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Cabecera: título + badge contador de pendientes -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        style="@style/Homney.Text.Title"
+                        android:text="@string/mis_tareas" />
+
+                    <TextView
+                        android:id="@+id/tareas_pendientes"
+                        style="@style/Homney.Tag.Yellow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="3 PENDIENTES" />
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/border" />
+
+                <!-- Contenedor dinámico de tareas propias -->
+                <LinearLayout
+                    android:id="@+id/container_tareas_usuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_sin_tareas_usuario"
+                        style="@style/Homney.Text.Muted"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="24dp"
+                        android:text="Cargando…" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN 2 — OTRAS TAREAS DEL HOGAR
+        ══════════════════════════════════════════ -->
+        <TextView
+            style="@style/Homney.Text.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            android:text="Otras tareas del hogar" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp">
+
+            <LinearLayout
+                android:id="@+id/container_otras_tareas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_sin_otras_tareas"
+                    style="@style/Homney.Text.Muted"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:text="Cargando…" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN 3 — COMPLETADAS ESTA SEMANA
+        ══════════════════════════════════════════ -->
+        <TextView
+            style="@style/Homney.Text.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            android:text="Completadas esta semana" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp">
+
+            <LinearLayout
+                android:id="@+id/container_completadas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_sin_completadas"
+                    style="@style/Homney.Text.Muted"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:text="Cargando…" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>

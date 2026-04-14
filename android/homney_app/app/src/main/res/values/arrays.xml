@@ -14,4 +14,314 @@
         <item>Unirme a un hogar existente</item>
     </string-array>
 
+    <!-- Spinner: Frecuencia_tarea -->
+    <string-array name="frecuencia_options">
+        <item>Dia</item>
+        <item>Semana</item>
+        <item>Mes</item>
+        <item>Variable</item>
+    </string-array>
+
+    <!-- Array de tareas para el autocompletetextview -->
+
+    <string-array name="tareas_options">
+        <!-- LIMPIEZA GENERAL -->
+        <item>Limpiar la casa</item>
+        <item>Limpiar </item>
+        <item>Limpiar habitación</item>
+        <item>Limpiar cocina</item>
+        <item>Limpiar baño</item>
+        <item>Limpiar sala</item>
+        <item>Limpiar comedor</item>
+        <item>Limpiar pasillo</item>
+        <item>Limpiar ventanas</item>
+        <item>Limpiar espejos</item>
+        <item>Limpiar techo</item>
+        <item>Limpiar polvo</item>
+        <item>Limpiar superficies</item>
+        <item>Limpiar electrodomésticos</item>
+        <item>Limpiar refrigerador</item>
+        <item>Limpiar horno</item>
+        <item>Limpiar microondas</item>
+        <item>Limpiar lavavajillas</item>
+        <item>Limpiar lavadora</item>
+        <item>Limpiar filtro del aire</item>
+        <item>Limpiar alfombras</item>
+        <item>Limpiar cortinas</item>
+        <item>Limpiar persianas</item>
+        <item>Limpiar bibliotecas</item>
+        <item>Limpiar armarios</item>
+        <item>Limpiar garaje</item>
+        <item>Limpiar sótano</item>
+        <item>Limpiar ático</item>
+        <item>Limpiar bodega</item>
+        <!-- BARRER Y FREGAR -->
+        <item>Barrer</item>
+        <item>Barrer cocina</item>
+        <item>Barrer baño</item>
+        <item>Barrer entrada</item>
+        <item>Barrer terraza</item>
+        <item>Barrer balcón</item>
+        <item>Fregar suelo</item>
+        <item>Fregar cocina</item>
+        <item>Fregar baño</item>
+        <item>Fregar azulejos</item>
+        <item>Trapear</item>
+        <item>Pasar mopa</item>
+        <item>Pasar aspiradora</item>
+        <item>Aspirar sofá</item>
+        <item>Aspirar colchón</item>
+        <item>Aspirar coche</item>
+        <!-- LAVANDERÍA -->
+        <item>Lavar ropa</item>
+        <item>Lavar prendas delicadas</item>
+        <item>Lavar sábanas</item>
+        <item>Lavar toallas</item>
+        <item>Lavar cortinas</item>
+        <item>Lavar alfombras</item>
+        <item>Secar ropa</item>
+        <item>Tender ropa</item>
+        <item>Recoger ropa</item>
+        <item>Planchar ropa</item>
+        <item>Planchar camisas</item>
+        <item>Planchar pantalones</item>
+        <item>Doblar ropa</item>
+        <item>Organizar armario</item>
+        <item>Ordenar ropa por temporadas</item>
+        <item>Lavar zapatos</item>
+        <item>Limpiar calzado</item>
+        <!-- COCINA -->
+        <item>Cocinar </item>
+        <item>Preparar desayuno</item>
+        <item>Preparar almuerzo</item>
+        <item>Preparar cena</item>
+        <item>Hacer la comida</item>
+        <item>Preparar lunch</item>
+        <item>Lavar menaje</item>
+        <item>Lavar ollas</item>
+        <item>Lavar cubiertos</item>
+        <item>Secar menaje</item>
+        <item>Guardar menaje</item>
+        <item>Ordenar cocina</item>
+        <item>Desinfectar superficies</item>
+        <item>Limpiar fuegos</item>
+        <item>Limpiar campana extractora</item>
+        <item>Vaciar basura</item>
+        <item>Sacar basura</item>
+        <item>Reciclar</item>
+        <item>Organizar despensa</item>
+        <item>Revisar vencimiento de alimentos</item>
+        <item>Hacer lista de la compra</item>
+        <item>Ir al supermercado</item>
+        <!-- MANTENIMIENTO DEL HOGAR -->
+        <item>Reparar grifo</item>
+        <item>Reparar tubería</item>
+        <item>Arreglar puerta</item>
+        <item>Arreglar ventana</item>
+        <item>Arreglar cerradura</item>
+        <item>Pintar pared</item>
+        <item>Pintar techo</item>
+        <item>Cambiar bombilla</item>
+        <item>Cambiar fusible</item>
+        <item>Revisar instalación eléctrica</item>
+        <item>Revisar gas</item>
+        <item>Revisar calentador</item>
+        <item>Revisar aire acondicionado</item>
+        <item>Limpiar aire acondicionado</item>
+        <item>Revisar extintor</item>
+        <item>Revisar detectores de humo</item>
+        <item>Cambiar filtro de agua</item>
+        <item>Desatascar desagüe</item>
+        <item>Desatascar inodoro</item>
+        <item>Instalar estante</item>
+        <item>Montar cuadro</item>
+        <item>Arreglar mueble</item>
+        <item>Cambiar cortinas</item>
+        <item>Aplicar impermeabilizante</item>
+        <item>Revisar techo</item>
+        <item>Limpiar canaletas</item>
+        <item>Revisar termite</item>
+        <item>Control de plagas</item>
+        <!-- CUIDADO DE MASCOTAS -->
+        <item>Alimentar mascota</item>
+        <item>Alimentar perro</item>
+        <item>Alimentar gato</item>
+        <item>Alimentar pez</item>
+        <item>Alimentar pájaro</item>
+        <item>Alimentar hamster</item>
+        <item>Dar agua a mascota</item>
+        <item>Sacar a pasear perro</item>
+        <item>Jugar con el gato</item>
+        <item>Barrer área de mascota</item>
+        <item>Limpiar caja de arena</item>
+        <item>Limpiar jaula de pájaro</item>
+        <item>Limpiar pecera</item>
+        <item>Limpiar cama de mascota</item>
+        <item>Bañar perro</item>
+        <item>Bañar gato</item>
+        <item>Cepillar pelaje</item>
+        <item>Cortar uñas </item>
+        <item>Limpiar orejas </item>
+        <item>Revisar salud de mascota</item>
+        <item>Dar medicamento a mascota</item>
+        <item>Ir al veterinario</item>
+        <item>Comprar alimento para mascota</item>
+        <item>Comprar juguetes para mascota</item>
+        <item>Entrenar mascota</item>
+        <item>Educar cachorro</item>
+        <item>Cortar pelo de mascota</item>
+        <item>Aplicar antiparasitario</item>
+        <item>Vacunar mascota</item>
+        <item>Cepillar dientes de mascota</item>
+        <!-- CUIDADO DE BEBÉS -->
+        <item>Alimentar bebé</item>
+        <item>Preparar biberón</item>
+        <item>Amamantar</item>
+        <item>Cambiar pañal</item>
+        <item>Bañar bebé</item>
+        <item>Despertar bebé</item>
+        <item>Dormir bebé</item>
+        <item>Acunar bebé</item>
+        <item>Cambiar ropa de bebé</item>
+        <item>Lavar ropa de bebé</item>
+        <item>Planchar ropa de bebé</item>
+        <item>Organizar cuarto de bebé</item>
+        <item>Desinfectar juguetes de bebé</item>
+        <item>Esterilizar biberones</item>
+        <item>Preparar puré</item>
+        <item>Vigilar siesta</item>
+        <item>Dar baño térmico</item>
+        <item>Masajear bebé</item>
+        <item>Aplicar crema hidratante</item>
+        <item>Cortar uñas de bebé</item>
+        <item>Revisar dentición</item>
+        <item>Ir al pediátricola</item>
+        <!-- CUIDADO DE NIÑOS -->
+        <item>Ayudar con tareas escolares</item>
+        <item>Revisar tarea</item>
+        <item>Preparar lunch escolar</item>
+        <item>Preparar uniforme</item>
+        <item>Llevar al colegio</item>
+        <item>Recoger del colegio</item>
+        <item>Ayudar con lectura</item>
+        <item>Ayudar con matemáticas</item>
+        <item>Practicar deporte</item>
+        <item>Llevar a clase extraescolar</item>
+        <item>Preparar merienda</item>
+        <item>Bañar niño</item>
+        <item>Ayudar a vestirse</item>
+        <item>Peinar niño</item>
+        <item>Cortar pelo de niño</item>
+        <item>Llevar al parque</item>
+        <item>Jugar con niño</item>
+        <item>Revisar mochila</item>
+        <item>Organizar cuarto de niños</item>
+        <item>Lavar ropa de niño</item>
+        <item>Planificar cumpleaños</item>
+        <item>Organizar actividades</item>
+        <item>Ir a revisión pediátrica</item>
+        <item>Comprar útiles escolares</item>
+        <item>Comprar uniforme escolar</item>
+        <item>Comprar zapatos escolares</item>
+        <item>Inscribir en actividades</item>
+        <!-- CUIDADO DE MAYORES -->
+        <item>Ayudar a bañarse</item>
+        <item>Ayudar a vestirse</item>
+        <item>Preparar comida para mayor</item>
+        <item>Ayudar a comer</item>
+        <item>Dar medicamentos</item>
+        <item>Controlar signos vitales</item>
+        <item>Ayudar a caminar</item>
+        <item>Ayudar con fisioterapeuta</item>
+        <item>Acompañar al médico</item>
+        <item>Ir a cita médica</item>
+        <item>Comprar medicamentos</item>
+        <item>Ordenar medicamentos</item>
+        <item>Ayudar con higiene personal</item>
+        <item>Peinar mayor</item>
+        <item>Cortar pelo de mayor</item>
+        <item>Cortar uñas de mayor</item>
+        <item>Cambiar ropa de cama</item>
+        <item>Acompañar a pasear</item>
+        <item>Hacer compañía</item>
+        <item>Ayudar con trámites</item>
+        <item>Organizar citas</item>
+        <item>Preparar cama</item>
+        <item>Ventilar habitación</item>
+        <!-- JARDÍN Y EXTERIOR -->
+        <item>Cortar césped</item>
+        <item>Regar plantas</item>
+        <item>Regar jardín</item>
+        <item>Plantar flor</item>
+        <item>Plantar vegetal</item>
+        <item>Podar arbusto</item>
+        <item>Podar árbol</item>
+        <item>Desherbar</item>
+        <item>Fertilizar planta</item>
+        <item>Trasplantar planta</item>
+        <item>Limpiar jardín</item>
+        <item>Recoger hojas</item>
+        <item>Barrer terraza</item>
+        <item>Barrer patio</item>
+        <item>Lavar Exterior de casa</item>
+        <item>Pintar valla</item>
+        <item>Revisar cerca</item>
+        <item>Limpiar piscina</item>
+        <item>Revisar sistema de riego</item>
+        <item>Comprar plantas</item>
+        <item>Comprar herramientas</item>
+        <!-- ORGANIZACIÓN Y ADMINISTRACIÓN -->
+        <item>Organizar documentos</item>
+        <item>Pagar facturas</item>
+        <item>Pagar servicios</item>
+        <item>Pagar internet</item>
+        <item>Revisar correo</item>
+        <item>Archivar documentos</item>
+        <item>Actualizar presupuesto</item>
+        <item>Revisar seguro</item>
+        <item>Renovar suscripción</item>
+        <item>Organizar cajones</item>
+        <item>Organizar</item>
+        <item>Ordenar por categorías</item>
+        <item>Hacer limpieza general</item>
+        <item>Donar cosas</item>
+        <item>Deshazte de trastos viejos</item>
+        <item>Revisar fecha de caducidad</item>
+        <!-- VARIOS -->
+        <item>Planificar menú semanal</item>
+        <item>Hacer inventario</item>
+        <item>Comprar productos de limpieza</item>
+        <item>Comprar papelería</item>
+        <item>Revisar extintor</item>
+        <item>Revisar botiquín</item>
+        <item>Renovar botiquín</item>
+        <item>Limpiar coche</item>
+        <item>Revisar aceite de coche</item>
+        <item>Revisar presión de neumáticos</item>
+        <item>Lavado de coche</item>
+        <item>Planificar vacaciones</item>
+        <item>Organizar fiesta</item>
+        <item>Preparar decoración</item>
+        <item>Hacer lista de bodas</item>
+        <item>Preparar regreso de vacaciones</item>
+        <item>Cambiar sábanas</item>
+        <item>Cambiar toallas</item>
+        <item>Preparar cama de invitados</item>
+    </string-array>
+
+
+    <!-- Spinner: Modo de pago (gasto) -->
+    <string-array name="modo_pago_options">
+        <item>efectivo</item>
+        <item>transferencia</item>
+        <item>tarjeta</item>
+        <item>bizum</item>
+    </string-array>
+
+    <!-- Spinner: Tipo de gasto -->
+    <string-array name="tipo_gasto_options">
+        <item>ocasional</item>
+        <item>fijo</item>
+    </string-array>
+
 </resources>

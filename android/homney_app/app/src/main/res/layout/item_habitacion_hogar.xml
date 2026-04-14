@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tarjeta de una habitación del hogar.
+    Se infla dinámicamente desde fragmento_mihogar.java
+    en filas de 2 columnas dentro de grid_habitaciones.
+    El layout_width se sobreescribe a 0dp + weight=1 desde Java.
+-->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/surface"
+    app:strokeColor="@color/border"
+    app:strokeWidth="1dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <!-- Icono de la habitación (ic_home2 como genérico hasta tener iconos específicos) -->
+        <ImageView
+            android:id="@+id/img_tipo_hab"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_home2"
+            android:background="@color/surface_two"
+            android:padding="6dp"
+            android:layout_marginBottom="8dp"
+            tools:ignore="ContentDescription" />
+
+        <!-- Nombre de la habitación -->
+        <TextView
+            android:id="@+id/tv_nombre_hab"
+            style="@style/Homney.Text.Subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="2"
+            android:ellipsize="end"
+            tools:text="Cocina" />
+
+        <!-- Tipo de habitación -->
+        <TextView
+            android:id="@+id/tv_tipo_hab"
+            style="@style/Homney.Text.Muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="2dp"
+            tools:text="cocina" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

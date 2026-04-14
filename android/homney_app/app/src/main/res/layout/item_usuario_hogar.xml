@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tarjeta de un miembro del hogar.
+    Se infla dinámicamente desde fragmento_mihogar.java
+    y se añade a container_usuarios.
+-->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/surface"
+    app:strokeColor="@color/border"
+    app:strokeWidth="1dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="2dp"
+    android:layout_marginBottom="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="14dp"
+        android:gravity="center_vertical">
+
+        <!-- Avatar (ImageView pendiente — por ahora muestra icono de usuario) -->
+        <ImageView
+            android:id="@+id/img_avatar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/ic_user"
+            android:background="@color/accent_background"
+            android:padding="10dp"
+            tools:ignore="ContentDescription" />
+
+        <!-- Nombre + email -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_nombre"
+                style="@style/Homney.Text.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Marcos Castro" />
+
+            <TextView
+                android:id="@+id/tv_email"
+                style="@style/Homney.Text.Muted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                tools:text="marcos@email.com" />
+        </LinearLayout>
+
+        <!-- Etiqueta rol: ADMIN (amarillo) o MIEMBRO (verde) -->
+        <TextView
+            android:id="@+id/tv_rol"
+            style="@style/Homney.Tag.Yellow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="ADMIN" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

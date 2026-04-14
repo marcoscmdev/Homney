@@ -106,19 +106,26 @@ public class activity_fragment_registro extends Fragment {
                                     // Sacamos el primer usuario de la lista data
                                     Usuario usuario = respuestaLogin.data.get(0);
 
+                                    // Guardamos SIEMPRE los datos de sesión activa
+                                    editor.putInt("id_usuario",  usuario.getId_usuario());
+                                    editor.putString("nombre",   usuario.getNombre());
+                                    editor.putString("email",    usuario.getEmail());
+                                    editor.putString("rol",      usuario.getRol());
+                                    editor.putInt("id_hogar",    usuario.getId_hogar());
+
+                                    // "Recuérdame" solo persiste el mail para auto-login
                                     if (cb_recordar_sesion.isChecked()) {
                                         editor.putBoolean("remember", true);
                                         editor.putString("mail", usuario.getEmail());
-                                        editor.apply();
                                     } else {
-                                        editor.clear();
-                                        editor.apply();
+                                        editor.putBoolean("remember", false);
                                     }
+                                    editor.apply();
 
                                     Intent intent = new Intent(requireActivity(), MainActivity.class);
-                                    intent.putExtra("usuario_id",     usuario.getId_usuario());
-                                    intent.putExtra("usuario_nombre",  usuario.getNombre());
-                                    intent.putExtra("usuario_email",   usuario.getEmail());
+                                    intent.putExtra("usuario_id",    usuario.getId_usuario());
+                                    intent.putExtra("usuario_nombre", usuario.getNombre());
+                                    intent.putExtra("usuario_email",  usuario.getEmail());
 
                                     startActivity(intent);
                                     requireActivity().finish();

@@ -1,23 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true"
     tools:context=".ui.fragmento2_mihogar.fragmento_mihogar">
 
-    <TextView
-        android:id="@+id/text_gallery"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:text="Mi Hogar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:orientation="vertical"
+        android:paddingBottom="32dp">
+
+        <!-- ══════════════════════════════════════════
+             TARJETA INFO HOGAR (número + clave)
+        ══════════════════════════════════════════ -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
+
+                <!-- Icono hogar -->
+                <ImageView
+                    android:id="@+id/img_hogar"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_home2"
+                    android:background="@color/accent_background"
+                    android:padding="10dp"
+                    android:layout_marginEnd="14dp" />
+
+                <!-- Datos del hogar -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_hogar_titulo"
+                        style="@style/Homney.Text.Title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="Hogar #12" />
+
+                    <!-- Fila clave de invitación -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            style="@style/Homney.Text.Muted"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Clave: " />
+
+                        <TextView
+                            android:id="@+id/tareas_pendientes"
+                            style="@style/Homney.Text.Body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/accent_background"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:paddingTop="2dp"
+                            android:paddingBottom="2dp"
+                            tools:text="AB12XY" />
+                    </LinearLayout>
+
+                    <TextView
+                        style="@style/Homney.Text.Muted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Compártela para que otros se unan" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN: COMPAÑEROS DEL HOGAR
+        ══════════════════════════════════════════ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Homney.Text.Title"
+            android:text="@string/miembros_hogar"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Contenedor dinámico de tarjetas de usuarios (se rellena desde Java) -->
+        <LinearLayout
+            android:id="@+id/container_usuarios"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+
+            <!-- Placeholder visible en el editor (se reemplaza en tiempo de ejecución) -->
+            <TextView
+                android:id="@+id/tv_sin_usuarios"
+                style="@style/Homney.Text.Muted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Cargando compañeros…"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN: HABITACIONES
+        ══════════════════════════════════════════ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/Homney.Text.Title"
+            android:text="Habitaciones"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Grid de habitaciones (filas de 2 columnas, se rellena desde Java) -->
+        <LinearLayout
+            android:id="@+id/grid_habitaciones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+
+            <TextView
+                android:id="@+id/tv_sin_habitaciones"
+                style="@style/Homney.Text.Muted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="20dp"
+                android:text="Cargando habitaciones…"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN: CALENDARIO
+        ══════════════════════════════════════════ -->
+        <TextView
+            android:id="@+id/tv_calendar_titulo"
+            style="@style/Homney.Text.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            tools:text="Titulo calendario Mes - Año" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp">
+
+            <CalendarView
+                android:id="@+id/calendar_hogar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:dateTextAppearance="@style/Homney.Text.Body"
+                android:weekDayTextAppearance="@style/Homney.Text.Muted"
+                />
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</ScrollView>

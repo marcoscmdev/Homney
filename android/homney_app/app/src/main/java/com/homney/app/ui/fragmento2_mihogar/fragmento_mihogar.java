@@ -1,9 +1,15 @@
 package com.homney.app.ui.fragmento2_mihogar;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CalendarView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,8 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,87 +25,319 @@ import com.homney.app.R;
 import com.homney.app.Utilidades;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
+import com.homney.app.webservice.modelo.Habitacion;
 import com.homney.app.webservice.modelo.Hogar;
+import com.homney.app.webservice.modelo.Usuario;
 import com.homney.app.webservice.respuestas.RespuestaLista;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class fragmento_mihogar extends Fragment {
 
-    TextView tv_hogar;
-    String tagLogCat = "WS";
+    /* ── Vistas del layout ──────────────────────────────── */
+    private TextView    tvHogarTitulo;
+    private TextView    tvClaveHogar;
+    private TextView    tvCalendarTitulo;
+    private TextView    tvSinUsuarios;
+    private TextView    tvSinHabitaciones;
+    private LinearLayout containerUsuarios;
+    private LinearLayout gridHabitaciones;
+    private CalendarView calendarHogar;
 
+    /* ── Datos de sesión ────────────────────────────────── */
+    private int    idHogar   = -1;
+    private String rolUsuario = "";
+
+    private static final String TAG = "WS_HOGAR";
+
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment2_hogar, container, false);
 
-        tv_hogar = root.findViewById(R.id.text_gallery);
+        // Enlazar vistas
+        tvHogarTitulo      = root.findViewById(R.id.tv_hogar_titulo);
+        tvClaveHogar       = root.findViewById(R.id.tareas_pendientes);
+        tvCalendarTitulo   = root.findViewById(R.id.tv_calendar_titulo);
+        tvSinUsuarios      = root.findViewById(R.id.tv_sin_usuarios);
+        tvSinHabitaciones  = root.findViewById(R.id.tv_sin_habitaciones);
+        containerUsuarios  = root.findViewById(R.id.container_usuarios);
+        gridHabitaciones   = root.findViewById(R.id.grid_habitaciones);
+        calendarHogar      = root.findViewById(R.id.calendar_hogar);
 
-        Bundle argumentos = getArguments();
-        if (argumentos != null) {
-            String dato = argumentos.getString("dato");
-            Toast.makeText(getContext(), "Dato recibido: " + dato, Toast.LENGTH_LONG).show();
+        // Leer datos de sesión guardados en login
+        SharedPreferences prefs = requireContext()
+                .getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        idHogar    = prefs.getInt("id_hogar", -1);
+        rolUsuario = prefs.getString("rol", "");
+
+        // Título del calendario con mes y año en español
+        ponerTituloCalendario();
+
+        // Iniciar las tres peticiones en paralelo
+        if (idHogar != -1) {
+            if (Utilidades.hayConexionInternet(requireContext())) {
+                cargarInfoHogar();
+                cargarUsuarios();
+                cargarHabitaciones();
+            } else {
+                Toast.makeText(requireContext(),
+                        "No hay conexión a Internet", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(requireContext(),
+                    "Sesión no válida — vuelve a iniciar sesión", Toast.LENGTH_LONG).show();
         }
-
-        cargarHogar();
 
         return root;
     }
 
-    void cargarHogar() {
-        if (!Utilidades.hayConexionInternet(requireContext())) {
-            Toast.makeText(requireContext(), "No existe conexión a INTERNET", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private void ponerTituloCalendario() {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", new Locale("es", "ES"));
+        String mesAnho = sdf.format(new Date());
+        // Poner en mayúscula la primera letra
+        mesAnho = Character.toUpperCase(mesAnho.charAt(0)) + mesAnho.substring(1);
+        tvCalendarTitulo.setText("Calendario -"+mesAnho);
+    }
 
-        String endPoint = WebService.URL_Hogar;
-        int metodo = Request.Method.GET;
+    // PETICIONES WEB SERVICE
 
-        JsonObjectRequest peticionHogar = new JsonObjectRequest(metodo, endPoint, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            if (response.getString(WebService.JSON.STATUS).equals(WebService.JSON.SUCCESS)) {
-                                Gson gson = new GsonBuilder().create();
+    private void cargarInfoHogar() {
+        String endPoint = WebService.URL_Hogar + "?id_hogar=" + idHogar;
 
-                                Type tipoRespuesta = new TypeToken<RespuestaLista<Hogar>>() {}.getType();
-                                RespuestaLista<Hogar> respuestaHogar = gson.fromJson(response.toString(), tipoRespuesta);
+        JsonObjectRequest peticion = new JsonObjectRequest(
+                Request.Method.GET, endPoint, null,
+                response -> {
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
 
-                                if (respuestaHogar.data != null && !respuestaHogar.data.isEmpty()) {
-                                    StringBuilder sb = new StringBuilder();
-                                    for (Hogar h : respuestaHogar.data) {
-                                        sb.append("ID: ").append(h.getId_hogar())
-                                          .append(" | Clave: ").append(h.getClave_inv())
-                                          .append("\n");
-                                    }
-                                    tv_hogar.setText(sb.toString());
-                                } else {
-                                    tv_hogar.setText("No hay hogares registrados");
-                                }
-                            } else {
-                                String mensajeError = response.has("message")
-                                        ? response.getString("message")
-                                        : "Error al obtener hogares";
-                                Toast.makeText(requireContext(), mensajeError, Toast.LENGTH_SHORT).show();
+                            Gson gson = new GsonBuilder().create();
+                            Type tipo = new TypeToken<RespuestaLista<Hogar>>() {}.getType();
+                            RespuestaLista<Hogar> resp =
+                                    gson.fromJson(response.toString(), tipo);
+
+                            if (resp.data != null && !resp.data.isEmpty()) {
+                                Hogar h = resp.data.get(0);
+                                tvHogarTitulo.setText("Hogar #" + h.getId_hogar());
+                                tvClaveHogar.setText(h.getClave_inv());
                             }
-                        } catch (JSONException e) {
-                            Toast.makeText(requireContext(), "Error al procesar la respuesta del servidor", Toast.LENGTH_SHORT).show();
                         }
+                    } catch (JSONException e) {
+                        // Si falla la info del hogar no bloqueamos el resto
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Utilidades.mostrar_error_peticion(requireContext(), tagLogCat, "Error en la red", metodo, endPoint, error);
-                    }
-                }
+                error -> Utilidades.mostrar_error_peticion(
+                        requireContext(), TAG,
+                        "Error cargando hogar",
+                        Request.Method.GET, endPoint, error)
         );
 
-        PeticionesRed.anhadirPeticionACola(peticionHogar);
+        PeticionesRed.anhadirPeticionACola(peticion);
+    }
+
+
+    private void cargarUsuarios() {
+        String endPoint = WebService.URL_Usuario + "?id_hogar=" + idHogar;
+
+        JsonObjectRequest peticion = new JsonObjectRequest(
+                Request.Method.GET, endPoint, null,
+                response -> {
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+
+                            Gson gson = new GsonBuilder().create();
+                            Type tipo = new TypeToken<RespuestaLista<Usuario>>() {}.getType();
+                            RespuestaLista<Usuario> resp =
+                                    gson.fromJson(response.toString(), tipo);
+
+                            if (resp.data != null && !resp.data.isEmpty()) {
+                                mostrarUsuarios(resp.data);
+                            } else {
+                                tvSinUsuarios.setText("Sin compañeros registrados");
+                                tvSinUsuarios.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(requireContext(),
+                                "Error al procesar usuarios", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Utilidades.mostrar_error_peticion(
+                        requireContext(), TAG,
+                        "Error cargando usuarios",
+                        Request.Method.GET, endPoint, error)
+        );
+
+        PeticionesRed.anhadirPeticionACola(peticion);
+    }
+
+    /* ════════════════════════════════════════════════════════
+       PETICIÓN 3 — Habitaciones del Hogar
+    ════════════════════════════════════════════════════════ */
+
+    private void cargarHabitaciones() {
+        String endPoint = WebService.URL_Habitacion + "?id_hogar=" + idHogar;
+
+        JsonObjectRequest peticion = new JsonObjectRequest(
+                Request.Method.GET, endPoint, null,
+                response -> {
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+
+                            Gson gson = new GsonBuilder().create();
+                            Type tipo = new TypeToken<RespuestaLista<Habitacion>>() {}.getType();
+                            RespuestaLista<Habitacion> resp =
+                                    gson.fromJson(response.toString(), tipo);
+
+                            if (resp.data != null && !resp.data.isEmpty()) {
+                                mostrarHabitaciones(resp.data);
+                            } else {
+                                tvSinHabitaciones.setText("Sin habitaciones registradas");
+                                tvSinHabitaciones.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(requireContext(),
+                                "Error al procesar habitaciones", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Utilidades.mostrar_error_peticion(
+                        requireContext(), TAG,
+                        "Error cargando habitaciones",
+                        Request.Method.GET, endPoint, error)
+        );
+
+        PeticionesRed.anhadirPeticionACola(peticion);
+    }
+
+    /* ════════════════════════════════════════════════════════
+       RENDERIZADO — Tarjetas de usuarios
+    ════════════════════════════════════════════════════════ */
+
+    private void mostrarUsuarios(List<Usuario> usuarios) {
+        // Quitar el placeholder "Cargando…"
+        tvSinUsuarios.setVisibility(View.GONE);
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+
+        for (Usuario u : usuarios) {
+            View card = inflater.inflate(
+                    R.layout.item_usuario_hogar, containerUsuarios, false);
+
+            ((TextView) card.findViewById(R.id.tv_nombre)).setText(u.getNombre());
+            ((TextView) card.findViewById(R.id.tv_email)).setText(u.getEmail());
+
+            TextView tvRol = card.findViewById(R.id.tv_rol);
+            String rol = u.getRol() != null ? u.getRol() : "miembro";
+            tvRol.setText(rol.toUpperCase(Locale.getDefault()));
+
+            if ("admin".equalsIgnoreCase(rol)) {
+                tvRol.setBackgroundResource(R.drawable.bg_tag_yellow);
+            } else {
+                tvRol.setBackgroundResource(R.drawable.bg_tag_green);
+            }
+
+            containerUsuarios.addView(card);
+        }
+    }
+
+    /* ════════════════════════════════════════════════════════
+       RENDERIZADO — Grid de habitaciones (2 columnas)
+    ════════════════════════════════════════════════════════ */
+
+    private void mostrarHabitaciones(List<Habitacion> habitaciones) {
+        // Quitar el placeholder "Cargando…"
+        tvSinHabitaciones.setVisibility(View.GONE);
+
+        LayoutInflater inflater = LayoutInflater.from(requireContext());
+        int gap = dp(8);   // separación horizontal entre las dos columnas
+
+        LinearLayout fila = null;
+
+        for (int i = 0; i < habitaciones.size(); i++) {
+
+            // Cada 2 items creamos una nueva fila horizontal
+            if (i % 2 == 0) {
+                fila = new LinearLayout(requireContext());
+                fila.setOrientation(LinearLayout.HORIZONTAL);
+
+                LinearLayout.LayoutParams filaParms = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                filaParms.bottomMargin = dp(10);
+                fila.setLayoutParams(filaParms);
+                gridHabitaciones.addView(fila);
+            }
+
+            // Inflar tarjeta de habitación
+            View cardHab = inflater.inflate(
+                    R.layout.item_habitacion_hogar, fila, false);
+
+            // Ocupar la mitad del ancho disponible con weight=1
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
+            if (i % 2 == 0) {
+                lp.rightMargin = gap / 2;   // columna izquierda
+            } else {
+                lp.leftMargin  = gap / 2;   // columna derecha
+            }
+            cardHab.setLayoutParams(lp);
+
+            Habitacion h = habitaciones.get(i);
+            ((TextView) cardHab.findViewById(R.id.tv_nombre_hab)).setText(h.getNombre());
+            ((TextView) cardHab.findViewById(R.id.tv_tipo_hab)).setText(h.getTipo());
+
+            // Icono según tipo de habitación
+            ImageView imgTipo = cardHab.findViewById(R.id.img_tipo_hab);
+            imgTipo.setImageResource(iconoParaTipo(h.getTipo()));
+
+            fila.addView(cardHab);
+        }
+
+        // Si el número de habitaciones es impar, añadir una vista vacía
+        // para que la última tarjeta ocupe solo la mitad izquierda
+        if (fila != null && habitaciones.size() % 2 != 0) {
+            View placeholder = new View(requireContext());
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, 1, 1f);
+            lp.leftMargin = gap / 2;
+            fila.addView(placeholder, lp);
+        }
+    }
+
+    /* ════════════════════════════════════════════════════════
+       HELPERS
+    ════════════════════════════════════════════════════════ */
+
+    /**
+     * Devuelve el drawable correspondiente al tipo de habitación.
+     * Cuando tengamos iconos propios sustituiremos ic_home2 por cada uno.
+     */
+    private int iconoParaTipo(String tipo) {
+        if (tipo == null) return R.drawable.ic_home2;
+        switch (tipo.toLowerCase(Locale.getDefault())) {
+            case "cocina":   return R.drawable.ic_home2;
+            case "aseo":     return R.drawable.ic_home2;
+            case "garaje":   return R.drawable.ic_home2;
+            case "exterior": return R.drawable.ic_home2;
+            default:         return R.drawable.ic_home2;
+        }
+    }
+
+    /** Convierte dp a píxeles usando la densidad de la pantalla actual. */
+    private int dp(int dp) {
+        return Math.round(TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp,
+                getResources().getDisplayMetrics()));
     }
 }

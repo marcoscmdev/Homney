@@ -27,7 +27,7 @@
             android:layout_marginBottom="6dp" />
 
         <EditText
-            android:id="@+id/et_concepto_gasto"
+            android:id="@+id/et_nombre_tarea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input"
@@ -100,18 +100,34 @@
             android:id="@+id/spinner_categoria"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="numberSigned"
             android:background="@drawable/bg_input"
-            android:textColor="@color/text"
-            android:textColorHint="@color/muted"
-            android:textSize="14sp"
+            android:paddingLeft="14dp"
+            android:paddingRight="14dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Subcategoría: visible solo si la categoría padre tiene hijos -->
+        <TextView
+            android:id="@+id/tv_label_subcategoria"
+            style="@style/Homney.Text.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Subcategoría (opcional)"
+            android:layout_marginBottom="6dp"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/spinner_subcategoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_input"
             android:paddingLeft="14dp"
             android:paddingRight="14dp"
             android:paddingTop="12dp"
             android:paddingBottom="12dp"
             android:layout_marginBottom="14dp"
-            />
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="wrap_content"

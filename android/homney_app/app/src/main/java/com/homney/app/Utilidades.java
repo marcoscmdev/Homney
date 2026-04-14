@@ -31,7 +31,6 @@ import java.util.Map;
 public class Utilidades {
 
 
-
     public static boolean hayConexionInternet(Context contexto){
 
         ConnectivityManager cm =

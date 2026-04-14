@@ -182,6 +182,10 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.action_settings) {
                 Toast.makeText(getApplicationContext(),"Clic menú principal", Toast.LENGTH_LONG).show();
         }
+        if(item.getItemId() == R.id.menu_cerrar_sesion){
+            deleteSharedPreferences("sesion");
+            finish();
+        }
         return super.onOptionsItemSelected(item);
     }
 
