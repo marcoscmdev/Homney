@@ -2,12 +2,17 @@ package com.homney.app.ui.fragmento4_cartera;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +32,7 @@ import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.Gasto;
 import com.homney.app.webservice.modelo.RepartoGasto;
+import com.homney.app.webservice.modelo.Tarea;
 import com.homney.app.webservice.modelo.Usuario;
 import com.homney.app.webservice.respuestas.RespuestaLista;
 
@@ -48,27 +54,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Fragmento4_cartera extends Fragment {
 
     /* ── Vistas ──────────────────────────────────── */
-    private TextView     tvStatMeDeben;
-    private TextView     tvStatDebo;
-    private TextView     tvStatBalance;
-    private TextView     tagMeDeben;
-    private TextView     tagDebo;
-    private TextView     tagHistorial;
+    private TextView tvStatMeDeben;
+    private TextView tvStatDebo;
+    private TextView tvStatBalance;
+    private TextView tagMeDeben;
+    private TextView tagDebo;
+    private TextView tagHistorial;
     private LinearLayout containerMeDeben;
     private LinearLayout containerDebo;
     private LinearLayout containerHistorial;
-    private TextView     tvSinMeDeben;
-    private TextView     tvSinDebo;
-    private TextView     tvSinHistorial;
+    private TextView tvSinMeDeben;
+    private TextView tvSinDebo;
+    private TextView tvSinHistorial;
 
     /* ── Sesión ──────────────────────────────────── */
     private int idUsuario = -1;
-    private int idHogar   = -1;
+    private int idHogar = -1;
 
     /* ── Datos API ───────────────────────────────── */
-    private List<Gasto>        gastos      = null;
+    private List<Gasto> gastos = null;
     private List<RepartoGasto> misRepartos = null;
-    private List<Usuario>      usuarios    = null;
+    private List<Usuario> usuarios = null;
     private Map<Integer, List<RepartoGasto>> repartosDeDeudores = null;
 
     private static final String TAG = "WS_CARTERA";
@@ -83,23 +89,23 @@ public class Fragmento4_cartera extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment4_cartera, container, false);
 
-        tvStatMeDeben      = root.findViewById(R.id.tv_stat_me_deben);
-        tvStatDebo         = root.findViewById(R.id.tv_stat_debo);
-        tvStatBalance      = root.findViewById(R.id.tv_stat_balance);
-        tagMeDeben         = root.findViewById(R.id.tag_me_deben);
-        tagDebo            = root.findViewById(R.id.tag_debo);
-        tagHistorial       = root.findViewById(R.id.tag_historial);
-        containerMeDeben   = root.findViewById(R.id.container_me_deben);
-        containerDebo      = root.findViewById(R.id.container_debo);
+        tvStatMeDeben = root.findViewById(R.id.tv_stat_me_deben);
+        tvStatDebo = root.findViewById(R.id.tv_stat_debo);
+        tvStatBalance = root.findViewById(R.id.tv_stat_balance);
+        tagMeDeben = root.findViewById(R.id.tag_me_deben);
+        tagDebo = root.findViewById(R.id.tag_debo);
+        tagHistorial = root.findViewById(R.id.tag_historial);
+        containerMeDeben = root.findViewById(R.id.container_me_deben);
+        containerDebo = root.findViewById(R.id.container_debo);
         containerHistorial = root.findViewById(R.id.container_historial);
-        tvSinMeDeben       = root.findViewById(R.id.tv_sin_me_deben);
-        tvSinDebo          = root.findViewById(R.id.tv_sin_debo);
-        tvSinHistorial     = root.findViewById(R.id.tv_sin_historial);
+        tvSinMeDeben = root.findViewById(R.id.tv_sin_me_deben);
+        tvSinDebo = root.findViewById(R.id.tv_sin_debo);
+        tvSinHistorial = root.findViewById(R.id.tv_sin_historial);
 
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
         idUsuario = prefs.getInt("id_usuario", -1);
-        idHogar   = prefs.getInt("id_hogar",   -1);
+        idHogar = prefs.getInt("id_hogar", -1);
 
         if (idHogar == -1 || idUsuario == -1) {
             Toast.makeText(requireContext(),
@@ -125,21 +131,24 @@ public class Fragmento4_cartera extends Fragment {
         final AtomicInteger fase1 = new AtomicInteger(3);
 
         lanzarPeticion(WebService.URL_Gasto + "?id_hogar=" + idHogar,
-                new TypeToken<RespuestaLista<Gasto>>() {}.getType(),
+                new TypeToken<RespuestaLista<Gasto>>() {
+                }.getType(),
                 (List<Gasto> resp) -> {
                     gastos = resp;
                     if (fase1.decrementAndGet() == 0) iniciarFase2();
                 });
 
         lanzarPeticion(WebService.URL_RepartoGasto + "?id_usuario=" + idUsuario,
-                new TypeToken<RespuestaLista<RepartoGasto>>() {}.getType(),
+                new TypeToken<RespuestaLista<RepartoGasto>>() {
+                }.getType(),
                 (List<RepartoGasto> resp) -> {
                     misRepartos = resp;
                     if (fase1.decrementAndGet() == 0) iniciarFase2();
                 });
 
         lanzarPeticion(WebService.URL_Usuario + "?id_hogar=" + idHogar,
-                new TypeToken<RespuestaLista<Usuario>>() {}.getType(),
+                new TypeToken<RespuestaLista<Usuario>>() {
+                }.getType(),
                 (List<Usuario> resp) -> {
                     usuarios = resp;
                     if (fase1.decrementAndGet() == 0) iniciarFase2();
@@ -161,7 +170,8 @@ public class Fragmento4_cartera extends Fragment {
         for (Gasto g : misGastos) {
             String url = WebService.URL_RepartoGasto + "?id_gasto=" + g.getId_gasto();
             lanzarPeticion(url,
-                    new TypeToken<RespuestaLista<RepartoGasto>>() {}.getType(),
+                    new TypeToken<RespuestaLista<RepartoGasto>>() {
+                    }.getType(),
                     (List<RepartoGasto> resp) -> {
                         List<RepartoGasto> deudores = new ArrayList<>();
                         for (RepartoGasto r : resp) {
@@ -219,9 +229,9 @@ public class Fragmento4_cartera extends Fragment {
     private void renderCartera() {
         if (!isAdded()) return;
 
-        Map<Integer, Gasto>   gastoMap = new HashMap<>();
-        Map<Integer, Usuario> userMap  = new HashMap<>();
-        for (Gasto g : gastos)    gastoMap.put(g.getId_gasto(), g);
+        Map<Integer, Gasto> gastoMap = new HashMap<>();
+        Map<Integer, Usuario> userMap = new HashMap<>();
+        for (Gasto g : gastos) gastoMap.put(g.getId_gasto(), g);
         for (Usuario u : usuarios) userMap.put(u.getId_usuario(), u);
 
         // "Me deben": suma pendiente de mis gastos
@@ -253,7 +263,7 @@ public class Fragmento4_cartera extends Fragment {
 
         double totalMeDeben = 0, totalDebo = 0;
         for (DeudorInfo d : meDebenMap.values()) totalMeDeben += d.totalPendiente;
-        for (DeudorInfo d : deboMap.values())    totalDebo    += d.totalPendiente;
+        for (DeudorInfo d : deboMap.values()) totalDebo += d.totalPendiente;
         double balance = totalMeDeben - totalDebo;
 
         tvStatMeDeben.setText("+" + fmt(totalMeDeben));
@@ -284,7 +294,7 @@ public class Fragmento4_cartera extends Fragment {
                 containerDebo.addView(buildBloqueReparto(d, false));
         }
 
-        // Historial
+        // Historial de gastos con swipe-to-delete
         tvSinHistorial.setVisibility(View.GONE);
         if (gastos.isEmpty()) {
             tvSinHistorial.setText("Sin gastos registrados.");
@@ -292,12 +302,146 @@ public class Fragmento4_cartera extends Fragment {
         } else {
             LayoutInflater inf = LayoutInflater.from(requireContext());
             for (Gasto g : gastos) {
-                View row = inf.inflate(R.layout.item_gasto_historial, containerHistorial, false);
+                // 1. FrameLayout contenedor (misma técnica que en Tareas)
+                FrameLayout rootFrame = new FrameLayout(requireContext());
+                rootFrame.setLayoutParams(new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                // 2. Botón rojo DEBAJO (capa inferior)
+                LinearLayout deleteBtn = new LinearLayout(requireContext());
+                deleteBtn.setBackgroundColor(0xFFE05C5C);
+                deleteBtn.setGravity(Gravity.CENTER);
+                FrameLayout.LayoutParams btnLp = new FrameLayout.LayoutParams(
+                        dp(80), ViewGroup.LayoutParams.MATCH_PARENT);
+                btnLp.gravity = Gravity.END;
+                deleteBtn.setLayoutParams(btnLp);
+                ImageView icDelete = new ImageView(requireContext());
+                icDelete.setImageResource(android.R.drawable.ic_menu_delete);
+                icDelete.setColorFilter(Color.WHITE);
+                deleteBtn.addView(icDelete);
+                rootFrame.addView(deleteBtn);
+
+                // 3. Fila de gasto ENCIMA (capa superior, fondo blanco opaco)
+                View row = inf.inflate(R.layout.item_gasto_historial, rootFrame, false);
+                row.setBackgroundColor(0xFFFFFFFF);
+                rootFrame.addView(row);
+
+                // 4. Rellenar datos de la fila
                 rellenarFilaGasto(row, g, userMap);
-                containerHistorial.addView(row);
+
+                // 5. Touch listener para swipe + click en botón rojo
+                setupSwipeDeleteGasto(row, deleteBtn, g, rootFrame);
+
+                containerHistorial.addView(rootFrame);
                 agregarDivider(containerHistorial);
             }
         }
+    }
+
+    /* ════════════════════════════════════════════
+       SWIPE-TO-DELETE — Historial de gastos
+    ════════════════════════════════════════════ */
+
+    private void setupSwipeDeleteGasto(View row, LinearLayout deleteBtn,
+                                       Gasto g, FrameLayout rootFrame) {
+        // Foreground ripple para feedback de tap (el fondo blanco sólido permanece)
+        TypedValue outValue = new TypedValue();
+        requireContext().getTheme().resolveAttribute(
+                android.R.attr.selectableItemBackground, outValue, true);
+        row.setForeground(requireContext().getDrawable(outValue.resourceId));
+        row.setClickable(true);
+        row.setFocusable(true);
+
+        final float[] x1    = {0};
+        final float[] initTX = {0};
+        final int MAX_SWIPE  = dp(-80);
+
+        row.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    x1[0]     = event.getRawX();
+                    initTX[0] = v.getTranslationX();
+                    return true;
+                case MotionEvent.ACTION_MOVE:
+                    float delta  = event.getRawX() - x1[0];
+                    float newTX  = initTX[0] + delta;
+                    if (newTX <= 0 && newTX >= MAX_SWIPE)
+                        v.setTranslationX(newTX);
+                    return true;
+                case MotionEvent.ACTION_UP:
+                    if (v.getTranslationX() < MAX_SWIPE / 2f)
+                        v.animate().translationX(MAX_SWIPE).setDuration(200).start();
+                    else
+                        v.animate().translationX(0).setDuration(200).start();
+                    return true;
+            }
+            return false;
+        });
+
+        deleteBtn.setOnClickListener(v -> borrarGasto(g, rootFrame));
+    }
+
+    /* ════════════════════════════════════════════
+       BORRAR GASTO — réplica de deleteGasto() del web:
+       1) DELETE reparto_gasto.php?id_gasto=X
+       2) DELETE gasto.php?id_gasto=X
+       3) recargarCartera() para actualizar totales
+    ════════════════════════════════════════════ */
+
+    private void borrarGasto(Gasto g, FrameLayout rootFrame) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("¿Eliminar gasto?")
+                .setMessage("¿Seguro que quieres eliminar «" + g.getConcepto()
+                        + "» y su reparto asociado?")
+                .setPositiveButton("Eliminar", (dialog, which) ->
+                        eliminarRepartoYGasto(g, rootFrame))
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void eliminarRepartoYGasto(Gasto g, FrameLayout rootFrame) {
+        String urlReparto = WebService.URL_RepartoGasto + "?id_gasto=" + g.getId_gasto();
+        String urlGasto   = WebService.URL_Gasto        + "?id_gasto=" + g.getId_gasto();
+
+        // Paso 2: DELETE gasto (se lanza desde el callback del paso 1)
+        JsonObjectRequest deleteGasto = new JsonObjectRequest(
+                Request.Method.DELETE, urlGasto, null,
+                response -> {
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+                            Toast.makeText(requireContext(),
+                                    "Gasto eliminado", Toast.LENGTH_SHORT).show();
+                            // Recalcular todo (totales + historial sin el gasto borrado)
+                            recargarCartera();
+                        } else {
+                            Toast.makeText(requireContext(),
+                                    "No se pudo eliminar: "
+                                            + response.optString("message", ""),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(requireContext(),
+                                "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                        "Error al eliminar gasto", Request.Method.DELETE, urlGasto, error)
+        );
+
+        // Paso 1: DELETE reparto (libera FK); luego lanza el paso 2
+        JsonObjectRequest deleteReparto = new JsonObjectRequest(
+                Request.Method.DELETE, urlReparto, null,
+                respReparto -> PeticionesRed.anhadirPeticionACola(deleteGasto),
+                error -> {
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error al eliminar reparto", Request.Method.DELETE, urlReparto, error);
+                    // Intentamos borrar el gasto de todas formas
+                    PeticionesRed.anhadirPeticionACola(deleteGasto);
+                }
+        );
+
+        PeticionesRed.anhadirPeticionACola(deleteReparto);
     }
 
     /* ════════════════════════════════════════════
@@ -489,7 +633,7 @@ public class Fragmento4_cartera extends Fragment {
         String importe = fmt(item.reparto.getImporte());
         String concepto = item.gasto.getConcepto();
 
-        String titulo  = esMeDeben ? "Confirmar cobro" : "Confirmar pago";
+        String titulo = esMeDeben ? "Confirmar cobro" : "Confirmar pago";
         String mensaje = esMeDeben
                 ? "¿Confirmas que te han pagado " + importe + "?\n\n«" + concepto + "»"
                 : "¿Confirmas el pago de " + importe + "?\n\n«" + concepto + "»";
@@ -510,11 +654,11 @@ public class Fragmento4_cartera extends Fragment {
     private void marcarAbonado(ItemReparto item) {
         JSONObject body = new JSONObject();
         try {
-            body.put("id_gasto",   item.gasto.getId_gasto());
+            body.put("id_gasto", item.gasto.getId_gasto());
             body.put("id_usuario", item.reparto.getId_usuario());
-            body.put("abonado",    true);
-            body.put("importe",    item.reparto.getImporte());
-            body.put("pagador",    false);
+            body.put("abonado", true);
+            body.put("importe", item.reparto.getImporte());
+            body.put("pagador", false);
         } catch (JSONException e) {
             Toast.makeText(requireContext(), "Error al preparar la solicitud", Toast.LENGTH_SHORT).show();
             return;
@@ -549,7 +693,8 @@ public class Fragmento4_cartera extends Fragment {
        HISTORIAL: rellena fila de gasto
     ════════════════════════════════════════════ */
 
-    private void rellenarFilaGasto(View row, Gasto g, Map<Integer, Usuario> userMap) {
+    private void rellenarFilaGasto(View row, Gasto g,
+                                   Map<Integer, Usuario> userMap) {
         boolean esPropio = g.getId_usuario_pagador() == idUsuario;
         ((TextView) row.findViewById(R.id.tv_concepto)).setText(g.getConcepto());
 
@@ -603,6 +748,55 @@ public class Fragmento4_cartera extends Fragment {
         PeticionesRed.anhadirPeticionACola(peticion);
     }
 
+    private void eliminarRepartosyGastos(Gasto g, View rootFrame) {
+        String urlReparto = WebService.URL_RepartoGasto + "?reparto_gasto=" + g.getId_gasto();
+        String urlGasto = WebService.URL_Gasto + "?id_gasto=" + g.getId_gasto();
+
+        // ─── Paso 2: eliminar la tarea (se llama desde el callback del paso 1) ───
+        JsonObjectRequest deleteGasto = new JsonObjectRequest(
+                Request.Method.DELETE, urlGasto, null,
+                response -> {
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+                            Toast.makeText(requireContext(),
+                                    "Gasto Eliminado", Toast.LENGTH_SHORT).show();
+                            // Quitar el FrameLayout (rootFrame) del contenedor
+                            ViewGroup parent = (ViewGroup) rootFrame.getParent();
+                            if (parent != null) parent.removeView(rootFrame);
+                        } else {
+                            Toast.makeText(requireContext(),
+                                    "No se pudo eliminar el gasto: "
+                                            + response.optString("message", ""),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(requireContext(),
+                                "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                        "Error al eliminar gasto", Request.Method.DELETE, urlGasto, error)
+        );
+
+        // ─── Paso 1: eliminar el reparto (en callback lanza el paso 2) ─────────
+        JsonObjectRequest deleteReparto = new JsonObjectRequest(
+                Request.Method.DELETE, urlReparto, null,
+                respRepart -> {
+                    // Con o sin asignaciones, procedemos a borrar la tarea
+                    PeticionesRed.anhadirPeticionACola(deleteGasto);
+                },
+                error -> {
+                    // Si falla la petición de asignaciones, intentamos igualmente
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error al eliminar repartos", Request.Method.DELETE, urlReparto, error);
+                    PeticionesRed.anhadirPeticionACola(deleteGasto);
+                }
+        );
+
+        PeticionesRed.anhadirPeticionACola(deleteReparto);
+    }
+
     /* ════════════════════════════════════════════
        MODELOS INTERNOS
     ════════════════════════════════════════════ */
@@ -610,19 +804,27 @@ public class Fragmento4_cartera extends Fragment {
     private static class ItemReparto {
         Gasto gasto;
         RepartoGasto reparto;
-        ItemReparto(Gasto g, RepartoGasto r) { gasto = g; reparto = r; }
+
+        ItemReparto(Gasto g, RepartoGasto r) {
+            gasto = g;
+            reparto = r;
+        }
     }
 
     private static class DeudorInfo {
         Usuario user;
         List<ItemReparto> items = new ArrayList<>();
         double totalPendiente = 0;
-        double totalAbonado   = 0;
-        DeudorInfo(Usuario u) { user = u; }
+        double totalAbonado = 0;
+
+        DeudorInfo(Usuario u) {
+            user = u;
+        }
+
         void agregarItem(Gasto g, RepartoGasto r) {
             items.add(new ItemReparto(g, r));
             if (!r.isAbonado()) totalPendiente += r.getImporte();
-            else                totalAbonado   += r.getImporte();
+            else totalAbonado += r.getImporte();
         }
     }
 
@@ -643,7 +845,9 @@ public class Fragmento4_cartera extends Fragment {
             SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             Date d = p.parse(fechaStr);
             return d != null ? f.format(d) : fechaStr;
-        } catch (Exception e) { return fechaStr; }
+        } catch (Exception e) {
+            return fechaStr;
+        }
     }
 
     private void agregarDivider(LinearLayout parent) {

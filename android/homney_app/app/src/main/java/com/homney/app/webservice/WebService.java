@@ -13,7 +13,7 @@ public class WebService {
     public static final String URL_Muro =PROTOCOLO + SERVIDOR + CARPETA + "/muro.php";
     public static final String URL_RepartoGasto =PROTOCOLO + SERVIDOR + CARPETA + "/reparto_gasto.php";
     public static final String URL_Tarea =PROTOCOLO + SERVIDOR + CARPETA + "/tarea.php";
-    public static final String URL_Tarea_Realizada =PROTOCOLO + SERVIDOR + CARPETA + "/tarea_realizada.php";
+    public static final String URL_Tarea_Realizada =PROTOCOLO + SERVIDOR + CARPETA + "/tareas_realizadas.php";
     public static final String URL_Usuario =PROTOCOLO + SERVIDOR + CARPETA + "/usuario.php";
     public static final String URL_Login   =PROTOCOLO + SERVIDOR + CARPETA + "/login.php";
     public static final String URL_EjemploImagen ="https://tesdai.com/imagenes/logoTESDAI.png";

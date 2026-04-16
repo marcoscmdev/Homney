@@ -1,16 +1,31 @@
 package com.homney.app;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.homney.app.webservice.WebService;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -50,18 +65,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout); // Contenedor principal que incluye toda la interfaz con el menú deslizante
-        NavigationView navigationView = findViewById(R.id.nav_view); // Menú deslizante
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
 
-        // IDs fragments(mobile_navigation.xml) y eb menu deslizante(activity_main_drawer.xml)
-        // a tener en cuenta para visualizar en la barra de acción
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.fragmento2, R.id.fragmento3, R.id.fragmento4, R.id.fragmento5,
                 R.id.nav_crear_tarea, R.id.nav_crear_gasto)
                 .setOpenableLayout(drawer)
                 .build();
 
-        /* Enlazamos cargador de fragments del menú deslizante (NavController) con barra de acción */
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -72,9 +84,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
                 NavigationView navigationView = findViewById(R.id.nav_view);
-                // Buscamos id menú/fragmento Actual
-                long idMenuPrevioSeleccionado=-1;
-                for (int i=0; i<navigationView.getMenu().size(); i++) {
+                long idMenuPrevioSeleccionado = -1;
+                for (int i = 0; i < navigationView.getMenu().size(); i++) {
                     if (navigationView.getMenu().getItem(i).isChecked()) {
                         idMenuPrevioSeleccionado = navigationView.getMenu().getItem(i).getItemId();
                     }
@@ -82,24 +93,21 @@ public class MainActivity extends AppCompatActivity {
 
                 if (menuItem.getItemId() == R.id.nav_view) {
                     finish();
-                }
-                else {
-                    Bundle argumentos=null;
-                    // Ejemplo para enviar argumentos a un fragmento
-                    if (idMenuPrevioSeleccionado == R.id.nav_home && menuItem.getItemId()==R.id.fragmento2) {
-                        argumentos=new Bundle();
-                        argumentos.putString("dato","X-100");
+                } else {
+                    Bundle argumentos = null;
+                    if (idMenuPrevioSeleccionado == R.id.nav_home && menuItem.getItemId() == R.id.fragmento2) {
+                        argumentos = new Bundle();
+                        argumentos.putString("dato", "X-100");
                     }
-                    if (idMenuPrevioSeleccionado == R.id.fragmento2 && menuItem.getItemId()==R.id.fragmento2) {
-                        argumentos=new Bundle();
-                        argumentos.putString("dato","X-100");
+                    if (idMenuPrevioSeleccionado == R.id.fragmento2 && menuItem.getItemId() == R.id.fragmento2) {
+                        argumentos = new Bundle();
+                        argumentos.putString("dato", "X-100");
                     }
-
 
                     NavController navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
                     NavOptions.Builder opcionesBuilder = new NavOptions.Builder();
                     opcionesBuilder.setPopUpTo(menuItem.getItemId(), true);
-                    navController.navigate(menuItem.getItemId(),argumentos, opcionesBuilder.build());
+                    navController.navigate(menuItem.getItemId(), argumentos, opcionesBuilder.build());
 
                     ((DrawerLayout) findViewById(R.id.drawer_layout)).closeDrawers();
                 }
@@ -108,35 +116,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-        // Eventos del menú deslizante
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
-            }
-
-            @Override
-            public void onDrawerOpened(@NonNull View drawerView) {
-                    // Menú deslizante abierto
-            }
-
-            @Override
-            public void onDrawerClosed(@NonNull View drawerView) {
-                    // Menú deslizante cerrado
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-
-            }
+            @Override public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {}
+            @Override public void onDrawerOpened(@NonNull View drawerView) {}
+            @Override public void onDrawerClosed(@NonNull View drawerView) {}
+            @Override public void onDrawerStateChanged(int newState) {}
         });
 
-
-
-
-        // Confirmacion de cierre de aplicación
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -147,42 +133,55 @@ public class MainActivity extends AppCompatActivity {
 
                 if (num_fragmentos_historial == 0) {
                     if (pulsadoUnaVezAtrasParaSalir) {
-                        finish(); // ← mucho más simple
+                        finish();
                         return;
                     }
-
                     pulsadoUnaVezAtrasParaSalir = true;
                     Toast.makeText(getApplicationContext(),
                             "Por favor, presione ATRÁS otra vez para SALIR",
                             Toast.LENGTH_LONG).show();
-
                     handler.removeCallbacks(cancelarSalida);
-                    handler.postDelayed(cancelarSalida, 2000); // 2 segundos
-
-                } else { // Mostramos fragmento anterior
+                    handler.postDelayed(cancelarSalida, 2000);
+                } else {
                     NavController navController = Navigation.findNavController(
                             MainActivity.this, R.id.nav_host_fragment);
                     navController.popBackStack();
                 }
             }
         });
-
     }
 
-    /* Menú principal */
+    /* ════════════════════════════════════════════
+       MENÚ PRINCIPAL — incluye el avatar de perfil
+    ════════════════════════════════════════════ */
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // Cargar el avatar en el action view del ítem de perfil
+        MenuItem profileItem = menu.findItem(R.id.action_profile);
+        if (profileItem != null) {
+            View actionView = profileItem.getActionView();
+            if (actionView != null) {
+                ImageView ivAvatar = actionView.findViewById(R.id.iv_toolbar_avatar);
+                if (ivAvatar != null) {
+                    cargarAvatarToolbar(ivAvatar);
+                    // Al pulsar el avatar se abre un PopupMenu anclado al propio avatar
+                    actionView.setOnClickListener(v -> mostrarPopupPerfil(v));
+                }
+            }
+        }
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
-                Toast.makeText(getApplicationContext(),"Clic menú principal", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Ajustes", Toast.LENGTH_LONG).show();
         }
-        if(item.getItemId() == R.id.menu_cerrar_sesion){
+        if (item.getItemId() == R.id.menu_cerrar_sesion) {
             deleteSharedPreferences("sesion");
             finish();
         }
@@ -190,12 +189,92 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp() {  // Manejo del historial de framentos
+    public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
 
+    /**
+     * PopupMenu anclado al avatar.
+     * Sustituye al menú de desbordamiento (3 puntos) para que éste no aparezca.
+     * Reutiliza la lógica de onOptionsItemSelected para cada ítem.
+     */
+    private void mostrarPopupPerfil(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenuInflater().inflate(R.menu.popup_perfil, popup.getMenu());
+        popup.setOnMenuItemClickListener(item -> onOptionsItemSelected(item));
+        popup.show();
+    }
 
+    /* ════════════════════════════════════════════
+       CARGA DEL AVATAR CON GLIDE
+       - Si el usuario tiene foto real → Glide la carga en círculo
+       - Si tiene la foto por defecto (default.png) o no tiene
+         → se genera un Bitmap con la inicial sobre fondo accent
+    ════════════════════════════════════════════ */
 
+    private void cargarAvatarToolbar(ImageView ivAvatar) {
+        SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        String nombre = prefs.getString("nombre", "?");
+        String avatar = prefs.getString("avatar", null);
+
+        char inicial = (nombre != null && !nombre.isEmpty())
+                ? Character.toUpperCase(nombre.charAt(0)) : '?';
+
+        // Fallback: círculo con la inicial (fondo accent #F5C518)
+        Drawable avatarFallback = crearAvatarInicial(inicial, 0xFFF5C518);
+
+        boolean tieneAvatarReal = avatar != null
+                && !avatar.isEmpty()
+                && !avatar.contains("default.png");
+
+        if (tieneAvatarReal) {
+            // URL completa de la imagen: mismo base que el backend
+            String avatarUrl = WebService.PROTOCOLO + WebService.SERVIDOR
+                    + WebService.CARPETA + "/" + avatar;
+
+            Glide.with(this)
+                    .load(avatarUrl)
+                    .apply(new RequestOptions()
+                            .circleCrop()
+                            .placeholder(avatarFallback)
+                            .error(avatarFallback))
+                    .into(ivAvatar);
+        } else {
+            // Sin foto real → mostrar inicial directamente
+            ivAvatar.setImageDrawable(avatarFallback);
+            // Clip circular para la imagen con inicial
+            ivAvatar.setClipToOutline(true);
+        }
+    }
+
+    /**
+     * Genera un Drawable circular con la inicial del usuario.
+     * Equivale al avatar por defecto de la web:
+     *   <div class="avatar" style="background:${color}">${inicial}</div>
+     */
+    private Drawable crearAvatarInicial(char inicial, int colorFondo) {
+        int size = Math.round(TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 36, getResources().getDisplayMetrics()));
+
+        Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+        // Fondo circular
+        Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        bgPaint.setColor(colorFondo);
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, bgPaint);
+
+        // Texto de la inicial centrado
+        Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(Color.WHITE);
+        textPaint.setTextSize(size * 0.43f);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        float yPos = size / 2f - (textPaint.descent() + textPaint.ascent()) / 2f;
+        canvas.drawText(String.valueOf(inicial), size / 2f, yPos, textPaint);
+
+        return new BitmapDrawable(getResources(), bitmap);
+    }
 }

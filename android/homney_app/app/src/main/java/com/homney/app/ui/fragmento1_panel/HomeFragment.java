@@ -26,6 +26,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.anychart.AnyChart;
 import com.anychart.AnyChartView;
+import com.anychart.APIlib;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
@@ -345,6 +346,7 @@ public class HomeFragment extends Fragment {
     ════════════════════════════════════════════ */
 
     private void renderChartTareas() {
+        APIlib.getInstance().setActiveAnyChartView(chartTareas);
         Cartesian lineChart = AnyChart.line();
         lineChart.animation(true);
 
@@ -404,6 +406,7 @@ public class HomeFragment extends Fragment {
     ════════════════════════════════════════════ */
 
     private void renderChartGastos(Map<Integer, Usuario> userMap) {
+        APIlib.getInstance().setActiveAnyChartView(chartGastos);
         Cartesian colChart = AnyChart.column();
         colChart.animation(true);
 

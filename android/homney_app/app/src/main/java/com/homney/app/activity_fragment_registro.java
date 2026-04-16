@@ -112,6 +112,7 @@ public class activity_fragment_registro extends Fragment {
                                     editor.putString("email",    usuario.getEmail());
                                     editor.putString("rol",      usuario.getRol());
                                     editor.putInt("id_hogar",    usuario.getId_hogar());
+                                    editor.putString("avatar",   usuario.getAvatar()); // para el círculo del toolbar
 
                                     // "Recuérdame" solo persiste el mail para auto-login
                                     if (cb_recordar_sesion.isChecked()) {

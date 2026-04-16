@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Action view del ítem de perfil en la Toolbar.
+    Glide carga la foto de usuario (circleCrop) o bien un Bitmap
+    con la inicial del nombre sobre fondo accent.
+-->
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/iv_toolbar_avatar"
+    android:layout_width="36dp"
+    android:layout_height="36dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="4dp"
+    android:scaleType="centerCrop"
+    android:src="@drawable/ic_user"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@drawable/bg_tag_muted" />

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Opciones que aparecen en el PopupMenu al pulsar el avatar del toolbar.
+    Los IDs coinciden con los de onOptionsItemSelected en MainActivity
+    para reutilizar la misma lógica.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings" />
+
+    <item
+        android:id="@+id/menu_ayuda"
+        android:title="@string/main_menu" />
+
+    <item
+        android:id="@+id/menu_cerrar_sesion"
+        android:title="@string/main_menu1" />
+
+</menu>
