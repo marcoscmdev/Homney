@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="10dp"
+    android:padding="14dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/titulo_publi_muro"
+        style="@style/Homney.Text.Title"
+        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
+        android:text="Titulo"/>
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:layout_below="@id/titulo_publi_muro"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:id="@+id/imagen_publi_muro"
+        android:visibility="gone"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/fecha_nombre"
+        style="@style/Homney.Text.Muted"
+        android:layout_below="@id/imagen_publi_muro"
+        android:layout_centerInParent="true"
+        android:text="Lunes - 23 Febrero 2026 Usuario"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/body_muro"
+        style="@style/Homney.Text.Body"
+        android:layout_below="@id/fecha_nombre"
+        android:layout_centerInParent="true"
+        android:textAlignment="textStart"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+        android:layout_margin="@dimen/fab_margin"/>
+
+    
+</RelativeLayout>

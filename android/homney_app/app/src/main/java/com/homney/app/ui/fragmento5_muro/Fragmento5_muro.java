@@ -1,29 +1,169 @@
 package com.homney.app.ui.fragmento5_muro;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
+import com.homney.app.Utilidades;
+import com.homney.app.webservice.PeticionesRed;
+import com.homney.app.webservice.WebService;
+import com.homney.app.webservice.modelo.Muro;
+import com.homney.app.webservice.modelo.Usuario;
+import com.homney.app.webservice.respuestas.RespuestaLista;
+
+import org.json.JSONException;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Fragmento5_muro extends Fragment {
 
+    /* ── Vistas ─────────────────────────────────────────── */
+    private RecyclerView recycler;
+    private TextView     tvSinPublicaciones;
+
+    /* ── Sesión ─────────────────────────────────────────── */
+    private int idHogar = -1;
+
+    /* ── Datos ──────────────────────────────────────────── */
+    private List<Muro>    listaPublis   = new ArrayList<>();
+    private List<Usuario> listaUsuarios = new ArrayList<>();
+
+    private static final String TAG = "WS_MURO";
+
+    /* ════════════════════════════════════════════════════════
+       CICLO DE VIDA
+    ════════════════════════════════════════════════════════ */
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment5_muro, container, false);
 
-        Bundle argumentos = getArguments();
-        if (argumentos!=null) {
-            String dato = argumentos.getString("dato");
-            Toast.makeText(getContext(), "Dato recibido: " + dato, Toast.LENGTH_LONG).show();
+        // Enlazar vistas
+        recycler           = root.findViewById(R.id.recycler);
+        tvSinPublicaciones = root.findViewById(R.id.tv_sin_publicaciones);
+
+        // Configurar RecyclerView (el adapter se asigna cuando lleguen los datos)
+        recycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        recycler.addItemDecoration(
+                new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+
+        // Leer sesión
+        SharedPreferences prefs = requireContext()
+                .getSharedPreferences("sesion", Context.MODE_PRIVATE);
+        idHogar = prefs.getInt("id_hogar", -1);
+
+        if (idHogar != -1) {
+            if (Utilidades.hayConexionInternet(requireContext())) {
+                cargarDatos();
+            } else {
+                tvSinPublicaciones.setText("Sin conexión a Internet");
+            }
+        } else {
+            Toast.makeText(requireContext(),
+                    "Sesión no válida — vuelve a iniciar sesión",
+                    Toast.LENGTH_LONG).show();
         }
 
         return root;
+    }
+
+    /* ════════════════════════════════════════════════════════
+       PETICIONES — Publicaciones y Usuarios en paralelo
+       Cuando las dos lleguen → mostrarPublicaciones()
+    ════════════════════════════════════════════════════════ */
+
+    private void cargarDatos() {
+        AtomicInteger pendiente = new AtomicInteger(2);
+
+        // 1) Publicaciones del muro filtradas por hogar
+        String urlMuro = WebService.URL_Muro + "?id_hogar=" + idHogar;
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                Request.Method.GET, urlMuro, null,
+                response -> {
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+                            Gson gson = new GsonBuilder().create();
+                            Type tipo = new TypeToken<RespuestaLista<Muro>>() {}.getType();
+                            RespuestaLista<Muro> resp = gson.fromJson(response.toString(), tipo);
+                            if (resp.data != null) listaPublis = resp.data;
+                        }
+                    } catch (JSONException e) { /* ignorar */ }
+                    if (pendiente.decrementAndGet() == 0) mostrarPublicaciones();
+                },
+                error -> {
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error cargando muro", Request.Method.GET, urlMuro, error);
+                    if (pendiente.decrementAndGet() == 0) mostrarPublicaciones();
+                }
+        ));
+
+        // 2) Usuarios del hogar (para mostrar el nombre del autor)
+        String urlUsuarios = WebService.URL_Usuario + "?id_hogar=" + idHogar;
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                Request.Method.GET, urlUsuarios, null,
+                response -> {
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+                            Gson gson = new GsonBuilder().create();
+                            Type tipo = new TypeToken<RespuestaLista<Usuario>>() {}.getType();
+                            RespuestaLista<Usuario> resp = gson.fromJson(response.toString(), tipo);
+                            if (resp.data != null) listaUsuarios = resp.data;
+                        }
+                    } catch (JSONException e) { /* ignorar */ }
+                    if (pendiente.decrementAndGet() == 0) mostrarPublicaciones();
+                },
+                error -> { if (pendiente.decrementAndGet() == 0) mostrarPublicaciones(); }
+        ));
+    }
+
+    /* ════════════════════════════════════════════════════════
+       RENDERIZADO
+    ════════════════════════════════════════════════════════ */
+
+    private void mostrarPublicaciones() {
+        if (!isAdded()) return;
+
+        if (listaPublis.isEmpty()) {
+            tvSinPublicaciones.setText("El muro está vacío");
+            tvSinPublicaciones.setVisibility(View.VISIBLE);
+            recycler.setVisibility(View.GONE);
+            return;
+        }
+
+        // Construir mapa id_usuario → nombre para el adapter
+        Map<Integer, String> nombresPorUsuario = new HashMap<>();
+        for (Usuario u : listaUsuarios) {
+            nombresPorUsuario.put(u.getId_usuario(), u.getNombre());
+        }
+
+        tvSinPublicaciones.setVisibility(View.GONE);
+        recycler.setVisibility(View.VISIBLE);
+        recycler.setAdapter(new RvMuroAdapter(listaPublis, nombresPorUsuario));
     }
 }
