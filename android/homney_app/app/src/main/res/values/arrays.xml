@@ -3,11 +3,15 @@
 
     <!-- Spinner: Sexo (registro) -->
     <string-array name="sexo_options">
-        <item>Hombre</item>
         <item>Mujer</item>
+        <item>Hombre</item>
+        <item>No binario</item>
+        <item>Género fluido</item>
+        <item>Transgénero</item>
+        <item>Agénero</item>
+        <item>Prefiero no decirlo</item>
         <item>Otro</item>
     </string-array>
-
     <!-- Spinner: Modo de hogar (registro) -->
     <string-array name="modo_options">
         <item>Crear un hogar nuevo</item>

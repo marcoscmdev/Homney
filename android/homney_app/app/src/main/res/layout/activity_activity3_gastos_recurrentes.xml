@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    WIZARD PASO 2 — Gastos recurrentes
+    Equivale al Paso 3 del wizard web: tabla de gastos sugeridos (concepto + importe + modo de pago)
+    con campo personalizado al final.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:paddingBottom="40dp">
+
+        <!-- ══ Indicador de progreso ═════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="28dp">
+
+            <View android:layout_width="8dp" android:layout_height="8dp"
+                android:background="@color/accent_dark" android:layout_marginEnd="6dp" />
+            <!-- Punto activo -->
+            <View
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@color/accent_dark"
+                android:layout_marginEnd="6dp" />
+            <View android:layout_width="8dp" android:layout_height="8dp"
+                android:background="@color/border" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Paso 2 de 3"
+                style="@style/Homney.Text.Muted"
+                android:layout_marginStart="12dp" />
+        </LinearLayout>
+
+        <!-- ══ Cabecera ═══════════════════════════════════════ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gastos recurrentes"
+            android:textColor="@color/text"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registra los gastos fijos del hogar. Se calculará la parte de cada conviviente automáticamente."
+            style="@style/Homney.Text.Muted"
+            android:layout_marginBottom="20dp" />
+
+        <!-- ══ Cabecera de la tabla ═══════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/surface_two"
+            android:padding="10dp"
+            android:layout_marginBottom="2dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Concepto"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="@color/design_default_color_secondary_variant" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Importe €"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="@color/danger"
+                android:gravity="end" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="12sp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- ══ Filas de gastos sugeridos (generadas desde Java) ══ -->
+        <LinearLayout
+            android:id="@+id/ll_gastos_tabla"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp" />
+
+        <!-- ══ Añadir gasto personalizado ════════════════════ -->
+        <TextView
+            style="@style/Homney.Text.Muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="O añade un gasto personalizado"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="32dp">
+
+            <EditText
+                android:id="@+id/et_custom_nombre"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:hint="Concepto..."
+                android:background="@drawable/bg_input"
+                android:padding="10dp"
+                android:inputType="textCapSentences"
+                android:layout_marginEnd="6dp" />
+
+            <EditText
+                android:id="@+id/et_custom_importe"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:hint="Importe €"
+                android:background="@drawable/bg_input"
+                android:padding="10dp"
+                android:inputType="numberDecimal"
+                android:layout_marginEnd="6dp" />
+
+            <Button
+                android:id="@+id/btn_add_gasto"
+                style="@style/Homney.Button.Ghost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+" />
+        </LinearLayout>
+
+        <!-- ══ Resumen de gastos seleccionados ═══════════════ -->
+        <TextView
+            android:id="@+id/tv_resumen_gastos"
+            style="@style/Homney.Text.Muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 gastos seleccionados"
+            android:layout_marginBottom="16dp" />
+
+        <!-- ══ Botones de navegación ══════════════════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_atras"
+                style="@style/Homney.Button.Ghost"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="← Atrás"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btn_comenzar"
+                style="@style/Homney.Button.Primary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Comenzar →" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

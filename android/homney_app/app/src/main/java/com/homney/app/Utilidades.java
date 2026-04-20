@@ -23,6 +23,7 @@ import androidx.core.app.ActivityCompat;
 import java.io.File;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

@@ -68,5 +68,9 @@
     <string name="texto_hogar_invitacion">"Clave de invitación: "</string>
     <string name="miembros_hogar">Miembros del hogar</string>
     <string name="mis_tareas">Mis tareas</string>
+    <string name="repe_password">Repite la contraseña</string>
+    <string name="definir_estancia_titulo">Define las estancias</string>
+    <string name="definir_estancia_subtitulo">"Selecciona las zonas de tu hogar y organiza las tareas recurrentes por areas. "</string>
+    <string name="cocina">Cocina</string>
 
 </resources>

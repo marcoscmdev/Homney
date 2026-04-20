@@ -5,20 +5,27 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".app"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HomneyApp"
-        android:usesCleartextTraffic="true"
-        android:name=".app">
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".login_registro.Activity2_registro_config_hogar"
+            android:exported="false" />
+        <activity
+            android:name=".login_registro.Activity3_gastos_recurrentes"
+            android:exported="false" />
         <activity
             android:name=".loginActivity"
             android:exported="true"
             android:theme="@style/Theme.HomneyApp.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    WIZARD PASO 1 — Define las estancias del hogar
+    Equivale al Paso 1 del wizard web: chips de sugerencia + lista seleccionada + campo personalizado
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:paddingBottom="40dp">
+
+        <!-- ══ Indicador de progreso (4 puntos) ══════════════ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="28dp">
+
+            <!-- Punto activo -->
+            <View
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@color/accent_dark"
+                android:layout_marginEnd="6dp" />
+            <!-- Puntos inactivos -->
+            <View android:layout_width="8dp" android:layout_height="8dp"
+                android:background="@color/accent_dark" android:layout_marginEnd="6dp" />
+            <View android:layout_width="8dp" android:layout_height="8dp"
+                android:background="@color/border" android:layout_marginEnd="6dp" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Paso 2 de 3"
+                style="@style/Homney.Text.Muted"
+                android:layout_marginStart="12dp" />
+        </LinearLayout>
+
+        <!-- ══ Cabecera ═══════════════════════════════════════ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/definir_estancia_titulo"
+            android:textColor="@color/text"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/definir_estancia_subtitulo"
+            style="@style/Homney.Text.Muted"
+            android:layout_marginBottom="24dp" />
+
+        <!-- ══ Sugerencias — pulsa para añadir ═══════════════ -->
+        <TextView
+            style="@style/Homney.Text.Muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sugerencias — pulsa para añadir"
+            android:layout_marginBottom="10dp" />
+
+        <!-- Chips en 2 columnas gestionadas desde Java -->
+        <LinearLayout
+            android:id="@+id/ll_chips_fila1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="6dp" />
+
+        <LinearLayout
+            android:id="@+id/ll_chips_fila2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="6dp" />
+
+        <LinearLayout
+            android:id="@+id/ll_chips_fila3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp" />
+
+        <!-- ══ Estancias añadidas ═════════════════════════════ -->
+        <TextView
+            style="@style/Homney.Text.Muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Estancias añadidas"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Contenedor dinámico de tags seleccionados -->
+        <LinearLayout
+            android:id="@+id/ll_selected_rooms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_input"
+            android:padding="12dp"
+            android:minHeight="52dp"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/tv_sin_seleccion"
+                style="@style/Homney.Text.Muted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pulsa una sugerencia o escribe abajo"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <!-- ══ Campo personalizado ════════════════════════════ -->
+        <TextView
+            style="@style/Homney.Text.Muted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="O añade una estancia personalizada"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="32dp">
+
+            <EditText
+                android:id="@+id/et_custom_room"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Otra estancia..."
+                android:background="@drawable/bg_input"
+                android:padding="12dp"
+                android:inputType="textCapSentences"
+                android:maxLength="60"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btn_add_custom"
+                style="@style/Homney.Button.Ghost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Añadir" />
+        </LinearLayout>
+
+        <!-- ══ Botón Siguiente ════════════════════════════════ -->
+        <Button
+            android:id="@+id/btn_siguiente"
+            style="@style/Homney.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Siguiente →" />
+
+    </LinearLayout>
+</ScrollView>
