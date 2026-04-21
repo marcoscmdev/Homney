@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Spinner: Sexo (registro) -->
+    <!-- Spinner: Sexo (registro) para homney_produc
     <string-array name="sexo_options">
         <item>Mujer</item>
         <item>Hombre</item>
@@ -12,6 +12,14 @@
         <item>Prefiero no decirlo</item>
         <item>Otro</item>
     </string-array>
+    Datos de prueba con homneydev -->
+
+    <string-array name="sexo_options">
+        <item>femenino</item>
+        <item>masculino</item>
+        <item>otro</item>
+    </string-array>
+
     <!-- Spinner: Modo de hogar (registro) -->
     <string-array name="modo_options">
         <item>Crear un hogar nuevo</item>
