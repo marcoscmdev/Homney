@@ -38,7 +38,7 @@ public class activity_fragment_registro extends Fragment {
     EditText et_mail, et_pass;
     CheckBox cb_recordar_sesion;
     Button btn_login;
-    String tagLogCat ="WS";
+    String tagLogCat = "WS";
     String mail;
     boolean remember;
     SharedPreferences preferences;
@@ -62,7 +62,7 @@ public class activity_fragment_registro extends Fragment {
                 String mail = et_mail.getText().toString().trim();
                 String pass = et_pass.getText().toString().trim();
 
-                if(mail.isEmpty() || pass.isEmpty()){
+                if (mail.isEmpty() || pass.isEmpty()) {
                     Toast.makeText(getContext(), "Rellena todos los campos", Toast.LENGTH_SHORT).show();
                 } else {
                     iniciarSesion(mail, pass);
@@ -99,7 +99,8 @@ public class activity_fragment_registro extends Fragment {
                                 Gson gson = new GsonBuilder().create();
 
                                 // Definimos el tipo genérico correctamente con GSON
-                                Type tipoRespuesta = new TypeToken<RespuestaLista<Usuario>>(){}.getType();
+                                Type tipoRespuesta = new TypeToken<RespuestaLista<Usuario>>() {
+                                }.getType();
                                 RespuestaLista<Usuario> respuestaLogin = gson.fromJson(response.toString(), tipoRespuesta);
 
                                 if (respuestaLogin.data != null && !respuestaLogin.data.isEmpty()) {
@@ -107,12 +108,12 @@ public class activity_fragment_registro extends Fragment {
                                     Usuario usuario = respuestaLogin.data.get(0);
 
                                     // Guardamos SIEMPRE los datos de sesión activa
-                                    editor.putInt("id_usuario",  usuario.getId_usuario());
-                                    editor.putString("nombre",   usuario.getNombre());
-                                    editor.putString("email",    usuario.getEmail());
-                                    editor.putString("rol",      usuario.getRol());
-                                    editor.putInt("id_hogar",    usuario.getId_hogar());
-                                    editor.putString("avatar",   usuario.getAvatar()); // para el círculo del toolbar
+                                    editor.putInt("id_usuario", usuario.getId_usuario());
+                                    editor.putString("nombre", usuario.getNombre());
+                                    editor.putString("email", usuario.getEmail());
+                                    editor.putString("rol", usuario.getRol());
+                                    editor.putInt("id_hogar", usuario.getId_hogar());
+                                    editor.putString("avatar", usuario.getAvatar()); // para el círculo del toolbar
 
                                     // "Recuérdame" solo persiste el mail para auto-login
                                     if (cb_recordar_sesion.isChecked()) {
@@ -124,9 +125,9 @@ public class activity_fragment_registro extends Fragment {
                                     editor.apply();
 
                                     Intent intent = new Intent(requireActivity(), MainActivity.class);
-                                    intent.putExtra("usuario_id",    usuario.getId_usuario());
+                                    intent.putExtra("usuario_id", usuario.getId_usuario());
                                     intent.putExtra("usuario_nombre", usuario.getNombre());
-                                    intent.putExtra("usuario_email",  usuario.getEmail());
+                                    intent.putExtra("usuario_email", usuario.getEmail());
 
                                     startActivity(intent);
                                     requireActivity().finish();

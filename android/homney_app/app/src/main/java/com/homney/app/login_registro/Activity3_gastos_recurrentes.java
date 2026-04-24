@@ -3,7 +3,6 @@ package com.homney.app.login_registro;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -50,26 +49,26 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
        Gasto sugerido (nombre + importe por defecto + modo de pago)
        Igual que EXP_SUGG de la web
     ═══════════════════════════════════════════════════════ */
-    private static class GastoSugg {
+    private static class GastoSugest {
         final String nombre;
         final double importeDefault;
         final String modo;
-        GastoSugg(String nombre, double importeDefault, String modo) {
+        GastoSugest(String nombre, double importeDefault, String modo) {
             this.nombre          = nombre;
             this.importeDefault  = importeDefault;
             this.modo            = modo;
         }
     }
 
-    private static final GastoSugg[] SUGERENCIAS = {
-        new GastoSugg("Alquiler",  700, "transferencia"),
-        new GastoSugg("Luz",        80, "domiciliacion"),
-        new GastoSugg("Agua",       35, "domiciliacion"),
-        new GastoSugg("Gas",        55, "domiciliacion"),
-        new GastoSugg("Internet",   45, "domiciliacion"),
-        new GastoSugg("Netflix",    13, "tarjeta"),
-        new GastoSugg("Spotify",    11, "tarjeta"),
-        new GastoSugg("Comunidad",  60, "transferencia"),
+    private static final GastoSugest[] SUGERENCIAS = {
+        new GastoSugest("Alquiler",  700, "transferencia"),
+        new GastoSugest("Luz",        80, "domiciliacion"),
+        new GastoSugest("Agua",       35, "domiciliacion"),
+        new GastoSugest("Gas",        55, "domiciliacion"),
+        new GastoSugest("Internet",   45, "domiciliacion"),
+        new GastoSugest("Netflix",    13, "tarjeta"),
+        new GastoSugest("Spotify",    11, "tarjeta"),
+        new GastoSugest("Comunidad",  60, "transferencia"),
     };
 
     /* ── Vistas ─────────────────────────────────────────── */
@@ -131,7 +130,7 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
 
         for (int i = 0; i < SUGERENCIAS.length; i++) {
             final int idx = i;
-            GastoSugg g = SUGERENCIAS[i];
+            GastoSugest g = SUGERENCIAS[i];
 
             LinearLayout fila = new LinearLayout(this);
             fila.setOrientation(LinearLayout.HORIZONTAL);

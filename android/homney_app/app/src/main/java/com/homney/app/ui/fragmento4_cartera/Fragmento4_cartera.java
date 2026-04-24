@@ -747,55 +747,7 @@ public class Fragmento4_cartera extends Fragment {
         );
         PeticionesRed.anhadirPeticionACola(peticion);
     }
-
-    private void eliminarRepartosyGastos(Gasto g, View rootFrame) {
-        String urlReparto = WebService.URL_RepartoGasto + "?reparto_gasto=" + g.getId_gasto();
-        String urlGasto = WebService.URL_Gasto + "?id_gasto=" + g.getId_gasto();
-
-        // ─── Paso 2: eliminar la tarea (se llama desde el callback del paso 1) ───
-        JsonObjectRequest deleteGasto = new JsonObjectRequest(
-                Request.Method.DELETE, urlGasto, null,
-                response -> {
-                    try {
-                        if (response.getString(WebService.JSON.STATUS)
-                                .equals(WebService.JSON.SUCCESS)) {
-                            Toast.makeText(requireContext(),
-                                    "Gasto Eliminado", Toast.LENGTH_SHORT).show();
-                            // Quitar el FrameLayout (rootFrame) del contenedor
-                            ViewGroup parent = (ViewGroup) rootFrame.getParent();
-                            if (parent != null) parent.removeView(rootFrame);
-                        } else {
-                            Toast.makeText(requireContext(),
-                                    "No se pudo eliminar el gasto: "
-                                            + response.optString("message", ""),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    } catch (JSONException e) {
-                        Toast.makeText(requireContext(),
-                                "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                error -> Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                        "Error al eliminar gasto", Request.Method.DELETE, urlGasto, error)
-        );
-
-        // ─── Paso 1: eliminar el reparto (en callback lanza el paso 2) ─────────
-        JsonObjectRequest deleteReparto = new JsonObjectRequest(
-                Request.Method.DELETE, urlReparto, null,
-                respRepart -> {
-                    // Con o sin asignaciones, procedemos a borrar la tarea
-                    PeticionesRed.anhadirPeticionACola(deleteGasto);
-                },
-                error -> {
-                    // Si falla la petición de asignaciones, intentamos igualmente
-                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                            "Error al eliminar repartos", Request.Method.DELETE, urlReparto, error);
-                    PeticionesRed.anhadirPeticionACola(deleteGasto);
-                }
-        );
-
-        PeticionesRed.anhadirPeticionACola(deleteReparto);
-    }
+    
 
     /* ════════════════════════════════════════════
        MODELOS INTERNOS

@@ -45,7 +45,7 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
     /* ── Sugerencias (igual que ROOM_SUGG de la web) ─────── */
     private static final String[] SUGERENCIAS = {
         "Cocina", "Baño", "Salón", "Comedor",
-        "Habitación 1", "Habitación 2", "Pasillo",
+        "Dormitorio", "Despacho", "Pasillo",
         "Terraza", "Garaje", "Cuarto de limpieza"
     };
 
