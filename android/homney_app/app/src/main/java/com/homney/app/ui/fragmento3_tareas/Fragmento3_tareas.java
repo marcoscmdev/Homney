@@ -1,6 +1,8 @@
 package com.homney.app.ui.fragmento3_tareas;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -25,11 +27,14 @@ import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.ui.nav_crear_tarea.fragment_crear_tarea;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.AsignacionTarea;
@@ -76,7 +81,6 @@ public class Fragmento3_tareas extends Fragment {
     private List<Usuario>          usuarios   = null;
     private List<TareasRealizadas> realizadas = null;
     private List<Tarea>            tareas     = null;
-
     private static final String TAG = "WS_TAREAS";
 
     private static final int[] USER_COLORS = {
@@ -88,6 +92,7 @@ public class Fragmento3_tareas extends Fragment {
        CICLO DE VIDA
     ════════════════════════════════════════════ */
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

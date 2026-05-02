@@ -1,5 +1,6 @@
 package com.homney.app;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -23,8 +24,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.homney.app.ui.fragmento2_mihogar.HogarAIBottomSheet;
 import com.homney.app.webservice.WebService;
 
 import androidx.activity.OnBackPressedCallback;
@@ -56,14 +57,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         /* Botón flotante */
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -77,6 +70,57 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        /* ── FAB dinámico: cambia icono y acción según el fragment activo ── */
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            int id = destination.getId();
+
+            if (id == R.id.fragmento3) {
+                // Tareas → añadir tarea
+                fab.show();
+                fab.setImageResource(R.drawable.ic_add);
+                fab.setContentDescription("Nueva tarea");
+                fab.setOnClickListener(v ->
+                        navController.navigate(R.id.nav_crear_tarea));
+
+            } else if (id == R.id.fragmento4) {
+                // Cartera → añadir gasto
+                fab.show();
+                fab.setImageResource(R.drawable.ic_add);
+                fab.setContentDescription("Nuevo gasto");
+                fab.setOnClickListener(v ->
+                        navController.navigate(R.id.nav_crear_gasto));
+
+            } else if (id == R.id.fragmento5) {
+                // Muro → nueva publicación
+                fab.show();
+                fab.setImageResource(R.drawable.ic_add);
+                fab.setContentDescription("Nueva publicación");
+                fab.setOnClickListener(v ->
+                        navController.navigate(R.id.nav_crear_publicacion));
+
+            } else if (id == R.id.nav_home) {
+                // Panel → acceso rápido: diálogo con las 3 opciones de creación
+                fab.show();
+                fab.setImageResource(R.drawable.ic_add);
+                fab.setContentDescription("Crear...");
+                fab.setOnClickListener(v -> mostrarDialogoCrearRapido(navController));
+
+            } else if (id == R.id.fragmento2) {
+                // Mi Hogar → Asistente IA
+                fab.show();
+                fab.setImageResource(R.drawable.homney_mate);
+                fab.setContentDescription("Tu asistente con IA");
+                fab.setOnClickListener(v -> {
+                    HogarAIBottomSheet sheet = new HogarAIBottomSheet();
+                    sheet.show(getSupportFragmentManager(), "hogar_ai");
+                });
+
+            } else {
+                // Formularios de creación y el resto → FAB oculto
+                fab.hide();
+            }
+        });
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -192,6 +236,24 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    /**
+     * Diálogo de acceso rápido desde el Panel.
+     * Muestra las tres acciones de creación en un AlertDialog de lista.
+     */
+    private void mostrarDialogoCrearRapido(NavController navController) {
+        String[] opciones = {"📋  Nueva tarea", "💰  Nuevo gasto", "📣  Nueva publicación"};
+        new AlertDialog.Builder(this)
+                .setTitle("¿Qué quieres crear?")
+                .setItems(opciones, (dialog, which) -> {
+                    switch (which) {
+                        case 0: navController.navigate(R.id.nav_crear_tarea);        break;
+                        case 1: navController.navigate(R.id.nav_crear_gasto);        break;
+                        case 2: navController.navigate(R.id.nav_crear_publicacion);  break;
+                    }
+                })
+                .show();
     }
 
     /**

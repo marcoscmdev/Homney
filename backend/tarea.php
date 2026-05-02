@@ -110,6 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     extract($_GET);
 
     /* ********************************** */
+    $join         = '';
+    $select_extra = '';
     if (count($_GET) == 0) {
         $where = '';
     } elseif (count($_GET) == 1 && isset($id_tarea) && $id_tarea != null) {
@@ -118,13 +120,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         $where = " WHERE t.id_habitacion = '$id_habitacion'";
     } elseif (count($_GET) == 1 && isset($frecuencia) && $frecuencia != null) {
         $where = " WHERE t.frecuencia = '$frecuencia'";
+    } elseif (count($_GET) == 1 && isset($id_hogar) && $id_hogar != null) {
+        // Tareas del hogar: JOIN con habitaciones del hogar indicado
+        $join         = " JOIN HABITACION h ON t.id_habitacion = h.id_habitacion";
+        $where        = " WHERE h.id_hogar = '$id_hogar'";
+        $select_extra = ", h.nombre as nombre_habitacion";
     } else {
         die_por_fallo_en_sintaxis_peticion();
     }
 
     $consulta = "SELECT t.id_tarea, t.nombre, t.duracion, t.frecuencia,
                         t.num_veces, t.explicacion_frecuencia_variable, t.id_habitacion
+                        $select_extra
                  FROM TAREA t
+                 $join
                  $where
                  ORDER BY t.nombre";
     /* ********************************** */

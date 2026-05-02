@@ -25,7 +25,9 @@ public class WebService {
     public static final String URL_Tarea =PROTOCOLO + SERVIDOR + CARPETA + "/tarea.php";
     public static final String URL_Tarea_Realizada =PROTOCOLO + SERVIDOR + CARPETA + "/tareas_realizadas.php";
     public static final String URL_Usuario =PROTOCOLO + SERVIDOR + CARPETA + "/usuario.php";
-    public static final String URL_Login   =PROTOCOLO + SERVIDOR + CARPETA + "/login.php";
+    public static final String URL_Login       = PROTOCOLO + SERVIDOR + CARPETA + "/login.php";
+    public static final String URL_AsistenteIA    = PROTOCOLO + SERVIDOR + CARPETA + "/asistenteia.php";
+    public static final String URL_AsignacionTarea = PROTOCOLO + SERVIDOR + CARPETA + "/asignacion_tarea.php";
     public static final String URL_EjemploImagen ="https://tesdai.com/imagenes/logoTESDAI.png";
 
     public final static class JSON {
