@@ -49,4 +49,10 @@
         android:name="com.homney.app.ui.nav_crear_gasto.fragment_crear_gasto"
         android:label="@string/menu_crear2"
         tools:layout="@layout/fragment_crear_nuevo_gasto" />
+    <fragment
+        android:id="@+id/nav_crear_publicacion"
+        android:name="com.homney.app.ui.nav_crear_publi.fragment_crear_nueva_publicacion"
+        android:label="@string/crear_publicacion"
+        tools:layout="@layout/fragment_crear_nueva_publicacion" />
+
 </navigation>

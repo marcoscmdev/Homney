@@ -13,6 +13,7 @@
         android:title="Mi perfil"
         android:orderInCategory="1"
         app:showAsAction="always"
-        app:actionLayout="@layout/menu_item_avatar" />
+        app:actionLayout="@layout/menu_item_avatar"
+        />
 
 </menu>

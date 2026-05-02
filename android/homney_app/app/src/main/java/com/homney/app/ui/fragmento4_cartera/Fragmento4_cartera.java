@@ -747,7 +747,7 @@ public class Fragmento4_cartera extends Fragment {
         );
         PeticionesRed.anhadirPeticionACola(peticion);
     }
-    
+
 
     /* ════════════════════════════════════════════
        MODELOS INTERNOS

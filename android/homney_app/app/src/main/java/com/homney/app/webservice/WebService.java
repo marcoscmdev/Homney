@@ -1,10 +1,20 @@
 package com.homney.app.webservice;
 
 
+import android.os.Build;
+
 public class WebService {
     public static final String PROTOCOLO = "http://";
     public static final String CARPETA ="/homney/backend";
-    public static final String SERVIDOR = "10.0.2.2"; // Localhsot en anfitrión del Emulador
+
+    public static final String SERVIDOR = enLocal() ? "10.0.2.2" : "192.168.1.77";
+
+    private static boolean enLocal() {
+        return Build.FINGERPRINT.startsWith("generic");
+    }
+
+    // 10.0.2.2 = localhost del anfitrión en emulador
+    // 192.168.1.77 = IP fija del Mac en red local
     public static final String URL_Asignacion_Tarea =PROTOCOLO + SERVIDOR + CARPETA + "/asignacion_tarea.php";
     public static final String URL_Categoria =PROTOCOLO + SERVIDOR + CARPETA + "/categoria.php";
     public static final String URL_Gasto =PROTOCOLO + SERVIDOR + CARPETA + "/gasto.php";

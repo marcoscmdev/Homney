@@ -72,5 +72,11 @@
     <string name="definir_estancia_titulo">Define las estancias</string>
     <string name="definir_estancia_subtitulo">"Selecciona las zonas de tu hogar y organiza las tareas recurrentes por areas. "</string>
     <string name="cocina">Cocina</string>
+    <string name="titulo_publi">Título *</string>
+    <string name="ejemplo_titulo_muro">Ej: Lista de la compra, Aviso importante..</string>
+    <string name="contenido_publi">Contenido *</string>
+    <string name="ejemplo_publicacion">Escribe aquí tu mensaje para el hogar</string>
+    <string name="btn_publicar">Publicar</string>
+    <string name="crear_publicacion">"Publicar "</string>
 
 </resources>

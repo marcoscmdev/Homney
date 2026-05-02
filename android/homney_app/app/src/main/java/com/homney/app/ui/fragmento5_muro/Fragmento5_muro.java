@@ -68,8 +68,6 @@ public class Fragmento5_muro extends Fragment {
 
         // Configurar RecyclerView (el adapter se asigna cuando lleguen los datos)
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        recycler.addItemDecoration(
-                new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         // Leer sesión
         SharedPreferences prefs = requireContext()

@@ -396,7 +396,7 @@ public class fragment_crear_gasto extends Fragment {
                                 crearRepartoAutomatico(idGasto, importeFinal, v);
                             } else {
                                 Toast.makeText(requireContext(),
-                                        "Gasto registrado ✓", Toast.LENGTH_SHORT).show();
+                                        "Gasto registrado", Toast.LENGTH_SHORT).show();
                                 Navigation.findNavController(v).popBackStack();
                             }
                         } else {
@@ -472,7 +472,7 @@ public class fragment_crear_gasto extends Fragment {
         if (!isAdded()) return;
         Toast.makeText(requireContext(),
                 huboError ? "Gasto registrado (reparto parcial)"
-                          : "Gasto registrado y repartido ✓",
+                          : "Gasto registrado y repartido correctamente",
                 Toast.LENGTH_SHORT).show();
         Navigation.findNavController(v).popBackStack();
     }

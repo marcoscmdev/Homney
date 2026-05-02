@@ -57,6 +57,10 @@
     </LinearLayout>
 
     <!-- Importe + tag tipo (columna derecha) -->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/outline_border_color_24"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

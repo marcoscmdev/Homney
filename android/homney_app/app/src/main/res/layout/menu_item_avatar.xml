@@ -4,14 +4,20 @@
     Glide carga la foto de usuario (circleCrop) o bien un Bitmap
     con la inicial del nombre sobre fondo accent.
 -->
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/iv_toolbar_avatar"
-    android:layout_width="36dp"
-    android:layout_height="36dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginStart="4dp"
-    android:scaleType="centerCrop"
-    android:src="@drawable/ic_user"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:clickable="true"
-    android:focusable="true"
-    android:background="@drawable/bg_tag_muted" />
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/iv_toolbar_avatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="4dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_user"
+        android:background="@drawable/bg_tag_muted" />
+
+</FrameLayout>

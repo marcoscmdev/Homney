@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.fragmento2, R.id.fragmento3, R.id.fragmento4, R.id.fragmento5,
-                R.id.nav_crear_tarea, R.id.nav_crear_gasto)
+                R.id.nav_crear_tarea, R.id.nav_crear_gasto, R.id.nav_crear_publicacion)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -172,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
         return true;
     }
 
@@ -260,11 +259,15 @@ public class MainActivity extends AppCompatActivity {
 
         Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
+        int marginRight = Math.round(TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
 
         // Fondo circular
         Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bgPaint.setColor(colorFondo);
+        float offsetRight = 8f;
         canvas.drawCircle(size / 2f, size / 2f, size / 2f, bgPaint);
+
 
         // Texto de la inicial centrado
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
