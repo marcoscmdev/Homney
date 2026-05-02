@@ -136,7 +136,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="8dp"
-            android:text="Completadas esta semana" />
+            android:text="Completadas este mes" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -166,6 +166,72 @@
                     android:text="Cargando…" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
+        <!-- ══════════════════════════════════════════
+             SECCIÓN 4 — HISTORIAL MES ANTERIOR
+        ══════════════════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/section_historial_mes_tareas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:id="@+id/tv_historial_mes_tareas_titulo"
+                    style="@style/Homney.Text.Title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Mes anterior" />
+
+                <TextView
+                    android:id="@+id/tag_historial_mes_tareas"
+                    style="@style/Homney.Tag.Yellow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="0 completadas" />
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/surface"
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="2dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="4dp">
+
+                <LinearLayout
+                    android:id="@+id/container_historial_mes_tareas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_sin_historial_mes_tareas"
+                        style="@style/Homney.Text.Muted"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="24dp"
+                        android:text="Sin registros el mes anterior." />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

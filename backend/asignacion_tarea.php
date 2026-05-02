@@ -101,12 +101,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     extract($_GET);
 
     /* ********************************** */
+    $extra_join = '';
     if (count($_GET) == 0) {
         $where = '';
     } elseif (count($_GET) == 1 && isset($id_tarea) && $id_tarea != null) {
         $where = " WHERE at.id_tarea = '$id_tarea'";
     } elseif (count($_GET) == 1 && isset($id_usuario) && $id_usuario != null) {
         $where = " WHERE at.id_usuario = '$id_usuario'";
+    } elseif (count($_GET) == 1 && isset($id_hogar) && $id_hogar != null) {
+        // Todas las asignaciones de tareas que pertenecen al hogar indicado
+        $extra_join = " JOIN TAREA t ON at.id_tarea = t.id_tarea
+                        JOIN HABITACION h ON t.id_habitacion = h.id_habitacion";
+        $where = " WHERE h.id_hogar = '$id_hogar'";
     } elseif (count($_GET) == 2 && isset($id_tarea) && $id_tarea != null
                                 && isset($id_usuario) && $id_usuario != null) {
         $where = " WHERE at.id_tarea = '$id_tarea' AND at.id_usuario = '$id_usuario'";
@@ -116,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
 
     $consulta = "SELECT at.id_tarea, at.id_usuario, at.observaciones
                  FROM ASIGNACION_TAREA at
+                 $extra_join
                  $where";
     /* ********************************** */
 

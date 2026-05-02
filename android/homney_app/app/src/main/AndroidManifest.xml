@@ -3,6 +3,12 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".app"
@@ -34,6 +40,21 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.HomneyApp.NoActionBar" />
+
+        <!--
+            FileProvider para compartir URIs de fichero con la app de cámara.
+            Necesario en Android 7+ para evitar FileUriExposedException y para
+            que las cámaras OEM (Samsung, Xiaomi…) acepten el destino de la foto.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

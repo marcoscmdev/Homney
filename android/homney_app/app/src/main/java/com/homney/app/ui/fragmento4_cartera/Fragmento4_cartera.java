@@ -28,6 +28,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.Gasto;
@@ -57,6 +58,7 @@ public class Fragmento4_cartera extends Fragment {
     private TextView tvStatMeDeben;
     private TextView tvStatDebo;
     private TextView tvStatBalance;
+    private androidx.cardview.widget.CardView cvStatBalance;
     private TextView tagMeDeben;
     private TextView tagDebo;
     private TextView tagHistorial;
@@ -66,6 +68,13 @@ public class Fragmento4_cartera extends Fragment {
     private TextView tvSinMeDeben;
     private TextView tvSinDebo;
     private TextView tvSinHistorial;
+    private LinearLayout sectionMesAnteriorCartera;
+    private TextView tvMesAnteriorTitulo;
+    private TextView tagMesAnterior;
+    private LinearLayout containerMesAnterior;
+    private TextView tvSinMesAnterior;
+
+    private LoadingDialog loadingDialog;
 
     /* ── Sesión ──────────────────────────────────── */
     private int idUsuario = -1;
@@ -92,6 +101,10 @@ public class Fragmento4_cartera extends Fragment {
         tvStatMeDeben = root.findViewById(R.id.tv_stat_me_deben);
         tvStatDebo = root.findViewById(R.id.tv_stat_debo);
         tvStatBalance = root.findViewById(R.id.tv_stat_balance);
+        cvStatBalance = root.findViewById(R.id.cv_stat_balance);
+        // Tarjeta de "Total gastado" → fondo amarillo
+        if (cvStatBalance != null)
+            cvStatBalance.setCardBackgroundColor(0xFFFFF3C0);
         tagMeDeben = root.findViewById(R.id.tag_me_deben);
         tagDebo = root.findViewById(R.id.tag_debo);
         tagHistorial = root.findViewById(R.id.tag_historial);
@@ -101,6 +114,13 @@ public class Fragmento4_cartera extends Fragment {
         tvSinMeDeben = root.findViewById(R.id.tv_sin_me_deben);
         tvSinDebo = root.findViewById(R.id.tv_sin_debo);
         tvSinHistorial = root.findViewById(R.id.tv_sin_historial);
+        sectionMesAnteriorCartera = root.findViewById(R.id.section_mes_anterior_cartera);
+        tvMesAnteriorTitulo       = root.findViewById(R.id.tv_mes_anterior_titulo);
+        tagMesAnterior            = root.findViewById(R.id.tag_mes_anterior);
+        containerMesAnterior      = root.findViewById(R.id.container_mes_anterior);
+        tvSinMesAnterior          = root.findViewById(R.id.tv_sin_mes_anterior);
+
+        loadingDialog = new LoadingDialog(requireContext());
 
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
@@ -128,6 +148,7 @@ public class Fragmento4_cartera extends Fragment {
     ════════════════════════════════════════════ */
 
     private void cargarDatos() {
+        loadingDialog.show();
         final AtomicInteger fase1 = new AtomicInteger(3);
 
         lanzarPeticion(WebService.URL_Gasto + "?id_hogar=" + idHogar,
@@ -181,7 +202,10 @@ public class Fragmento4_cartera extends Fragment {
                         synchronized (repartosDeDeudores) {
                             repartosDeDeudores.put(g.getId_gasto(), deudores);
                         }
-                        if (pendiente.decrementAndGet() == 0) renderCartera();
+                        if (pendiente.decrementAndGet() == 0) {
+                            loadingDialog.dismiss();
+                            renderCartera();
+                        }
                     });
         }
     }
@@ -212,6 +236,10 @@ public class Fragmento4_cartera extends Fragment {
         tvStatMeDeben.setText("—");
         tvStatDebo.setText("—");
         tvStatBalance.setText("—");
+        tvStatBalance.setTextColor(0xFF2D2416);
+
+        if (sectionMesAnteriorCartera != null)
+            sectionMesAnteriorCartera.setVisibility(View.GONE);
 
         // Resetear datos y recargar
         gastos = null;
@@ -261,17 +289,48 @@ public class Fragmento4_cartera extends Fragment {
             deboMap.get(pagadorId).agregarItem(g, r);
         }
 
-        double totalMeDeben = 0, totalDebo = 0;
-        for (DeudorInfo d : meDebenMap.values()) totalMeDeben += d.totalPendiente;
-        for (DeudorInfo d : deboMap.values()) totalDebo += d.totalPendiente;
-        double balance = totalMeDeben - totalDebo;
+        // ── Totales MENSUALES para las tarjetas stat ──────────────────────────
+        String mesActual = new SimpleDateFormat("yyyy-MM", Locale.ROOT).format(new Date());
+        java.util.Calendar prevCalc = java.util.Calendar.getInstance();
+        prevCalc.add(java.util.Calendar.MONTH, -1);
+        String mesPrev   = new SimpleDateFormat("yyyy-MM", Locale.ROOT).format(prevCalc.getTime());
+        String nomMesPrev = new SimpleDateFormat("MMMM yyyy", new Locale("es")).format(prevCalc.getTime());
 
-        tvStatMeDeben.setText("+" + fmt(totalMeDeben));
-        tvStatDebo.setText("−" + fmt(totalDebo));
-        tvStatBalance.setText((balance >= 0 ? "+" : "") + fmt(balance));
-        tvStatBalance.setTextColor(balance >= 0 ? 0xFF58A856 : 0xFFE05C5C);
-        tagMeDeben.setText(fmt(totalMeDeben) + " pendiente");
-        tagDebo.setText(fmt(totalDebo) + " pendiente");
+        double cardMeDeben = 0, cardDebo = 0, cardGastado = 0;
+        double prevMeDeben = 0, prevDebo = 0, prevGastado = 0;
+
+        // Me deben — filtrado por mes
+        for (DeudorInfo d : meDebenMap.values()) {
+            for (ItemReparto item : d.items) {
+                if (item.reparto.isAbonado()) continue;
+                String fg = item.gasto.getFecha();
+                if (fg != null && fg.startsWith(mesActual)) cardMeDeben += item.reparto.getImporte();
+                else if (fg != null && fg.startsWith(mesPrev))  prevMeDeben += item.reparto.getImporte();
+            }
+        }
+        // Debo — filtrado por mes
+        for (DeudorInfo d : deboMap.values()) {
+            for (ItemReparto item : d.items) {
+                if (item.reparto.isAbonado()) continue;
+                String fg = item.gasto.getFecha();
+                if (fg != null && fg.startsWith(mesActual)) cardDebo += item.reparto.getImporte();
+                else if (fg != null && fg.startsWith(mesPrev))  prevDebo += item.reparto.getImporte();
+            }
+        }
+        // Total gastado — filtrado por mes
+        for (Gasto g : gastos) {
+            if (g.getId_usuario_pagador() != idUsuario) continue;
+            String fg = g.getFecha();
+            if (fg != null && fg.startsWith(mesActual)) cardGastado += g.getImporte();
+            else if (fg != null && fg.startsWith(mesPrev))  prevGastado += g.getImporte();
+        }
+
+        tvStatMeDeben.setText("+" + fmt(cardMeDeben));
+        tvStatDebo.setText("−" + fmt(cardDebo));
+        tvStatBalance.setText(fmt(cardGastado));
+        tvStatBalance.setTextColor(0xFF2D2416);
+        tagMeDeben.setText(fmt(cardMeDeben) + " pendiente");
+        tagDebo.setText(fmt(cardDebo) + " pendiente");
         tagHistorial.setText(gastos.size() + (gastos.size() == 1 ? " registro" : " registros"));
 
         // Lo que te deben
@@ -336,6 +395,33 @@ public class Fragmento4_cartera extends Fragment {
                 agregarDivider(containerHistorial);
             }
         }
+
+        // ── Sección historial mes anterior ───────────────────
+        boolean hayDatosMesAnterior = prevMeDeben > 0 || prevDebo > 0 || prevGastado > 0;
+        if (sectionMesAnteriorCartera != null) {
+            sectionMesAnteriorCartera.setVisibility(hayDatosMesAnterior ? View.VISIBLE : View.GONE);
+        }
+        if (hayDatosMesAnterior && containerMesAnterior != null) {
+            String nomCap = nomMesPrev.substring(0, 1).toUpperCase(Locale.getDefault())
+                          + nomMesPrev.substring(1);
+            tvMesAnteriorTitulo.setText(nomCap);
+            tagMesAnterior.setText("HISTORIAL");
+            containerMesAnterior.removeAllViews();
+            tvSinMesAnterior.setVisibility(View.GONE);
+
+            agregarFilaHistorialMes(containerMesAnterior, "Pagado por ti", fmt(prevGastado), 0xFF2D2416, 0xFFFFF3C0);
+            agregarFilaHistorialMes(containerMesAnterior, "Te debían",     "+" + fmt(prevMeDeben), 0xFF58A856, 0xFFE8F5E8);
+            agregarFilaHistorialMes(containerMesAnterior, "Debías tú",     "−" + fmt(prevDebo),    0xFFE05C5C, 0xFFFDEAEA);
+
+            double balance = prevMeDeben - prevDebo;
+            int balColor = balance >= 0 ? 0xFF58A856 : 0xFFE05C5C;
+            int balBg    = balance >= 0 ? 0xFFE8F5E8 : 0xFFFDEAEA;
+            agregarFilaHistorialMes(containerMesAnterior, "Balance neto",
+                    (balance >= 0 ? "+" : "") + fmt(balance), balColor, balBg);
+        }
+
+        // ── Gastos fijos: detectar y renovar automáticamente ─
+        detectarYRenovarGastosFijos(mesActual, mesPrev);
     }
 
     /* ════════════════════════════════════════════
@@ -400,6 +486,7 @@ public class Fragmento4_cartera extends Fragment {
     }
 
     private void eliminarRepartoYGasto(Gasto g, FrameLayout rootFrame) {
+        loadingDialog.show();
         String urlReparto = WebService.URL_RepartoGasto + "?id_gasto=" + g.getId_gasto();
         String urlGasto   = WebService.URL_Gasto        + "?id_gasto=" + g.getId_gasto();
 
@@ -407,6 +494,7 @@ public class Fragmento4_cartera extends Fragment {
         JsonObjectRequest deleteGasto = new JsonObjectRequest(
                 Request.Method.DELETE, urlGasto, null,
                 response -> {
+                    loadingDialog.dismiss();
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
@@ -425,8 +513,11 @@ public class Fragmento4_cartera extends Fragment {
                                 "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                        "Error al eliminar gasto", Request.Method.DELETE, urlGasto, error)
+                error -> {
+                    loadingDialog.dismiss();
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                        "Error al eliminar gasto", Request.Method.DELETE, urlGasto, error);
+                }
         );
 
         // Paso 1: DELETE reparto (libera FK); luego lanza el paso 2
@@ -652,6 +743,7 @@ public class Fragmento4_cartera extends Fragment {
      * Equivale a cobrarDeuda() / abonarDeuda() del web.
      */
     private void marcarAbonado(ItemReparto item) {
+        loadingDialog.show();
         JSONObject body = new JSONObject();
         try {
             body.put("id_gasto", item.gasto.getId_gasto());
@@ -668,6 +760,7 @@ public class Fragmento4_cartera extends Fragment {
         JsonObjectRequest peticion = new JsonObjectRequest(
                 Request.Method.PUT, url, body,
                 response -> {
+                    loadingDialog.dismiss();
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
@@ -683,8 +776,11 @@ public class Fragmento4_cartera extends Fragment {
                                 "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                        "Error al abonar", Request.Method.PUT, url, error)
+                error -> {
+                    loadingDialog.dismiss();
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                        "Error al abonar", Request.Method.PUT, url, error);
+                }
         );
         PeticionesRed.anhadirPeticionACola(peticion);
     }
@@ -777,6 +873,118 @@ public class Fragmento4_cartera extends Fragment {
             items.add(new ItemReparto(g, r));
             if (!r.isAbonado()) totalPendiente += r.getImporte();
             else totalAbonado += r.getImporte();
+        }
+    }
+
+    /** Añade una fila resumen al contenedor de historial del mes anterior. */
+    private void agregarFilaHistorialMes(LinearLayout container,
+                                         String label, String valor,
+                                         int colorTexto, int colorFondo) {
+        LinearLayout row = new LinearLayout(requireContext());
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        row.setBackgroundColor(colorFondo);
+        row.setPadding(dp(12), dp(10), dp(12), dp(10));
+        LinearLayout.LayoutParams rowLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        rowLp.bottomMargin = dp(4);
+        row.setLayoutParams(rowLp);
+
+        TextView tvLabel = new TextView(requireContext());
+        tvLabel.setText(label);
+        tvLabel.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 13);
+        tvLabel.setTextColor(0xFF5C4A2A);
+        tvLabel.setLayoutParams(new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        row.addView(tvLabel);
+
+        TextView tvValor = new TextView(requireContext());
+        tvValor.setText(valor);
+        tvValor.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14);
+        tvValor.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvValor.setTextColor(colorTexto);
+        row.addView(tvValor);
+
+        container.addView(row);
+    }
+
+    /**
+     * Detecta gastos fijos (tipo="fijo") del mes anterior pagados por el usuario
+     * que no tienen equivalente en el mes actual, y los crea automáticamente.
+     */
+    private void detectarYRenovarGastosFijos(String mesActual, String mesPrev) {
+        if (!isAdded() || gastos == null) return;
+
+        // Gastos fijos del mes anterior pagados por el usuario
+        List<Gasto> fijosPrevMes = new ArrayList<>();
+        for (Gasto g : gastos) {
+            if ("fijo".equals(g.getTipo())
+                    && g.getId_usuario_pagador() == idUsuario
+                    && g.getFecha() != null
+                    && g.getFecha().startsWith(mesPrev)) {
+                fijosPrevMes.add(g);
+            }
+        }
+        if (fijosPrevMes.isEmpty()) return;
+
+        // Conceptos ya registrados en el mes actual (para evitar duplicados)
+        java.util.Set<String> conceptosEsteMes = new java.util.HashSet<>();
+        for (Gasto g : gastos) {
+            if ("fijo".equals(g.getTipo())
+                    && g.getId_usuario_pagador() == idUsuario
+                    && g.getFecha() != null
+                    && g.getFecha().startsWith(mesActual)) {
+                conceptosEsteMes.add(g.getConcepto() != null ? g.getConcepto().toLowerCase() : "");
+            }
+        }
+
+        // Filtrar los que faltan este mes
+        List<Gasto> aCrear = new ArrayList<>();
+        for (Gasto g : fijosPrevMes) {
+            String c = g.getConcepto() != null ? g.getConcepto().toLowerCase() : "";
+            if (!conceptosEsteMes.contains(c)) aCrear.add(g);
+        }
+        if (aCrear.isEmpty()) return;
+
+        // Fecha de hoy para el nuevo gasto
+        String fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date());
+        final int[] creados = {0};
+        final int total = aCrear.size();
+
+        for (Gasto g : aCrear) {
+            org.json.JSONObject body = new org.json.JSONObject();
+            try {
+                body.put("fecha",              fechaHoy);
+                body.put("concepto",           g.getConcepto());
+                body.put("importe",            g.getImporte());
+                body.put("tipo",               "fijo");
+                body.put("modo",               g.getModo() != null ? g.getModo() : "");
+                body.put("categoria",          g.getCategoria() != null ? g.getCategoria() : "");
+                body.put("id_hogar",           idHogar);
+                body.put("id_usuario_pagador", idUsuario);
+            } catch (org.json.JSONException e) { continue; }
+
+            com.android.volley.toolbox.JsonObjectRequest req = new com.android.volley.toolbox.JsonObjectRequest(
+                    com.android.volley.Request.Method.POST,
+                    WebService.URL_Gasto, body,
+                    response -> {
+                        if (!isAdded()) return;
+                        try {
+                            if (response.getString(WebService.JSON.STATUS).equals(WebService.JSON.SUCCESS)) {
+                                creados[0]++;
+                                if (creados[0] == total) {
+                                    android.widget.Toast.makeText(requireContext(),
+                                            "Se han renovado " + total + " gasto"
+                                                    + (total == 1 ? " fijo" : "s fijos") + " del nuevo mes",
+                                            android.widget.Toast.LENGTH_LONG).show();
+                                    recargarCartera();
+                                }
+                            }
+                        } catch (org.json.JSONException ignored) {}
+                    },
+                    error -> { /* silencioso */ }
+            );
+            com.homney.app.webservice.PeticionesRed.anhadirPeticionACola(req);
         }
     }
 

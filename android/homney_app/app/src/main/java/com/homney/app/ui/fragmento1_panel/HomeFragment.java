@@ -39,6 +39,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.AsignacionTarea;
@@ -80,6 +81,8 @@ public class HomeFragment extends Fragment {
     private TextView     tvSinPublicaciones;
     private AnyChartView chartTareas;
     private AnyChartView chartGastos;
+
+    private LoadingDialog loadingDialog;
 
     /* ── Sesión ──────────────────────────────────── */
     private int idUsuario = -1;
@@ -124,6 +127,12 @@ public class HomeFragment extends Fragment {
         chartTareas           = root.findViewById(R.id.chart_tareas);
         chartGastos           = root.findViewById(R.id.chart_gastos);
 
+        // Desactivar aceleración por hardware para evitar crash en RenderThread con AnyChartView (WebView)
+        chartTareas.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        chartGastos.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+        loadingDialog = new LoadingDialog(requireContext());
+
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
         idUsuario = prefs.getInt("id_usuario", -1);
@@ -164,6 +173,7 @@ public class HomeFragment extends Fragment {
     ════════════════════════════════════════════ */
 
     private void cargarDatos() {
+        loadingDialog.show();
         // 5 peticiones paralelas de fase-1
         final AtomicInteger fase1 = new AtomicInteger(5);
 
@@ -270,6 +280,7 @@ public class HomeFragment extends Fragment {
     private void intentarRender() {
         if (gastos != null && misAsig != null && pubs != null
                 && usuarios != null && tareas != null && realizadasPorUsuario != null) {
+            loadingDialog.dismiss();
             renderDashboard();
         }
     }

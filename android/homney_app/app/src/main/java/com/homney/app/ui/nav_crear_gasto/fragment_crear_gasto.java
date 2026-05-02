@@ -27,6 +27,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.Categoria;
@@ -70,6 +71,8 @@ public class fragment_crear_gasto extends Fragment {
     private List<Categoria>              listaHijosActuales = new ArrayList<>(); // hijos de la seleccionada
     private Map<String, List<Categoria>> hijosPorPadre      = new HashMap<>();  // padre → hijos
     private List<Usuario>                listaUsuarios       = new ArrayList<>();
+    private LoadingDialog loadingDialog;
+    private final AtomicInteger peticionesPendientes = new AtomicInteger(0);
 
     private static final String TAG = "WS_CREAR_GASTO";
 
@@ -100,6 +103,8 @@ public class fragment_crear_gasto extends Fragment {
         idUsuario = prefs.getInt("id_usuario", -1);
         idHogar   = prefs.getInt("id_hogar",   -1);
 
+        loadingDialog = new LoadingDialog(requireContext());
+
         // ── Fecha ────────────────────────────────────────────
         String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         etFecha.setText(hoy);
@@ -127,6 +132,8 @@ public class fragment_crear_gasto extends Fragment {
 
         // ── Cargar spinners dinámicos ─────────────────────────
         if (Utilidades.hayConexionInternet(requireContext())) {
+            peticionesPendientes.set(2);
+            loadingDialog.show();
             cargarCategorias();
             cargarUsuarios();
         } else {
@@ -166,6 +173,9 @@ public class fragment_crear_gasto extends Fragment {
         JsonObjectRequest peticion = new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 response -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
@@ -197,6 +207,9 @@ public class fragment_crear_gasto extends Fragment {
                     }
                 },
                 error -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
                     poblarCategoriasFallback();
                     Utilidades.mostrar_error_peticion(requireContext(), TAG,
                             "Error categorías", Request.Method.GET, url, error);
@@ -210,6 +223,9 @@ public class fragment_crear_gasto extends Fragment {
         JsonObjectRequest peticion = new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 response -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
@@ -221,8 +237,13 @@ public class fragment_crear_gasto extends Fragment {
                         }
                     } catch (JSONException ignored) {}
                 },
-                error -> Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                        "Error usuarios", Request.Method.GET, url, error)
+                error -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error usuarios", Request.Method.GET, url, error);
+                }
         );
         PeticionesRed.anhadirPeticionACola(peticion);
     }
@@ -375,6 +396,7 @@ public class fragment_crear_gasto extends Fragment {
         }
 
         btnCrear.setEnabled(false);
+        loadingDialog.show();
         final double importeFinal = importe;
 
         String url = WebService.URL_Gasto;
@@ -395,23 +417,27 @@ public class fragment_crear_gasto extends Fragment {
                             if (idGasto != -1 && !listaUsuarios.isEmpty()) {
                                 crearRepartoAutomatico(idGasto, importeFinal, v);
                             } else {
+                                loadingDialog.dismiss();
                                 Toast.makeText(requireContext(),
                                         "Gasto registrado", Toast.LENGTH_SHORT).show();
                                 Navigation.findNavController(v).popBackStack();
                             }
                         } else {
+                            loadingDialog.dismiss();
                             btnCrear.setEnabled(true);
                             Toast.makeText(requireContext(),
                                     response.optString("message", "Error al registrar"),
                                     Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
+                        loadingDialog.dismiss();
                         btnCrear.setEnabled(true);
                         Toast.makeText(requireContext(),
                                 "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
+                    loadingDialog.dismiss();
                     btnCrear.setEnabled(true);
                     Utilidades.mostrar_error_peticion(requireContext(), TAG,
                             "Error al crear gasto", Request.Method.POST, url, error);
@@ -470,6 +496,7 @@ public class fragment_crear_gasto extends Fragment {
 
     private void finalizarCreacion(View v, boolean huboError) {
         if (!isAdded()) return;
+        loadingDialog.dismiss();
         Toast.makeText(requireContext(),
                 huboError ? "Gasto registrado (reparto parcial)"
                           : "Gasto registrado y repartido correctamente",

@@ -23,6 +23,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 
@@ -50,6 +51,7 @@ public class activity_fragment_nueva_cuenta extends Fragment {
     Spinner reg_sexo, reg_modo;
     LinearLayout reg_clave_wrap;
     Button btn_registro;
+    LoadingDialog loadingDialog;
 
     /* ════════════════════════════════════════════════════════
        CICLO DE VIDA
@@ -71,6 +73,7 @@ public class activity_fragment_nueva_cuenta extends Fragment {
         reg_sexo = vista.findViewById(R.id.reg_sexo);
         reg_modo = vista.findViewById(R.id.reg_modo);
         btn_registro = vista.findViewById(R.id.btn_registro);
+        loadingDialog = new LoadingDialog(requireContext());
 
         reg_modo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -135,6 +138,7 @@ public class activity_fragment_nueva_cuenta extends Fragment {
 
         btn_registro.setEnabled(false);
         btn_registro.setText("Creando cuenta…");
+        loadingDialog.show();
 
         if (modo == 0) {
             crearHogarYUsuario(generarClaveInv(), nombre, email, telefono, password, sexo, "admin");
@@ -162,13 +166,19 @@ public class activity_fragment_nueva_cuenta extends Fragment {
                         int idHogar = response.getJSONObject(WebService.JSON.DATA).getInt("autoincrement");
                         crearUsuario(nombre, email, telefono, password, sexo, idHogar, rol);
                     } else {
+                        loadingDialog.dismiss();
                         mostrarError("hogar fail: " + response);
                     }
                 } catch (JSONException e) {
+                    loadingDialog.dismiss();
                     mostrarError("Error JSON hogar: " + e.getMessage());
                 }
-            }, error -> mostrarError("Error de red al crear el hogar")));
+            }, error -> {
+                loadingDialog.dismiss();
+                mostrarError("Error de red al crear el hogar");
+            }));
         } catch (JSONException e) {
+            loadingDialog.dismiss();
             mostrarError("Error al preparar petición de hogar");
         }
     }
@@ -195,15 +205,21 @@ public class activity_fragment_nueva_cuenta extends Fragment {
                         String passEncriptada = Utilidades.encriptaMD5(password);
                         crearUsuario(nombre, email, telefono, passEncriptada, sexo, idHogar, "miembro");
                     } else {
+                        loadingDialog.dismiss();
                         mostrarError("Clave de invitación no encontrada");
                     }
                 } else {
+                    loadingDialog.dismiss();
                     mostrarError("Clave de invitación no válida");
                 }
             } catch (JSONException e) {
+                loadingDialog.dismiss();
                 mostrarError("Error JSON hogar GET: " + e.getMessage());
             }
-        }, error -> mostrarError("Error de red al verificar la clave de invitación")));
+        }, error -> {
+            loadingDialog.dismiss();
+            mostrarError("Error de red al verificar la clave de invitación");
+        }));
     }
 
     /* ════════════════════════════════════════════════════════
@@ -231,17 +247,21 @@ public class activity_fragment_nueva_cuenta extends Fragment {
                         int idUsuario = response.getJSONObject(WebService.JSON.DATA).getInt("autoincrement");
                         guardarSesionYContinuar(idUsuario, nombre, email, rol, idHogar);
                     } else {
+                        loadingDialog.dismiss();
                         // Muestra la respuesta completa del servidor para diagnosticar
                         mostrarError("Servidor: " + response);
                     }
                 } catch (JSONException e) {
+                    loadingDialog.dismiss();
                     mostrarError("Error JSON usuario: " + e.getMessage());
                 }
             }, error -> {
+                loadingDialog.dismiss();
                 Log.e(TAG, "Volley error usuario: " + error);
                 mostrarError("Error de red al crear el usuario");
             }));
         } catch (JSONException e) {
+            loadingDialog.dismiss();
             mostrarError("Error al preparar la petición de usuario");
         }
     }
@@ -251,6 +271,7 @@ public class activity_fragment_nueva_cuenta extends Fragment {
     ════════════════════════════════════════════════════════ */
 
     private void guardarSesionYContinuar(int idUsuario, String nombre, String email, String rol, int idHogar) {
+        loadingDialog.dismiss();
         SharedPreferences.Editor editor = requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE).edit();
         editor.putInt("id_usuario", idUsuario);
         editor.putString("nombre", nombre);
@@ -269,6 +290,7 @@ public class activity_fragment_nueva_cuenta extends Fragment {
     ════════════════════════════════════════════════════════ */
 
     private void mostrarError(String mensaje) {
+        loadingDialog.dismiss();
         if (getActivity() == null) return;
         requireActivity().runOnUiThread(() -> {
             btn_registro.setEnabled(true);

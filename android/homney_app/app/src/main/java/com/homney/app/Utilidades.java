@@ -1,11 +1,14 @@
 package com.homney.app;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -20,7 +23,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -190,6 +195,67 @@ public class Utilidades {
             ActivityCompat.requestPermissions(a, new String[]{permiso}, codigoSolicitudPermiso);  // muestra una ventana al usuario
         }
         return false;
+    }
+
+    /* ══════════════════════════════════════════════
+       UTILIDADES DE IMAGEN
+    ══════════════════════════════════════════════ */
+
+    /**
+     * Lee una imagen desde una URI (galería / cámara) y la devuelve como array de bytes JPEG
+     * comprimido hasta el tamaño máximo indicado.
+     *
+     * Uso típico:
+     *   byte[] bytes = Utilidades.uriABytesJpeg(context, uri, 800, 80);
+     *   if (bytes != null) { ... usar VolleyMultipartRequest ... }
+     *
+     * @param context     Contexto de la aplicación/fragmento
+     * @param uri         URI de la imagen seleccionada (content:// o file://)
+     * @param maxPx       Dimensión máxima (ancho o alto). 0 = sin escalar
+     * @param calidad     Calidad JPEG 0-100 (recomendado 80 para avatares, 70 para muro)
+     * @return bytes del JPEG, o null si falla
+     */
+    public static byte[] uriABytesJpeg(Context context, Uri uri, int maxPx, int calidad) {
+        try {
+            ContentResolver cr = context.getContentResolver();
+            InputStream is = cr.openInputStream(uri);
+            if (is == null) return null;
+
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+            if (bitmap == null) return null;
+
+            // Escalar si supera maxPx
+            if (maxPx > 0) {
+                int w = bitmap.getWidth();
+                int h = bitmap.getHeight();
+                if (w > maxPx || h > maxPx) {
+                    float ratio = Math.min((float) maxPx / w, (float) maxPx / h);
+                    bitmap = Bitmap.createScaledBitmap(
+                            bitmap, Math.round(w * ratio), Math.round(h * ratio), true);
+                }
+            }
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, calidad, bos);
+            return bos.toByteArray();
+
+        } catch (Exception e) {
+            Log.e("Utilidades", "uriABytesJpeg error: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Devuelve un nombre de fichero único para subir al servidor.
+     * Ejemplo: "usuario_5.jpg" o "pub_12.jpg"
+     *
+     * @param prefijo  "usuario" | "pub"
+     * @param id       id del recurso
+     * @return nombre del fichero
+     */
+    public static String nombreFicheroImagen(String prefijo, int id) {
+        return prefijo + "_" + id + ".jpg";
     }
 
     public static void mostrar_error_peticion(Context contexto,String tag,String mensaje, int method, String endPoint,Exception e) {

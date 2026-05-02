@@ -16,10 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
+    // Imagen opcional (ruta devuelta por subir_imagen.php)
+    $value_imagen = (isset($datos_recibidos->imagen) && $datos_recibidos->imagen != null)
+        ? "'$datos_recibidos->imagen'" : "NULL";
+
     // fecha_pub tiene DEFAULT CURRENT_TIMESTAMP, no es necesaria en el INSERT
-    $consulta = "INSERT INTO `MURO` (`titulo`, `cuerpo`, `id_usuario`)
+    $consulta = "INSERT INTO `MURO` (`titulo`, `cuerpo`, `id_usuario`, `imagen`)
                  VALUES ('$datos_recibidos->titulo', '$datos_recibidos->cuerpo',
-                         '$datos_recibidos->id_usuario')";
+                         '$datos_recibidos->id_usuario', $value_imagen)";
     /* ********************************** */
 
     $resultado_consulta = @mysqli_query($conexion, $consulta);
@@ -47,9 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
+    $value_imagen_upd = (isset($datos_recibidos->imagen) && $datos_recibidos->imagen != null)
+        ? "'$datos_recibidos->imagen'" : "NULL";
+
     $consulta_update = "UPDATE `MURO`
-                        SET `titulo` = '$datos_recibidos->titulo',
-                            `cuerpo` = '$datos_recibidos->cuerpo'
+                        SET `titulo`  = '$datos_recibidos->titulo',
+                            `cuerpo`  = '$datos_recibidos->cuerpo',
+                            `imagen`  = $value_imagen_upd
                         WHERE `id_pub` = '$datos_recibidos->id_pub'";
     /* ********************************** */
 
@@ -105,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
-    $consulta = "SELECT m.id_pub, m.fecha_pub, m.titulo, m.cuerpo, m.id_usuario
+    $consulta = "SELECT m.id_pub, m.fecha_pub, m.titulo, m.cuerpo, m.id_usuario, m.imagen
                  FROM MURO m
                  $join
                  $where

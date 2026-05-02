@@ -23,6 +23,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.Usuario;
@@ -43,6 +44,7 @@ public class activity_fragment_registro extends Fragment {
     boolean remember;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
+    LoadingDialog loadingDialog;
 
     @Nullable
     @Override
@@ -55,6 +57,7 @@ public class activity_fragment_registro extends Fragment {
 
         preferences = requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE);
         editor = preferences.edit();
+        loadingDialog = new LoadingDialog(requireContext());
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,10 +93,13 @@ public class activity_fragment_registro extends Fragment {
             return;
         }
 
+        loadingDialog.show();
+
         JsonObjectRequest peticionLogin = new JsonObjectRequest(metodo, endPoint, credenciales,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        loadingDialog.dismiss();
                         try {
                             if (response.getString(WebService.JSON.STATUS).equals(WebService.JSON.SUCCESS)) {
                                 Gson gson = new GsonBuilder().create();
@@ -147,6 +153,7 @@ public class activity_fragment_registro extends Fragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        loadingDialog.dismiss();
                         Utilidades.mostrar_error_peticion(requireContext(), tagLogCat, "Error en la red", metodo, endPoint, error);
                     }
                 }

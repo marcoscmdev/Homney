@@ -12,6 +12,7 @@ public class Muro {
     private String cuerpo;
     private int id_usuario;
     private String fecha_pub; // generada automáticamente por el servidor (CURRENT_TIMESTAMP)
+    private String imagen;    // ruta relativa devuelta por subir_imagen.php (nullable)
 
     /* El constructor para GSON no es necesario */
     public Muro(String titulo, String cuerpo, int id_usuario) {
@@ -34,4 +35,7 @@ public class Muro {
 
     public String getFecha_pub() { return fecha_pub; }
     public void setFecha_pub(String fecha_pub) { this.fecha_pub = fecha_pub; }
+
+    public String getImagen() { return imagen; }
+    public void setImagen(String imagen) { this.imagen = imagen; }
 }

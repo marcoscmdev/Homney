@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.Habitacion;
@@ -37,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class fragmento_mihogar extends Fragment {
 
@@ -53,6 +55,9 @@ public class fragmento_mihogar extends Fragment {
     /* ── Datos de sesión ────────────────────────────────── */
     private int    idHogar   = -1;
     private String rolUsuario = "";
+
+    private LoadingDialog loadingDialog;
+    private final AtomicInteger peticionesPendientes = new AtomicInteger(0);
 
     private static final String TAG = "WS_HOGAR";
 
@@ -73,6 +78,8 @@ public class fragmento_mihogar extends Fragment {
         gridHabitaciones   = root.findViewById(R.id.grid_habitaciones);
         calendarHogar      = root.findViewById(R.id.calendar_hogar);
 
+        loadingDialog = new LoadingDialog(requireContext());
+
         // Leer datos de sesión guardados en login
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
@@ -85,6 +92,8 @@ public class fragmento_mihogar extends Fragment {
         // Iniciar las tres peticiones en paralelo
         if (idHogar != -1) {
             if (Utilidades.hayConexionInternet(requireContext())) {
+                peticionesPendientes.set(3);
+                loadingDialog.show();
                 cargarInfoHogar();
                 cargarUsuarios();
                 cargarHabitaciones();
@@ -116,6 +125,9 @@ public class fragmento_mihogar extends Fragment {
         JsonObjectRequest peticion = new JsonObjectRequest(
                 Request.Method.GET, endPoint, null,
                 response -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
@@ -135,10 +147,15 @@ public class fragmento_mihogar extends Fragment {
                         // Si falla la info del hogar no bloqueamos el resto
                     }
                 },
-                error -> Utilidades.mostrar_error_peticion(
-                        requireContext(), TAG,
-                        "Error cargando hogar",
-                        Request.Method.GET, endPoint, error)
+                error -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
+                    Utilidades.mostrar_error_peticion(
+                            requireContext(), TAG,
+                            "Error cargando hogar",
+                            Request.Method.GET, endPoint, error);
+                }
         );
 
         PeticionesRed.anhadirPeticionACola(peticion);
@@ -151,6 +168,9 @@ public class fragmento_mihogar extends Fragment {
         JsonObjectRequest peticion = new JsonObjectRequest(
                 Request.Method.GET, endPoint, null,
                 response -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
@@ -172,10 +192,15 @@ public class fragmento_mihogar extends Fragment {
                                 "Error al procesar usuarios", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Utilidades.mostrar_error_peticion(
-                        requireContext(), TAG,
-                        "Error cargando usuarios",
-                        Request.Method.GET, endPoint, error)
+                error -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
+                    Utilidades.mostrar_error_peticion(
+                            requireContext(), TAG,
+                            "Error cargando usuarios",
+                            Request.Method.GET, endPoint, error);
+                }
         );
 
         PeticionesRed.anhadirPeticionACola(peticion);
@@ -191,6 +216,9 @@ public class fragmento_mihogar extends Fragment {
         JsonObjectRequest peticion = new JsonObjectRequest(
                 Request.Method.GET, endPoint, null,
                 response -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
@@ -212,10 +240,15 @@ public class fragmento_mihogar extends Fragment {
                                 "Error al procesar habitaciones", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Utilidades.mostrar_error_peticion(
-                        requireContext(), TAG,
-                        "Error cargando habitaciones",
-                        Request.Method.GET, endPoint, error)
+                error -> {
+                    if (peticionesPendientes.decrementAndGet() == 0) {
+                        loadingDialog.dismiss();
+                    }
+                    Utilidades.mostrar_error_peticion(
+                            requireContext(), TAG,
+                            "Error cargando habitaciones",
+                            Request.Method.GET, endPoint, error);
+                }
         );
 
         PeticionesRed.anhadirPeticionACola(peticion);

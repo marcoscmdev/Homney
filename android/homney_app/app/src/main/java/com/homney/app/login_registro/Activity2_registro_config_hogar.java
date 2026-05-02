@@ -23,6 +23,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 
@@ -63,6 +64,7 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
     private final View[]        chipViews = new View[SUGERENCIAS.length];
 
     private int  idHogar  = -1;
+    private LoadingDialog loadingDialog;
     private static final String TAG = "WZ_ESTANCIAS";
 
     /* ════════════════════════════════════════════════════════
@@ -77,6 +79,8 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
         // Leer sesión
         SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
         idHogar = prefs.getInt("id_hogar", -1);
+
+        loadingDialog = new LoadingDialog(this);
 
         // Enlazar vistas
         llChipsFila1   = findViewById(R.id.ll_chips_fila1);
@@ -248,6 +252,7 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
 
         btnSiguiente.setEnabled(false);
         btnSiguiente.setText("Guardando…");
+        loadingDialog.show();
 
         // Crear todas las habitaciones en paralelo
         AtomicInteger pendiente   = new AtomicInteger(habitacionesSeleccionadas.size());
@@ -292,6 +297,7 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
 
     private void onTodasCreadas(int errores) {
         runOnUiThread(() -> {
+            loadingDialog.dismiss();
             btnSiguiente.setEnabled(true);
             btnSiguiente.setText("Siguiente →");
 

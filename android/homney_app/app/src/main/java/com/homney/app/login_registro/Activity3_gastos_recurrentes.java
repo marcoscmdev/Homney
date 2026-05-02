@@ -23,6 +23,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.homney.app.MainActivity;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 
@@ -88,6 +89,7 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
 
     private int    idHogar    = -1;
     private int    idUsuario  = -1;
+    private LoadingDialog loadingDialog;
     private static final String TAG = "WZ_GASTOS";
 
     /* ════════════════════════════════════════════════════════
@@ -103,6 +105,8 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
         idHogar   = prefs.getInt("id_hogar",   -1);
         idUsuario = prefs.getInt("id_usuario", -1);
+
+        loadingDialog = new LoadingDialog(this);
 
         // Vistas
         llGastosTabla   = findViewById(R.id.ll_gastos_tabla);
@@ -304,6 +308,7 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
 
         btnComenzar.setEnabled(false);
         btnComenzar.setText("Guardando…");
+        loadingDialog.show();
 
         AtomicInteger pendiente = new AtomicInteger(nombres.size());
         AtomicInteger errores   = new AtomicInteger(0);
@@ -353,6 +358,7 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
 
     private void onTodosCreados(int errores) {
         runOnUiThread(() -> {
+            loadingDialog.dismiss();
             btnComenzar.setEnabled(true);
             btnComenzar.setText("Comenzar →");
             if (errores > 0) {

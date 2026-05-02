@@ -6,6 +6,7 @@
     <color name="border">#E8DFC0</color>
     <color name="border2">#D6C99A</color>
     <color name="accent">#F5C518</color>
+    <color name="accent_disabled">#8CF5C518</color>
     <color name="accent_dark">#D4A80E</color>
     <color name="accent_background">#FFF3C0</color>
     <color name="green">#7CC87A</color>

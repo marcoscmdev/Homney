@@ -35,12 +35,20 @@
         android:layout_centerInParent="true"
         android:text="Lunes - 23 Febrero 2026 Usuario"
         />
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/img_muro_publi"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/fecha_nombre"
+        android:visibility="gone"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/body_muro"
         style="@style/Homney.Text.Body"
-        android:layout_below="@id/fecha_nombre"
+        android:layout_below="@id/img_muro_publi"
         android:layout_centerInParent="true"
         android:textAlignment="textStart"
         android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"

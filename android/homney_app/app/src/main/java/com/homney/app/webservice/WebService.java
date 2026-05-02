@@ -15,6 +15,9 @@ public class WebService {
 
     // 10.0.2.2 = localhost del anfitrión en emulador
     // 192.168.1.77 = IP fija del Mac en red local
+
+    public final static String PARAMETRO_USUARIO_PARA_UPLOAD_FICHERO="usuario";
+    public final static String URL_Upload=PROTOCOLO + SERVIDOR + CARPETA +"/upload.php";
     public static final String URL_Asignacion_Tarea =PROTOCOLO + SERVIDOR + CARPETA + "/asignacion_tarea.php";
     public static final String URL_Categoria =PROTOCOLO + SERVIDOR + CARPETA + "/categoria.php";
     public static final String URL_Gasto =PROTOCOLO + SERVIDOR + CARPETA + "/gasto.php";
@@ -28,6 +31,7 @@ public class WebService {
     public static final String URL_Login       = PROTOCOLO + SERVIDOR + CARPETA + "/login.php";
     public static final String URL_AsistenteIA    = PROTOCOLO + SERVIDOR + CARPETA + "/asistenteia.php";
     public static final String URL_AsignacionTarea = PROTOCOLO + SERVIDOR + CARPETA + "/asignacion_tarea.php";
+    public static final String URL_SubirImagen     = PROTOCOLO + SERVIDOR + CARPETA + "/subir_imagen.php";
     public static final String URL_EjemploImagen ="https://tesdai.com/imagenes/logoTESDAI.png";
 
     public final static class JSON {

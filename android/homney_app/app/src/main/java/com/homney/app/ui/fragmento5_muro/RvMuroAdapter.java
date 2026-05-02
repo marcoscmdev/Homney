@@ -9,7 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.homney.app.R;
+import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.Muro;
 
 import java.text.ParseException;
@@ -63,7 +65,23 @@ public class RvMuroAdapter extends RecyclerView.Adapter<RvMuroAdapter.MuroViewHo
 
         holder.fecha_nombre.setText(fechaTexto + "  ·  " + autor);
 
-        // La imagen está oculta por defecto en el layout (visibility="gone")
+        // Imagen de la publicación — si el servidor devolvió una ruta, la cargamos con Glide
+        String rutaImagen = pub.getImagen();
+        if (rutaImagen != null && !rutaImagen.isEmpty()) {
+            String urlCompleta = WebService.PROTOCOLO + WebService.SERVIDOR
+                               + WebService.CARPETA + "/" + rutaImagen;
+            holder.img_muro_publi.setVisibility(View.VISIBLE);
+            Glide.with(holder.img_muro_publi.getContext())
+                    .load(urlCompleta)
+                    .centerCrop()
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.ic_menu_report_image)
+                    .into(holder.img_muro_publi);
+        } else {
+            holder.img_muro_publi.setVisibility(View.GONE);
+        }
+
+        // imagen_publi_muro (el otro ImageView del layout) permanece oculto
         holder.imagen_publi_muro.setVisibility(View.GONE);
     }
 
@@ -85,7 +103,8 @@ public class RvMuroAdapter extends RecyclerView.Adapter<RvMuroAdapter.MuroViewHo
     /* ── ViewHolder ─────────────────────────────────────── */
     public static class MuroViewHolder extends RecyclerView.ViewHolder {
         TextView  titulo_publi_muro, fecha_nombre, body_muro;
-        ImageView imagen_publi_muro;
+        ImageView imagen_publi_muro;  // ImageView legacy (oculto)
+        ImageView img_muro_publi;     // ImageView principal para la imagen de la publicación
 
         public MuroViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -93,6 +112,7 @@ public class RvMuroAdapter extends RecyclerView.Adapter<RvMuroAdapter.MuroViewHo
             fecha_nombre      = itemView.findViewById(R.id.fecha_nombre);
             body_muro         = itemView.findViewById(R.id.body_muro);
             imagen_publi_muro = itemView.findViewById(R.id.imagen_publi_muro);
+            img_muro_publi    = itemView.findViewById(R.id.img_muro_publi);
         }
     }
 }

@@ -22,6 +22,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.Muro;
@@ -42,6 +43,8 @@ public class Fragmento5_muro extends Fragment {
     /* ── Vistas ─────────────────────────────────────────── */
     private RecyclerView recycler;
     private TextView     tvSinPublicaciones;
+
+    private LoadingDialog loadingDialog;
 
     /* ── Sesión ─────────────────────────────────────────── */
     private int idHogar = -1;
@@ -65,6 +68,8 @@ public class Fragmento5_muro extends Fragment {
         // Enlazar vistas
         recycler           = root.findViewById(R.id.recycler);
         tvSinPublicaciones = root.findViewById(R.id.tv_sin_publicaciones);
+
+        loadingDialog = new LoadingDialog(requireContext());
 
         // Configurar RecyclerView (el adapter se asigna cuando lleguen los datos)
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -95,6 +100,7 @@ public class Fragmento5_muro extends Fragment {
     ════════════════════════════════════════════════════════ */
 
     private void cargarDatos() {
+        loadingDialog.show();
         AtomicInteger pendiente = new AtomicInteger(2);
 
         // 1) Publicaciones del muro filtradas por hogar
@@ -146,6 +152,7 @@ public class Fragmento5_muro extends Fragment {
 
     private void mostrarPublicaciones() {
         if (!isAdded()) return;
+        loadingDialog.dismiss();
 
         if (listaPublis.isEmpty()) {
             tvSinPublicaciones.setText("El muro está vacío");

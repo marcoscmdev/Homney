@@ -2,7 +2,6 @@ package com.homney.app.ui.fragmento3_tareas;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -27,18 +26,15 @@ import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
-import com.homney.app.ui.nav_crear_tarea.fragment_crear_tarea;
+import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.AsignacionTarea;
-import com.homney.app.webservice.modelo.Habitacion;
 import com.homney.app.webservice.modelo.Tarea;
 import com.homney.app.webservice.modelo.TareasRealizadas;
 import com.homney.app.webservice.modelo.Usuario;
@@ -69,7 +65,13 @@ public class Fragmento3_tareas extends Fragment {
     private TextView     tvSinOtrasTareas;
     private LinearLayout containerCompletadas;
     private TextView     tvSinCompletadas;
+    private LinearLayout sectionHistorialMesTareas;
+    private TextView     tvHistorialMesTareasTitulo;
+    private TextView     tagHistorialMesTareas;
+    private LinearLayout containerHistorialMesTareas;
+    private TextView     tvSinHistorialMesTareas;
 
+    private LoadingDialog loadingDialog;
 
     /* ── Sesión ──────────────────────────────────── */
     private int idUsuario = -1;
@@ -106,6 +108,13 @@ public class Fragmento3_tareas extends Fragment {
         tvSinOtrasTareas     = root.findViewById(R.id.tv_sin_otras_tareas);
         containerCompletadas = root.findViewById(R.id.container_completadas);
         tvSinCompletadas     = root.findViewById(R.id.tv_sin_completadas);
+        sectionHistorialMesTareas    = root.findViewById(R.id.section_historial_mes_tareas);
+        tvHistorialMesTareasTitulo   = root.findViewById(R.id.tv_historial_mes_tareas_titulo);
+        tagHistorialMesTareas        = root.findViewById(R.id.tag_historial_mes_tareas);
+        containerHistorialMesTareas  = root.findViewById(R.id.container_historial_mes_tareas);
+        tvSinHistorialMesTareas      = root.findViewById(R.id.tv_sin_historial_mes_tareas);
+
+        loadingDialog = new LoadingDialog(requireContext());
 
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
@@ -115,85 +124,80 @@ public class Fragmento3_tareas extends Fragment {
         if (idHogar == -1 || idUsuario == -1) {
             Toast.makeText(requireContext(),
                     "Sesión no válida — vuelve a iniciar sesión", Toast.LENGTH_LONG).show();
-            return root;
-        }
-        if (!Utilidades.hayConexionInternet(requireContext())) {
-            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
-            return root;
         }
 
-        cargarDatos();
+        // Los datos se cargan en onResume para refrescarse al volver de crear/editar
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (idHogar != -1 && idUsuario != -1
+                && Utilidades.hayConexionInternet(requireContext())) {
+            resetContainers();
+            cargarDatos();
+        } else if (!Utilidades.hayConexionInternet(requireContext())) {
+            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /** Limpia el estado anterior para evitar duplicados al recargar. */
+    private void resetContainers() {
+        asigMias = null; allAsig = null; usuarios = null; realizadas = null; tareas = null;
+        if (containerMisTareas   != null) containerMisTareas.removeAllViews();
+        if (containerOtrasTareas != null) containerOtrasTareas.removeAllViews();
+        if (containerCompletadas != null) containerCompletadas.removeAllViews();
+        if (containerHistorialMesTareas != null) containerHistorialMesTareas.removeAllViews();
+    }
+
     /* ════════════════════════════════════════════
-       CARGA DE DATOS
+       CARGA DE DATOS  (5 peticiones paralelas)
     ════════════════════════════════════════════ */
 
     private void cargarDatos() {
-        final AtomicInteger fase1 = new AtomicInteger(5);
+        loadingDialog.show();
+        final AtomicInteger pendientes = new AtomicInteger(5);
 
-        lanzarPeticion(WebService.URL_Asignacion_Tarea + "?id_usuario=" + idUsuario,
+        // 1. Mis asignaciones (para saber qué tareas son "mías")
+        lanzarPeticion(
+                WebService.URL_Asignacion_Tarea + "?id_usuario=" + idUsuario,
                 new TypeToken<RespuestaLista<AsignacionTarea>>() {}.getType(),
-                (List<AsignacionTarea> resp) -> {
-                    asigMias = resp;
-                    if (fase1.decrementAndGet() == 0) intentarRender();
-                });
+                (List<AsignacionTarea> resp) -> { asigMias = resp; if (pendientes.decrementAndGet() == 0) intentarRender(); });
 
-        lanzarPeticion(WebService.URL_Asignacion_Tarea,
+        // 2. Todas las asignaciones del hogar (para mostrar badges de asignados)
+        //    Filtrado por id_hogar gracias al nuevo soporte en asignacion_tarea.php
+        lanzarPeticion(
+                WebService.URL_Asignacion_Tarea + "?id_hogar=" + idHogar,
                 new TypeToken<RespuestaLista<AsignacionTarea>>() {}.getType(),
-                (List<AsignacionTarea> resp) -> {
-                    allAsig = resp;
-                    if (fase1.decrementAndGet() == 0) intentarRender();
-                });
+                (List<AsignacionTarea> resp) -> { allAsig = resp; if (pendientes.decrementAndGet() == 0) intentarRender(); });
 
-        lanzarPeticion(WebService.URL_Usuario + "?id_hogar=" + idHogar,
+        // 3. Usuarios del hogar (para los badges de nombre)
+        lanzarPeticion(
+                WebService.URL_Usuario + "?id_hogar=" + idHogar,
                 new TypeToken<RespuestaLista<Usuario>>() {}.getType(),
-                (List<Usuario> resp) -> {
-                    usuarios = resp;
-                    if (fase1.decrementAndGet() == 0) intentarRender();
-                });
+                (List<Usuario> resp) -> { usuarios = resp; if (pendientes.decrementAndGet() == 0) intentarRender(); });
 
-        lanzarPeticion(WebService.URL_Tarea_Realizada + "?id_usuario=" + idUsuario,
+        // 4. Tareas realizadas por el usuario (para detectar "completadas hoy")
+        lanzarPeticion(
+                WebService.URL_Tarea_Realizada + "?id_usuario=" + idUsuario,
                 new TypeToken<RespuestaLista<TareasRealizadas>>() {}.getType(),
-                (List<TareasRealizadas> resp) -> {
-                    realizadas = resp;
-                    if (fase1.decrementAndGet() == 0) intentarRender();
-                });
+                (List<TareasRealizadas> resp) -> { realizadas = resp; if (pendientes.decrementAndGet() == 0) intentarRender(); });
 
-        lanzarPeticion(WebService.URL_Habitacion + "?id_hogar=" + idHogar,
-                new TypeToken<RespuestaLista<Habitacion>>() {}.getType(),
-                (List<Habitacion> habs) -> {
-                    boolean fase1Lista = fase1.decrementAndGet() == 0;
-                    if (habs == null || habs.isEmpty()) {
-                        tareas = new ArrayList<>();
-                        intentarRender();
-                    } else {
-                        cargarTareasDeCadaHabitacion(habs);
-                    }
-                });
-    }
-
-    private void cargarTareasDeCadaHabitacion(List<Habitacion> habs) {
-        List<Tarea> buffer = new ArrayList<>();
-        AtomicInteger pending = new AtomicInteger(habs.size());
-        for (Habitacion h : habs) {
-            lanzarPeticion(WebService.URL_Tarea + "?id_habitacion=" + h.getId_habitacion(),
-                    new TypeToken<RespuestaLista<Tarea>>() {}.getType(),
-                    (List<Tarea> tareasHab) -> {
-                        if (tareasHab != null) synchronized (buffer) { buffer.addAll(tareasHab); }
-                        if (pending.decrementAndGet() == 0) {
-                            tareas = buffer;
-                            intentarRender();
-                        }
-                    });
-        }
+        // 5. Todas las tareas del hogar (una sola petición con JOIN, no por habitación)
+        lanzarPeticion(
+                WebService.URL_Tarea + "?id_hogar=" + idHogar,
+                new TypeToken<RespuestaLista<Tarea>>() {}.getType(),
+                (List<Tarea> resp) -> { tareas = resp; if (pendientes.decrementAndGet() == 0) intentarRender(); });
     }
 
     private void intentarRender() {
         if (asigMias != null && allAsig != null
                 && usuarios != null && realizadas != null && tareas != null) {
-            renderTareas();
+            if (isAdded()) {
+                loadingDialog.dismiss();
+                renderTareas();
+            }
         }
     }
 
@@ -220,8 +224,10 @@ public class Fragmento3_tareas extends Fragment {
                     }
                 },
                 error -> {
-                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                            "Error petición", Request.Method.GET, url, error);
+                    if (isAdded()) {
+                        Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                                "Error petición", Request.Method.GET, url, error);
+                    }
                     callback.accept(new ArrayList<>());
                 }
         );
@@ -248,46 +254,55 @@ public class Fragmento3_tareas extends Fragment {
         Set<Integer> idsMias = new HashSet<>();
         for (AsignacionTarea a : asigMias) idsMias.add(a.getId_tarea());
 
-        // id_tarea → lista de usuarios asignados
         Map<Integer, List<Integer>> asigByTarea = new HashMap<>();
         for (AsignacionTarea a : allAsig) {
             asigByTarea.computeIfAbsent(a.getId_tarea(), k -> new ArrayList<>())
                        .add(a.getId_usuario());
         }
 
-        // Completadas hoy
-        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        Set<Integer> completadasHoy = new HashSet<>();
+        // Mapa: id_tarea → realización más reciente (realizadas ya vienen ORDER BY fecha DESC)
+        Map<Integer, TareasRealizadas> ultimaRealizacion = new HashMap<>();
         for (TareasRealizadas r : realizadas) {
-            if (r.getFecha_realizacion() != null && r.getFecha_realizacion().startsWith(hoy))
-                completadasHoy.add(r.getId_tarea());
+            if (!ultimaRealizacion.containsKey(r.getId_tarea()))
+                ultimaRealizacion.put(r.getId_tarea(), r);
         }
 
-        // Realizadas últimos 7 días
-        long hace7ms = System.currentTimeMillis() - 7L * 24 * 60 * 60 * 1000;
-        List<TareasRealizadas> recientes = new ArrayList<>();
+        String mesActual = new SimpleDateFormat("yyyy-MM", Locale.ROOT).format(new Date());
+        java.util.Calendar prevCal = java.util.Calendar.getInstance();
+        prevCal.add(java.util.Calendar.MONTH, -1);
+        String mesPrev  = new SimpleDateFormat("yyyy-MM", Locale.ROOT).format(prevCal.getTime());
+        String nombreMesPrev = new SimpleDateFormat("MMMM yyyy", new Locale("es")).format(prevCal.getTime());
+
+        // Completadas este mes (para la sección 3)
+        List<TareasRealizadas> completadasEsteMes = new ArrayList<>();
+        // Completadas el mes anterior (para historial)
+        List<TareasRealizadas> completadasMesPrev = new ArrayList<>();
         for (TareasRealizadas r : realizadas) {
-            try {
-                Date d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                        .parse(r.getFecha_realizacion());
-                if (d != null && d.getTime() >= hace7ms) recientes.add(r);
-            } catch (Exception ignored) {}
+            if (r.getFecha_realizacion() == null) continue;
+            if (r.getFecha_realizacion().startsWith(mesActual))
+                completadasEsteMes.add(r);
+            else if (r.getFecha_realizacion().startsWith(mesPrev))
+                completadasMesPrev.add(r);
         }
 
-        // Separar: mis tareas / otras (asignadas a otros o sin asignar)
+        // Separar: mis tareas PENDIENTES (según frecuencia) / otras
         List<Tarea> misTareas   = new ArrayList<>();
         List<Tarea> otrasTareas = new ArrayList<>();
         for (Tarea t : tareas) {
-            if (idsMias.contains(t.getId_tarea())) misTareas.add(t);
-            else otrasTareas.add(t);
+            if (idsMias.contains(t.getId_tarea())) {
+                if (esPendiente(t, ultimaRealizacion)) misTareas.add(t);
+                // Si no es pendiente (ya completada en período actual) → no va a ninguna lista de arriba,
+                // aparecerá en "Completadas este mes"
+            } else {
+                otrasTareas.add(t);
+            }
         }
 
         LayoutInflater inf = LayoutInflater.from(requireContext());
 
         // ─── Sección 1: Mis tareas ───────────────────────────
         tvSinMisTareas.setVisibility(View.GONE);
-        long pendCount = misTareas.stream()
-                .filter(t -> !completadasHoy.contains(t.getId_tarea())).count();
+        long pendCount = misTareas.size();
         tagPendientes.setText(pendCount + (pendCount == 1 ? " pendiente" : " pendientes"));
 
         if (misTareas.isEmpty()) {
@@ -295,39 +310,34 @@ public class Fragmento3_tareas extends Fragment {
             tvSinMisTareas.setVisibility(View.VISIBLE);
         } else {
             for (Tarea t : misTareas) {
-                // Contenedor para el efecto de deslizar
                 FrameLayout rootFrame = new FrameLayout(requireContext());
                 rootFrame.setLayoutParams(new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-                // Botón de eliminar (rojo, debajo)
                 LinearLayout deleteBtn = new LinearLayout(requireContext());
-                deleteBtn.setBackgroundColor(0xFFE05C5C); // Rojo suave
+                deleteBtn.setBackgroundColor(0xFFE05C5C);
                 deleteBtn.setGravity(Gravity.CENTER);
                 FrameLayout.LayoutParams btnLp = new FrameLayout.LayoutParams(
                         dp(80), ViewGroup.LayoutParams.MATCH_PARENT);
                 btnLp.gravity = Gravity.END;
                 deleteBtn.setLayoutParams(btnLp);
-
                 ImageView icDelete = new ImageView(requireContext());
                 icDelete.setImageResource(android.R.drawable.ic_menu_delete);
                 icDelete.setColorFilter(Color.WHITE);
                 deleteBtn.addView(icDelete);
                 rootFrame.addView(deleteBtn);
 
-                // Fila de la tarea (encima, fondo blanco sólido para tapar el botón rojo)
                 View row = inf.inflate(R.layout.item_tarea, rootFrame, false);
-                row.setBackgroundColor(0xFFFFFFFF); // opaco: el deleteBtn queda oculto hasta que se deslice
+                row.setBackgroundColor(0xFFFFFFFF);
                 rootFrame.addView(row);
 
-                rellenarFilaTarea(row, deleteBtn, t, true, completadasHoy, asigByTarea, userMap, colorMap);
+                rellenarFilaTarea(row, deleteBtn, t, true, new HashSet<>(), asigByTarea, userMap, colorMap);
                 containerMisTareas.addView(rootFrame);
                 agregarDivider(containerMisTareas);
             }
         }
 
         // ─── Sección 2: Otras tareas del hogar ──────────────
-        // Incluye tanto las no asignadas como las asignadas a otros usuarios
         tvSinOtrasTareas.setVisibility(View.GONE);
         if (otrasTareas.isEmpty()) {
             tvSinOtrasTareas.setText("No hay más tareas en el hogar.");
@@ -335,27 +345,27 @@ public class Fragmento3_tareas extends Fragment {
         } else {
             for (Tarea t : otrasTareas) {
                 View row = inf.inflate(R.layout.item_tarea, containerOtrasTareas, false);
-                rellenarFilaTarea(row, null, t, false, completadasHoy, asigByTarea, userMap, colorMap);
+                rellenarFilaTarea(row, null, t, false, new HashSet<>(), asigByTarea, userMap, colorMap);
                 containerOtrasTareas.addView(row);
                 agregarDivider(containerOtrasTareas);
             }
         }
 
-        // ─── Sección 3: Completadas esta semana ─────────────
+        // ─── Sección 3: Completadas este mes ─────────────────
         tvSinCompletadas.setVisibility(View.GONE);
-        if (recientes.isEmpty()) {
-            tvSinCompletadas.setText("Sin tareas completadas en los últimos 7 días.");
+        if (completadasEsteMes.isEmpty()) {
+            tvSinCompletadas.setText("Sin tareas completadas este mes.");
             tvSinCompletadas.setVisibility(View.VISIBLE);
         } else {
-            for (TareasRealizadas r : recientes) {
+            for (TareasRealizadas r : completadasEsteMes) {
                 Tarea t = tareaMap.get(r.getId_tarea());
                 View row = inf.inflate(R.layout.item_tarea, containerCompletadas, false);
                 ((TextView) row.findViewById(R.id.tv_nombre_tarea))
                         .setText(t != null ? t.getNombre() : "Tarea #" + r.getId_tarea());
-                // Mostrar observaciones si las tiene, si no la fecha
                 String obs = r.getObservaciones();
                 ((TextView) row.findViewById(R.id.tv_frecuencia))
-                        .setText((obs != null && !obs.isEmpty()) ? obs : formatFecha(r.getFecha_realizacion()));
+                        .setText((obs != null && !obs.isEmpty())
+                                ? obs : formatFecha(r.getFecha_realizacion()));
                 TextView tvCheck = row.findViewById(R.id.tv_check);
                 tvCheck.setText("✓");
                 tvCheck.setBackgroundResource(R.drawable.bg_tag_green);
@@ -364,6 +374,36 @@ public class Fragmento3_tareas extends Fragment {
                 tvTag.setBackgroundResource(R.drawable.bg_tag_green);
                 containerCompletadas.addView(row);
                 agregarDivider(containerCompletadas);
+            }
+        }
+
+        // ─── Sección 4: Historial mes anterior ───────────────
+        if (!completadasMesPrev.isEmpty() && sectionHistorialMesTareas != null) {
+            sectionHistorialMesTareas.setVisibility(View.VISIBLE);
+            String titulo = capitalize(nombreMesPrev);
+            tvHistorialMesTareasTitulo.setText(titulo);
+            tagHistorialMesTareas.setText(completadasMesPrev.size()
+                    + (completadasMesPrev.size() == 1 ? " completada" : " completadas"));
+
+            containerHistorialMesTareas.removeAllViews();
+            for (TareasRealizadas r : completadasMesPrev) {
+                Tarea t = tareaMap.get(r.getId_tarea());
+                View row = inf.inflate(R.layout.item_tarea, containerHistorialMesTareas, false);
+                ((TextView) row.findViewById(R.id.tv_nombre_tarea))
+                        .setText(t != null ? t.getNombre() : "Tarea #" + r.getId_tarea());
+                String obs = r.getObservaciones();
+                ((TextView) row.findViewById(R.id.tv_frecuencia))
+                        .setText((obs != null && !obs.isEmpty())
+                                ? obs : formatFecha(r.getFecha_realizacion()));
+                TextView tvCheck = row.findViewById(R.id.tv_check);
+                tvCheck.setText("✓");
+                tvCheck.setBackgroundResource(R.drawable.bg_tag_muted);
+                tvCheck.setAlpha(0.7f);
+                TextView tvTag = row.findViewById(R.id.tv_tag_estado);
+                tvTag.setText("ANTERIOR");
+                tvTag.setBackgroundResource(R.drawable.bg_tag_muted);
+                containerHistorialMesTareas.addView(row);
+                agregarDivider(containerHistorialMesTareas);
             }
         }
     }
@@ -379,7 +419,8 @@ public class Fragmento3_tareas extends Fragment {
                                    Map<Integer, Integer> colorMap) {
 
         boolean yaHecha = completadasHoy.contains(t.getId_tarea());
-        ((TextView) row.findViewById(R.id.tv_nombre_tarea)).setText(t.getNombre());
+        ((TextView) row.findViewById(R.id.tv_nombre_tarea)).setText(
+                t.getNombre() != null ? t.getNombre() : "");
 
         StringBuilder fr = new StringBuilder(labelFrecuencia(t.getFrecuencia()));
         if (t.getNum_veces() != null && !"1".equals(t.getNum_veces()))
@@ -406,6 +447,11 @@ public class Fragmento3_tareas extends Fragment {
                 ? asigByTarea.get(t.getId_tarea()) : new ArrayList<>();
         for (Integer uid : asigs) {
             Usuario u = userMap.get(uid);
+            // ── FIX: null-safety en getNombre() ──────────────────────────
+            String nombre = (u != null && u.getNombre() != null && !u.getNombre().isEmpty())
+                    ? u.getNombre() : "?";
+            char inicial = nombre.charAt(0);
+
             TextView badge = new TextView(requireContext());
             int sz = dp(24);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(sz, sz);
@@ -416,14 +462,11 @@ public class Fragmento3_tareas extends Fragment {
             badge.setTypeface(null, Typeface.BOLD);
             badge.setTextColor(Color.WHITE);
             badge.setBackgroundColor(colorMap.containsKey(uid) ? colorMap.get(uid) : USER_COLORS[0]);
-            badge.setText(u != null
-                    ? String.valueOf(u.getNombre().charAt(0)).toUpperCase(Locale.getDefault())
-                    : "?");
+            badge.setText(String.valueOf(inicial).toUpperCase(Locale.getDefault()));
             llAsig.addView(badge);
         }
 
-        // Para "otras tareas": añadir "Asignado a: Nombre1, Nombre2" debajo de los badges
-        // (si no hay nadie asignado: "Sin asignar")
+        // Para "otras tareas": mostrar "Asignado a: …" o "Sin asignar"
         if (!esMia) {
             LinearLayout bodyLayout = (LinearLayout) llAsig.getParent();
             TextView tvAsig = new TextView(requireContext());
@@ -462,7 +505,6 @@ public class Fragmento3_tareas extends Fragment {
 
         // ── Click + swipe: solo "mis tareas" PENDIENTES ──
         if (esMia && !yaHecha) {
-            // Foreground ripple → el background blanco sólido permanece intacto
             TypedValue outValue = new TypedValue();
             requireContext().getTheme().resolveAttribute(
                     android.R.attr.selectableItemBackground, outValue, true);
@@ -472,10 +514,9 @@ public class Fragmento3_tareas extends Fragment {
             row.setOnClickListener(v ->
                     mostrarDialogMarcarRealizada(t, row, tvFrec, tvCheck, tvTag));
 
-            // Variables para el swipe
             final float[] x1 = {0};
             final float[] initialTranslationX = {0};
-            final int MAX_SWIPE = dp(-80); // Ancho del botón rojo
+            final int MAX_SWIPE = dp(-80);
 
             row.setOnTouchListener((v, event) -> {
                 switch (event.getAction()) {
@@ -483,15 +524,12 @@ public class Fragmento3_tareas extends Fragment {
                         x1[0] = event.getRawX();
                         initialTranslationX[0] = v.getTranslationX();
                         return true;
-
                     case MotionEvent.ACTION_MOVE:
                         float deltaX = event.getRawX() - x1[0];
                         float newTranslationX = initialTranslationX[0] + deltaX;
-                        if (newTranslationX <= 0 && newTranslationX >= MAX_SWIPE) {
+                        if (newTranslationX <= 0 && newTranslationX >= MAX_SWIPE)
                             v.setTranslationX(newTranslationX);
-                        }
                         return true;
-
                     case MotionEvent.ACTION_UP:
                         if (v.getTranslationX() < MAX_SWIPE / 2f) {
                             v.animate().translationX(MAX_SWIPE).setDuration(200).start();
@@ -504,24 +542,21 @@ public class Fragmento3_tareas extends Fragment {
                 return false;
             });
 
-            // Evento para el botón rojo (borrar)
-            deleteBtn.setOnClickListener(v -> borrarTarea(t, (View) row.getParent()));
+            if (deleteBtn != null)
+                deleteBtn.setOnClickListener(v -> borrarTarea(t, (View) row.getParent()));
         }
     }
 
     /* ════════════════════════════════════════════
        DIALOG: ¿Confirmas realizar la tarea?
-       Campos: Tiempo (min) + Observaciones
     ════════════════════════════════════════════ */
 
     private void mostrarDialogMarcarRealizada(Tarea t, View row,
                                               TextView tvFrec, TextView tvCheck, TextView tvTag) {
-        // Construir el contenido del dialog
         LinearLayout layout = new LinearLayout(requireContext());
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(dp(20), dp(8), dp(20), dp(4));
 
-        // Nombre de la tarea (subtítulo del dialog)
         TextView tvNombreTarea = new TextView(requireContext());
         tvNombreTarea.setText("\"" + t.getNombre() + "\"");
         tvNombreTarea.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
@@ -533,7 +568,6 @@ public class Fragmento3_tareas extends Fragment {
         tvNombreTarea.setLayoutParams(lpNombre);
         layout.addView(tvNombreTarea);
 
-        // Label + EditText: Tiempo (min)
         TextView tvLabelDur = new TextView(requireContext());
         tvLabelDur.setText("Tiempo empleado (min)");
         tvLabelDur.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
@@ -549,14 +583,13 @@ public class Fragmento3_tareas extends Fragment {
         etDuracion.setInputType(InputType.TYPE_CLASS_NUMBER);
         etDuracion.setHint("ej. 30");
         if (t.getDuracion() != null)
-            etDuracion.setText(String.valueOf(t.getDuracion())); // valor por defecto = duración de la tarea
+            etDuracion.setText(String.valueOf(t.getDuracion()));
         LinearLayout.LayoutParams lpDur = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         lpDur.bottomMargin = dp(14);
         etDuracion.setLayoutParams(lpDur);
         layout.addView(etDuracion);
 
-        // Label + EditText: Observaciones
         TextView tvLabelObs = new TextView(requireContext());
         tvLabelObs.setText("Observaciones (opcional)");
         tvLabelObs.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
@@ -589,11 +622,11 @@ public class Fragmento3_tareas extends Fragment {
     }
 
     /* ════════════════════════════════════════════
-       DELETE: eliminar tarea — réplica exacta de deleteTarea() del web
-       Paso 1: DELETE asignacion_tarea.php?id_tarea=X  (libera la FK)
+       DELETE: eliminar tarea
+       Paso 1: DELETE asignacion_tarea.php?id_tarea=X
        Paso 2: DELETE tarea.php?id_tarea=X
-       Paso 3: quitar la fila visualmente
     ════════════════════════════════════════════ */
+
     private void borrarTarea(Tarea t, View rootFrame) {
         new AlertDialog.Builder(requireContext())
                 .setTitle("¿Eliminar tarea?")
@@ -605,60 +638,52 @@ public class Fragmento3_tareas extends Fragment {
                 .show();
     }
 
-    /**
-     * Encadena dos DELETE igual que deleteTarea() del web:
-     *   1) asignacion_tarea.php?id_tarea=X  — elimina las FK
-     *   2) tarea.php?id_tarea=X             — elimina la tarea
-     */
     private void eliminarAsignacionesYTarea(Tarea t, View rootFrame) {
+        loadingDialog.show();
         String urlAsig  = WebService.URL_Asignacion_Tarea + "?id_tarea=" + t.getId_tarea();
         String urlTarea = WebService.URL_Tarea            + "?id_tarea=" + t.getId_tarea();
 
-        // ─── Paso 2: eliminar la tarea (se llama desde el callback del paso 1) ───
         JsonObjectRequest deleteTarea = new JsonObjectRequest(
                 Request.Method.DELETE, urlTarea, null,
                 response -> {
+                    loadingDialog.dismiss();
+                    if (!isAdded()) return;
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
                             Toast.makeText(requireContext(),
                                     "Tarea eliminada", Toast.LENGTH_SHORT).show();
-                            // Quitar el FrameLayout (rootFrame) del contenedor
                             ViewGroup parent = (ViewGroup) rootFrame.getParent();
                             if (parent != null) parent.removeView(rootFrame);
                         } else {
                             Toast.makeText(requireContext(),
-                                    "No se pudo eliminar la tarea: "
-                                            + response.optString("message", ""),
-                                    Toast.LENGTH_SHORT).show();
+                                    "No se pudo eliminar la tarea", Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
                                 "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                        "Error al eliminar tarea", Request.Method.DELETE, urlTarea, error)
-        );
-
-        // ─── Paso 1: eliminar asignaciones (en callback lanza el paso 2) ─────────
-        JsonObjectRequest deleteAsig = new JsonObjectRequest(
-                Request.Method.DELETE, urlAsig, null,
-                respAsig -> {
-                    // Con o sin asignaciones, procedemos a borrar la tarea
-                    PeticionesRed.anhadirPeticionACola(deleteTarea);
-                },
                 error -> {
-                    // Si falla la petición de asignaciones, intentamos igualmente
-                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                            "Error al eliminar asignaciones", Request.Method.DELETE, urlAsig, error);
-                    PeticionesRed.anhadirPeticionACola(deleteTarea);
+                    loadingDialog.dismiss();
+                    if (isAdded())
+                        Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                                "Error al eliminar tarea", Request.Method.DELETE, urlTarea, error);
                 }
         );
 
+        JsonObjectRequest deleteAsig = new JsonObjectRequest(
+                Request.Method.DELETE, urlAsig, null,
+                respAsig -> PeticionesRed.anhadirPeticionACola(deleteTarea),
+                error -> {
+                    if (isAdded())
+                        Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                                "Error al eliminar asignaciones", Request.Method.DELETE, urlAsig, error);
+                    PeticionesRed.anhadirPeticionACola(deleteTarea);
+                }
+        );
         PeticionesRed.anhadirPeticionACola(deleteAsig);
     }
-
 
     /* ════════════════════════════════════════════
        POST: registrar tarea como realizada
@@ -667,7 +692,7 @@ public class Fragmento3_tareas extends Fragment {
     private void marcarTareaRealizada(Tarea t, String durReal, String obs,
                                       View row, TextView tvFrec,
                                       TextView tvCheck, TextView tvTag) {
-
+        loadingDialog.show();
         String fechaAhora = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                 .format(new Date());
 
@@ -681,6 +706,7 @@ public class Fragmento3_tareas extends Fragment {
             if (obs != null && !obs.isEmpty())
                 body.put("observaciones", obs);
         } catch (JSONException e) {
+            loadingDialog.dismiss();
             Toast.makeText(requireContext(), "Error al preparar el registro", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -689,29 +715,13 @@ public class Fragmento3_tareas extends Fragment {
         JsonObjectRequest peticion = new JsonObjectRequest(
                 Request.Method.POST, url, body,
                 response -> {
+                    loadingDialog.dismiss();
+                    if (!isAdded()) return;
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
 
-                            // Actualizar la fila en tiempo real
-                            tvCheck.setText("✓");
-                            tvCheck.setBackgroundResource(R.drawable.bg_tag_green);
-                            tvCheck.setAlpha(1f);
-
-                            tvTag.setText("HECHA HOY");
-                            tvTag.setBackgroundResource(R.drawable.bg_tag_green);
-
-                            // Mostrar observaciones en el label de frecuencia (si las hay)
-                            if (obs != null && !obs.isEmpty()) {
-                                tvFrec.setText(obs);
-                                tvFrec.setTextColor(0xFF5C4A2A);
-                            }
-
-                            // Quitar el click (ya no es accionable)
-                            row.setOnClickListener(null);
-                            row.setClickable(false);
-
-                            // Decrementar badge de pendientes
+                            // ── 1. Actualizar contador de pendientes ───────────
                             try {
                                 String txt = tagPendientes.getText().toString();
                                 int count = Integer.parseInt(txt.split(" ")[0]);
@@ -719,19 +729,73 @@ public class Fragmento3_tareas extends Fragment {
                                 tagPendientes.setText(count + (count == 1 ? " pendiente" : " pendientes"));
                             } catch (Exception ignored) {}
 
+                            // ── 2. Animar y quitar la fila de "Mis tareas" ────
+                            ViewGroup rootFrame = (ViewGroup) row.getParent();
+                            if (rootFrame != null) {
+                                rootFrame.animate()
+                                        .alpha(0f)
+                                        .translationX(-rootFrame.getWidth())
+                                        .setDuration(300)
+                                        .withEndAction(() -> {
+                                            if (!isAdded()) return;
+                                            int idx = containerMisTareas.indexOfChild(rootFrame);
+                                            if (idx >= 0) {
+                                                containerMisTareas.removeViewAt(idx); // quita el FrameLayout
+                                                // quita el divider que queda en esa posición
+                                                if (idx < containerMisTareas.getChildCount())
+                                                    containerMisTareas.removeViewAt(idx);
+                                            }
+                                            // Si el contenedor quedó vacío, mostrar mensaje
+                                            if (containerMisTareas.getChildCount() == 0) {
+                                                tvSinMisTareas.setText("Sin tareas pendientes.");
+                                                tvSinMisTareas.setVisibility(View.VISIBLE);
+                                            }
+                                        }).start();
+                            }
+
+                            // ── 3. Añadir fila al inicio de "Completadas esta semana" ──
+                            tvSinCompletadas.setVisibility(View.GONE);
+                            LayoutInflater inf2 = LayoutInflater.from(requireContext());
+                            View compRow = inf2.inflate(R.layout.item_tarea, containerCompletadas, false);
+                            ((TextView) compRow.findViewById(R.id.tv_nombre_tarea))
+                                    .setText(t.getNombre());
+                            ((TextView) compRow.findViewById(R.id.tv_frecuencia))
+                                    .setText((obs != null && !obs.isEmpty())
+                                            ? obs : "Completada ahora");
+                            TextView ck = compRow.findViewById(R.id.tv_check);
+                            ck.setText("✓");
+                            ck.setBackgroundResource(R.drawable.bg_tag_green);
+                            TextView tg = compRow.findViewById(R.id.tv_tag_estado);
+                            tg.setText("COMPLETADA");
+                            tg.setBackgroundResource(R.drawable.bg_tag_green);
+                            containerCompletadas.addView(compRow, 0);
+                            // Divider justo debajo de la nueva fila
+                            View div = new View(requireContext());
+                            LinearLayout.LayoutParams divLp = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                            divLp.leftMargin = dp(50);
+                            div.setLayoutParams(divLp);
+                            div.setBackgroundColor(0xFFE8DFC0);
+                            containerCompletadas.addView(div, 1);
+
                             Toast.makeText(requireContext(),
                                     "¡Tarea completada!", Toast.LENGTH_SHORT).show();
                         } else {
-                            String msg = response.optString("message", "Error al registrar");
-                            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(),
+                                    response.optString("message", "Error al registrar"),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
                                 "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
                     }
                 },
-                error -> Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                        "Error al marcar realizada", Request.Method.POST, url, error)
+                error -> {
+                    loadingDialog.dismiss();
+                    if (isAdded())
+                        Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                                "Error al marcar realizada", Request.Method.POST, url, error);
+                }
         );
         PeticionesRed.anhadirPeticionACola(peticion);
     }
@@ -739,6 +803,55 @@ public class Fragmento3_tareas extends Fragment {
     /* ════════════════════════════════════════════
        HELPERS
     ════════════════════════════════════════════ */
+
+    /**
+     * Determina si una tarea debe aparecer como PENDIENTE
+     * según su frecuencia y su última realización.
+     */
+    private boolean esPendiente(Tarea t, Map<Integer, TareasRealizadas> ultimaRealizacion) {
+        TareasRealizadas ultima = ultimaRealizacion.get(t.getId_tarea());
+        if (ultima == null || ultima.getFecha_realizacion() == null) return true;
+
+        // Tomamos solo los primeros 10 chars (yyyy-MM-dd) para comparar
+        String fechaUlt = ultima.getFecha_realizacion().length() >= 10
+                ? ultima.getFecha_realizacion().substring(0, 10) : ultima.getFecha_realizacion();
+        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date());
+
+        if (t.getFrecuencia() == null) return true;
+        switch (t.getFrecuencia()) {
+            case "dia":
+                return !fechaUlt.equals(hoy);
+            case "semana":
+                return !esMismaSemana(fechaUlt, hoy);
+            case "mes":
+                return !fechaUlt.substring(0, 7).equals(hoy.substring(0, 7));
+            case "variable":
+                return true; // Recurrencia libre: siempre pendiente
+            default:
+                return true;
+        }
+    }
+
+    /** Compara si dos fechas ISO (yyyy-MM-dd) pertenecen a la misma semana ISO. */
+    private boolean esMismaSemana(String isoDate1, String isoDate2) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
+            java.util.Calendar c1 = java.util.Calendar.getInstance();
+            java.util.Calendar c2 = java.util.Calendar.getInstance();
+            c1.setTime(sdf.parse(isoDate1));
+            c2.setTime(sdf.parse(isoDate2));
+            c1.setMinimalDaysInFirstWeek(4);
+            c2.setMinimalDaysInFirstWeek(4);
+            return c1.get(java.util.Calendar.YEAR) == c2.get(java.util.Calendar.YEAR)
+                    && c1.get(java.util.Calendar.WEEK_OF_YEAR) == c2.get(java.util.Calendar.WEEK_OF_YEAR);
+        } catch (Exception e) { return false; }
+    }
+
+    /** Capitaliza la primera letra de un string. */
+    private String capitalize(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+    }
 
     private String labelFrecuencia(String freq) {
         if (freq == null) return "-";
