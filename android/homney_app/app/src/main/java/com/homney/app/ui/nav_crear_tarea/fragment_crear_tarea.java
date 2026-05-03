@@ -131,8 +131,7 @@ public class fragment_crear_tarea extends Fragment {
         return v;
     }
 
-
-    // obtener horas y minutos de los timepickers
+    // configurar visualizacion de numberpicker
     private void configurarPickers() {
         // -------- HORAS --------
         int maxHoras = 12;
@@ -156,7 +155,7 @@ public class fragment_crear_tarea extends Fragment {
     }
 
     /* ════════════════════════════════════════════
-       CARGA DINÁMICA DE SPINNERS
+       CARGA DINÁMICA DE SPINNERS DESDE BD
     ════════════════════════════════════════════ */
 
     private void cargarHabitaciones() {

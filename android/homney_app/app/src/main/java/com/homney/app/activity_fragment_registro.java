@@ -99,29 +99,24 @@ public class activity_fragment_registro extends Fragment {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        loadingDialog.dismiss();
                         try {
                             if (response.getString(WebService.JSON.STATUS).equals(WebService.JSON.SUCCESS)) {
                                 Gson gson = new GsonBuilder().create();
 
-                                // Definimos el tipo genérico correctamente con GSON
                                 Type tipoRespuesta = new TypeToken<RespuestaLista<Usuario>>() {
                                 }.getType();
                                 RespuestaLista<Usuario> respuestaLogin = gson.fromJson(response.toString(), tipoRespuesta);
 
                                 if (respuestaLogin.data != null && !respuestaLogin.data.isEmpty()) {
-                                    // Sacamos el primer usuario de la lista data
                                     Usuario usuario = respuestaLogin.data.get(0);
 
-                                    // Guardamos SIEMPRE los datos de sesión activa
                                     editor.putInt("id_usuario", usuario.getId_usuario());
                                     editor.putString("nombre", usuario.getNombre());
                                     editor.putString("email", usuario.getEmail());
                                     editor.putString("rol", usuario.getRol());
                                     editor.putInt("id_hogar", usuario.getId_hogar());
-                                    editor.putString("avatar", usuario.getAvatar()); // para el círculo del toolbar
+                                    editor.putString("avatar", usuario.getAvatar());
 
-                                    // "Recuérdame" solo persiste el mail para auto-login
                                     if (cb_recordar_sesion.isChecked()) {
                                         editor.putBoolean("remember", true);
                                         editor.putString("mail", usuario.getEmail());
@@ -135,17 +130,26 @@ public class activity_fragment_registro extends Fragment {
                                     intent.putExtra("usuario_nombre", usuario.getNombre());
                                     intent.putExtra("usuario_email", usuario.getEmail());
 
+                                    // ── NO hacemos dismiss() aquí ──────────────────────────
+                                    // El loading sigue girando durante la transición.
+                                    // Cuando la loginActivity hace finish(), el dialog desaparece
+                                    // junto con ella en cuanto MainActivity es visible.
                                     startActivity(intent);
                                     requireActivity().finish();
+
                                 } else {
+                                    // Login incorrecto → sí descartamos el loading
+                                    loadingDialog.dismiss();
                                     Toast.makeText(requireContext(), "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                String mensajeError = response.has("message") ? response.getString("message") : "Error de login";
-
+                                loadingDialog.dismiss();
+                                String mensajeError = response.has("message")
+                                        ? response.getString("message") : "Error de login";
                                 Toast.makeText(requireContext(), mensajeError, Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
+                            loadingDialog.dismiss();
                             Toast.makeText(requireContext(), "Error al procesar la respuesta del servidor", Toast.LENGTH_SHORT).show();
                         }
                     }

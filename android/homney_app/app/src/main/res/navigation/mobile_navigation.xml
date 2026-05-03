@@ -55,4 +55,10 @@
         android:label="@string/btn_publicar"
         tools:layout="@layout/fragment_crear_nueva_publicacion" />
 
+    <fragment
+        android:id="@+id/nav_mi_perfil"
+        android:name="com.homney.app.ui.nav_mi_perfil.fragment_mi_perfil"
+        android:label="Mi perfil"
+        tools:layout="@layout/fragment_mi_perfil" />
+
 </navigation>

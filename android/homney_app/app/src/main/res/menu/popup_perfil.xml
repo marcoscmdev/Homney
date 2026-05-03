@@ -7,6 +7,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/action_mi_perfil"
+        android:title="Mi perfil" />
+
+    <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings" />
 

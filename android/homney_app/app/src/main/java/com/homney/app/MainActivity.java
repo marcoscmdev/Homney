@@ -221,6 +221,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_mi_perfil) {
+            Navigation.findNavController(this, R.id.nav_host_fragment)
+                    .navigate(R.id.nav_mi_perfil);
+            return true;
+        }
         if (item.getItemId() == R.id.action_settings) {
             Toast.makeText(getApplicationContext(), "Ajustes", Toast.LENGTH_LONG).show();
         }

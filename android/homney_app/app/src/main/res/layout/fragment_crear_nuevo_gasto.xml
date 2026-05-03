@@ -165,6 +165,14 @@
             android:paddingBottom="12dp"
             android:layout_marginBottom="24dp" />
 
+        <CheckBox
+            android:id="@+id/cb_compartir"
+            style="@style/Homney.Text.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="No Compartir" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

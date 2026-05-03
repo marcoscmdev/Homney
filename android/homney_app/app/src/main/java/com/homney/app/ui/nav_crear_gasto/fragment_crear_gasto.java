@@ -1,5 +1,6 @@
 package com.homney.app.ui.nav_crear_gasto;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -51,17 +53,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class fragment_crear_gasto extends Fragment {
 
     /* ── Vistas ─────────────────────────────────────────── */
-    EditText  etConcepto;          // R.id.et_nombre_tarea
-    EditText  etImporte;           // R.id.et_importe
-    EditText  etFecha;             // R.id.et_fecha_gasto
-    Spinner   spinnerCategoria;    // R.id.spinner_categoria      (categorías padre)
-    TextView  tvLabelSubcategoria; // R.id.tv_label_subcategoria  (hidden by default)
-    Spinner   spinnerSubcategoria; // R.id.spinner_subcategoria   (hidden by default)
-    Spinner   spinnerModoPago;     // R.id.spinner_modo_pago
-    Spinner   spinnerTipoPago;     // R.id.spinner_tipo_pago
-    Button    btnCancelar;         // R.id.btn_cancelar_tarea
-    Button    btnCrear;            // R.id.btn_crear_gasto
-
+    EditText  etConcepto;
+    EditText  etImporte;
+    EditText  etFecha;
+    Spinner   spinnerCategoria;
+    TextView  tvLabelSubcategoria;
+    Spinner   spinnerSubcategoria;
+    Spinner   spinnerModoPago;
+    Spinner   spinnerTipoPago;
+    Button    btnCancelar;
+    Button    btnCrear;
+    CheckBox cbRepartoAutomatico;
     /* ── Sesión ─────────────────────────────────────────── */
     private int idUsuario = -1;
     private int idHogar   = -1;
@@ -80,6 +82,7 @@ public class fragment_crear_gasto extends Fragment {
        CICLO DE VIDA
     ════════════════════════════════════════════ */
 
+    @SuppressLint("MissingInflatedId")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -97,6 +100,7 @@ public class fragment_crear_gasto extends Fragment {
         spinnerTipoPago      = v.findViewById(R.id.spinner_tipo_pago);
         btnCancelar          = v.findViewById(R.id.btn_cancelar_tarea);
         btnCrear             = v.findViewById(R.id.btn_crear_gasto);
+        cbRepartoAutomatico  = v.findViewById(R.id.cb_compartir);
 
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
@@ -267,7 +271,6 @@ public class fragment_crear_gasto extends Fragment {
     /**
      * Cuando cambia la categoría padre, carga sus hijos en el spinner de subcategoría.
      * Si no tiene hijos, oculta el spinner de subcategoría.
-     * Equivale a onCategPadreChange() del web.
      */
     private void actualizarSpinnerSubcategoria(int posicionPadre) {
         // posición 0 = "Seleccionar categoría" (placeholder)
@@ -276,10 +279,8 @@ public class fragment_crear_gasto extends Fragment {
             ocultarSubcategoria();
             return;
         }
-
         String nombrePadre = listaCategorias.get(posicionPadre - 1).getNombre();
         List<Categoria> hijos = hijosPorPadre.get(nombrePadre);
-
         if (hijos == null || hijos.isEmpty()) {
             ocultarSubcategoria();
             return;
@@ -287,16 +288,13 @@ public class fragment_crear_gasto extends Fragment {
 
         // Hay hijos → poblar y mostrar spinner de subcategoría
         listaHijosActuales = hijos;
-
         List<String> nombresHijos = new ArrayList<>();
         nombresHijos.add("Sin subcategoría");
         for (Categoria h : hijos) nombresHijos.add(h.getNombre());
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 requireContext(), android.R.layout.simple_spinner_item, nombresHijos);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSubcategoria.setAdapter(adapter);
-
         tvLabelSubcategoria.setVisibility(View.VISIBLE);
         spinnerSubcategoria.setVisibility(View.VISIBLE);
     }
@@ -312,7 +310,6 @@ public class fragment_crear_gasto extends Fragment {
      * - Si hay subcategoría seleccionada → nombre de la subcategoría
      * - Si no → nombre de la categoría padre
      * - Fallback → "Otros"
-     * Equivale a getCategoria() del web.
      */
     private String getCategoriaSeleccionada() {
         // Subcategoría visible y seleccionada (> 0 para excluir "Sin subcategoría")
@@ -355,7 +352,6 @@ public class fragment_crear_gasto extends Fragment {
         String concepto   = etConcepto.getText().toString().trim();
         String importeStr = etImporte.getText().toString().trim();
         String fecha      = etFecha.getText().toString().trim();
-
         if (concepto.isEmpty() || importeStr.isEmpty() || fecha.isEmpty()) {
             Toast.makeText(requireContext(),
                     "Rellena todos los campos obligatorios", Toast.LENGTH_SHORT).show();
@@ -370,16 +366,13 @@ public class fragment_crear_gasto extends Fragment {
             Toast.makeText(requireContext(), "Importe inválido", Toast.LENGTH_SHORT).show();
             return;
         }
-
         // Categoría final (padre o hijo según selección)
         String categoria = getCategoriaSeleccionada();
-
         // Modo y tipo
         String[] modos = requireContext().getResources().getStringArray(R.array.modo_pago_options);
         String modo = modos[spinnerModoPago.getSelectedItemPosition()];
         String[] tipos = requireContext().getResources().getStringArray(R.array.tipo_gasto_options);
         String tipo = tipos[spinnerTipoPago.getSelectedItemPosition()];
-
         JSONObject body = new JSONObject();
         try {
             body.put("concepto",           concepto);
@@ -394,11 +387,9 @@ public class fragment_crear_gasto extends Fragment {
             Toast.makeText(requireContext(), "Error al preparar los datos", Toast.LENGTH_SHORT).show();
             return;
         }
-
         btnCrear.setEnabled(false);
         loadingDialog.show();
         final double importeFinal = importe;
-
         String url = WebService.URL_Gasto;
         JsonObjectRequest peticion = new JsonObjectRequest(
                 Request.Method.POST, url, body,
@@ -406,21 +397,21 @@ public class fragment_crear_gasto extends Fragment {
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
-
                             int idGasto = -1;
                             if (response.has(WebService.JSON.DATA)
                                     && !response.isNull(WebService.JSON.DATA)) {
                                 idGasto = response.getJSONObject(WebService.JSON.DATA)
                                         .optInt("autoincrement", -1);
                             }
-
-                            if (idGasto != -1 && !listaUsuarios.isEmpty()) {
+                            // Repartir solo si: hay idGasto, hay usuarios cargados
+                            // Y el checkbox "no compartir" NO está marcado
+                            boolean hacerReparto = idGasto != -1
+                                    && !listaUsuarios.isEmpty()
+                                    && !cbRepartoAutomatico.isChecked();
+                            if (hacerReparto) {
                                 crearRepartoAutomatico(idGasto, importeFinal, v);
                             } else {
-                                loadingDialog.dismiss();
-                                Toast.makeText(requireContext(),
-                                        "Gasto registrado", Toast.LENGTH_SHORT).show();
-                                Navigation.findNavController(v).popBackStack();
+                                finalizarCreacion(v, false, false);
                             }
                         } else {
                             loadingDialog.dismiss();
@@ -447,8 +438,8 @@ public class fragment_crear_gasto extends Fragment {
     }
 
     /**
-     * Crea el reparto automático dividiendo el importe entre todos los miembros.
-     * Equivale a crearReparto() del web.
+     * Crea el reparto automático dividiendo el importe entre todos los miembros del hogar.
+     * Solo se llama si el usuario NO ha marcado "no compartir" en el checkbox.
      */
     private void crearRepartoAutomatico(int idGasto, double totalImporte, View v) {
         int n = listaUsuarios.size();
@@ -467,10 +458,9 @@ public class fragment_crear_gasto extends Fragment {
                 body.put("abonado",    false);
             } catch (JSONException e) {
                 if (pendiente.decrementAndGet() == 0)
-                    finalizarCreacion(v, errorFlag[0]);
+                    finalizarCreacion(v, errorFlag[0], true);
                 continue;
             }
-
             String url = WebService.URL_RepartoGasto;
             JsonObjectRequest peticion = new JsonObjectRequest(
                     Request.Method.POST, url, body,
@@ -482,25 +472,30 @@ public class fragment_crear_gasto extends Fragment {
                             }
                         } catch (JSONException ignored) { errorFlag[0] = true; }
                         if (pendiente.decrementAndGet() == 0)
-                            finalizarCreacion(v, errorFlag[0]);
+                            finalizarCreacion(v, errorFlag[0], true);
                     },
                     error -> {
                         errorFlag[0] = true;
                         if (pendiente.decrementAndGet() == 0)
-                            finalizarCreacion(v, errorFlag[0]);
+                            finalizarCreacion(v, errorFlag[0], true);
                     }
             );
             PeticionesRed.anhadirPeticionACola(peticion);
         }
     }
 
-    private void finalizarCreacion(View v, boolean huboError) {
+    /**
+     * @param huboError  true si alguna petición de reparto falló
+     * @param conReparto true si se intentó hacer reparto, false si el usuario lo omitió
+     */
+    private void finalizarCreacion(View v, boolean huboError, boolean conReparto) {
         if (!isAdded()) return;
         loadingDialog.dismiss();
-        Toast.makeText(requireContext(),
-                huboError ? "Gasto registrado (reparto parcial)"
-                          : "Gasto registrado y repartido correctamente",
-                Toast.LENGTH_SHORT).show();
+        String msg;
+        if (!conReparto)     msg = "Gasto registrado";
+        else if (huboError)  msg = "Gasto registrado (reparto parcial)";
+        else                 msg = "Gasto registrado y repartido correctamente";
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
         Navigation.findNavController(v).popBackStack();
     }
 }
