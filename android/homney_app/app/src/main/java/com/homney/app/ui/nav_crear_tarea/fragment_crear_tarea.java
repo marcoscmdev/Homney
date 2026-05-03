@@ -1,5 +1,6 @@
 package com.homney.app.ui.nav_crear_tarea;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,7 +49,7 @@ public class fragment_crear_tarea extends Fragment {
     Spinner spinnerHabitacion;
     Spinner spinnerFrecuencia;
     Spinner spinnerAsigna;
-    EditText etDuracion;
+    NumberPicker npHoras, npMinutos;
     EditText etNumVeces;
     Button btnCancelar;
     Button btnCrear;
@@ -61,11 +64,13 @@ public class fragment_crear_tarea extends Fragment {
     private LoadingDialog loadingDialog;
 
     private static final String TAG = "WS_CREAR_TAREA";
+    private int stepMinutos = 5;
 
     /* ════════════════════════════════════════════
        CICLO DE VIDA
     ════════════════════════════════════════════ */
 
+    @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -77,17 +82,32 @@ public class fragment_crear_tarea extends Fragment {
         spinnerHabitacion = v.findViewById(R.id.spinner_habitacion);
         spinnerFrecuencia = v.findViewById(R.id.spinner_frecuencia);
         spinnerAsigna     = v.findViewById(R.id.spinner_asigna);
-        etDuracion        = v.findViewById(R.id.et_duracion);
         etNumVeces        = v.findViewById(R.id.et_num_veces);
         btnCancelar       = v.findViewById(R.id.btn_cancelar_tarea);
         btnCrear          = v.findViewById(R.id.btn_crear_tarea);
-
+        npHoras           = v.findViewById(R.id.np_horas);
+        npMinutos         = v.findViewById(R.id.np_minutos);
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
         idUsuario = prefs.getInt("id_usuario", -1);
         idHogar   = prefs.getInt("id_hogar",   -1);
 
         loadingDialog = new LoadingDialog(requireContext());
+
+        // configurar formato de pickers en tiempo de ejecucion
+        configurarPickers();
+
+        // IMPORTANTE: evitar que el ScrollView robe el gesto si no, no se mueven los pickers
+        npHoras.setOnTouchListener((view, event) -> {
+            view.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
+        npMinutos.setOnTouchListener((view, event) -> {
+            view.getParent().requestDisallowInterceptTouchEvent(true);
+            return false;
+        });
+
+
 
         // AutoComplete con sugerencias de tareas comunes
         String[] sugerencias = requireContext().getResources()
@@ -109,6 +129,30 @@ public class fragment_crear_tarea extends Fragment {
         }
 
         return v;
+    }
+
+
+    // obtener horas y minutos de los timepickers
+    private void configurarPickers() {
+        // -------- HORAS --------
+        int maxHoras = 12;
+        String[] horasValores = new String[maxHoras + 1];
+        for (int i = 0; i <= maxHoras; i++) {
+            horasValores[i] = i + " h";
+        }
+        npHoras.setMinValue(0);
+        npHoras.setMaxValue(maxHoras);
+        npHoras.setDisplayedValues(horasValores);
+        // -------- MINUTOS --------
+        int cantidadValores = 60 / stepMinutos;
+        String[] minutosValores = new String[cantidadValores];
+        for (int i = 0; i < cantidadValores; i++) {
+            int valor = i * stepMinutos;
+            minutosValores[i] = String.format("%02d m", valor);
+        }
+        npMinutos.setMinValue(0);
+        npMinutos.setMaxValue(cantidadValores - 1);
+        npMinutos.setDisplayedValues(minutosValores);
     }
 
     /* ════════════════════════════════════════════
@@ -224,20 +268,9 @@ public class fragment_crear_tarea extends Fragment {
 
         // Duración (opcional)
         Integer duracion = null;
-        String durStr = etDuracion.getText().toString().trim();
-        if (!durStr.isEmpty()) {
-            try {
-                duracion = Integer.parseInt(durStr);
-                if (duracion < 1 || duracion > 255) {
-                    Toast.makeText(requireContext(),
-                            "Duración debe estar entre 1 y 255 min", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                Toast.makeText(requireContext(), "Duración inválida", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
+        int horas = npHoras.getValue();
+        int minutos = npMinutos.getValue() * stepMinutos;
+        duracion = horas * 60 + minutos;
 
         // Nº veces
         int numVeces = 1;

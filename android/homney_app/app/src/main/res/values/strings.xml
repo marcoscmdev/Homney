@@ -46,11 +46,12 @@
     <string name="main_menu">Ayuda</string>
     <string name="main_menu1">Cerrar Sesión</string>
     <string name="main_menu2">Salir</string>
+
+    <!-- Interfaz -->
     <string name="hint_tarea">Ej: Limpiar el baño</string>
     <string name="nombre_tarea_nueva">Nombre de la tarea *</string>
     <string name="habitacion_tarea_nueva">Habitación</string>
-    <string name="duracion_nueva_tarea">Duración (min)</string>
-    <string name="num">Num. veces</string>
+    <string name="duracion_nueva_tarea">Duración</string>
     <string name="num_veces">Num. veces</string>
     <string name="frecuencia_nueva">Frecuencia *</string>
     <string name="frecuencia_nueva_tarea">Frecuencia *</string>
@@ -65,18 +66,17 @@
     <string name="modo_pago">Modo de pago</string>
     <string name="tipo_pago">Tipo</string>
     <string name="btn_crear_gasto">Registrar</string>
-    <string name="texto_hogar_invitacion">"Clave de invitación: "</string>
+    <string name="texto_hogar_invitacion">Clave de invitación: </string>
     <string name="miembros_hogar">Miembros del hogar</string>
     <string name="mis_tareas">Mis tareas</string>
     <string name="repe_password">Repite la contraseña</string>
     <string name="definir_estancia_titulo">Define las estancias</string>
-    <string name="definir_estancia_subtitulo">"Selecciona las zonas de tu hogar y organiza las tareas recurrentes por areas. "</string>
+    <string name="definir_estancia_subtitulo">"Selecciona las zonas de tu hogar y organiza las tareas recurrentes por áreas. "</string>
     <string name="cocina">Cocina</string>
     <string name="titulo_publi">Título *</string>
     <string name="ejemplo_titulo_muro">Ej: Lista de la compra, Aviso importante..</string>
     <string name="contenido_publi">Contenido *</string>
     <string name="ejemplo_publicacion">Escribe aquí tu mensaje para el hogar</string>
     <string name="btn_publicar">Publicar</string>
-    <string name="crear_publicacion">"Publicar "</string>
 
 </resources>

@@ -52,7 +52,7 @@
     <fragment
         android:id="@+id/nav_crear_publicacion"
         android:name="com.homney.app.ui.nav_crear_publi.fragment_crear_nueva_publicacion"
-        android:label="@string/crear_publicacion"
+        android:label="@string/btn_publicar"
         tools:layout="@layout/fragment_crear_nueva_publicacion" />
 
 </navigation>
