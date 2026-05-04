@@ -227,7 +227,14 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         if (item.getItemId() == R.id.action_settings) {
-            Toast.makeText(getApplicationContext(), "Ajustes", Toast.LENGTH_LONG).show();
+            Navigation.findNavController(this, R.id.nav_host_fragment)
+                    .navigate(R.id.nav_ajustes_hogar);
+            return true;
+        }
+        if(item.getItemId() == R.id.menu_ayuda) {
+            Navigation.findNavController(this, R.id.nav_host_fragment)
+                    .navigate(R.id.nav_ayuda);
+            return true;
         }
         if (item.getItemId() == R.id.menu_cerrar_sesion) {
             deleteSharedPreferences("sesion");

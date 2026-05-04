@@ -14,9 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     if (!isset($datos_recibidos->clave_inv) || $datos_recibidos->clave_inv == null) {
         die_por_fallo_en_sintaxis_peticion();
     }
+    $value_nombre= (isset($datos_recibidos->value_nombre) && $datos_recibidos->value_nombre != null)
+        ? "'$datos_recibidos->value_nombre'" : "NULL";
 
-    $consulta = "INSERT INTO `HOGAR` (`clave_inv`)
-                 VALUES ('$datos_recibidos->clave_inv')";
+    $consulta = "INSERT INTO `HOGAR` (`clave_inv`, `nombre`)
+                 VALUES ('$datos_recibidos->clave_inv', $value_nombre)";
     /* ********************************** */
 
     $resultado_consulta = @mysqli_query($conexion, $consulta);
@@ -43,9 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         !isset($datos_recibidos->clave_inv) || $datos_recibidos->clave_inv == null) {
         die_por_fallo_en_sintaxis_peticion();
     }
+$value_nombre= (isset($datos_recibidos->value_nombre) && $datos_recibidos->value_nombre != null)
+        ? "'$datos_recibidos->value_nombre'" : "NULL";
 
     $consulta_update = "UPDATE `HOGAR`
-                        SET `clave_inv` = '$datos_recibidos->clave_inv'
+                        SET `clave_inv` = '$datos_recibidos->clave_inv', `nombre` = $value_nombre
                         WHERE `id_hogar` = '$datos_recibidos->id_hogar'";
     /* ********************************** */
 
@@ -96,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
         die_por_fallo_en_sintaxis_peticion();
     }
 
-    $consulta = "SELECT h.id_hogar, h.clave_inv
+    $consulta = "SELECT h.id_hogar, h.clave_inv, h.nombre
                  FROM HOGAR h
                  $where";
     /* ********************************** */

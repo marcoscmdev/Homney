@@ -8,6 +8,7 @@ public class Hogar {
 
     private int id_hogar;
     private String clave_inv;
+    private String nombre;
 
     /* El constructor para GSON no es necesario */
     public Hogar(String clave_inv) {
@@ -19,4 +20,8 @@ public class Hogar {
 
     public String getClave_inv() { return clave_inv; }
     public void setClave_inv(String clave_inv) { this.clave_inv = clave_inv; }
+
+    public String getNombre() {return nombre;}
+
+
 }

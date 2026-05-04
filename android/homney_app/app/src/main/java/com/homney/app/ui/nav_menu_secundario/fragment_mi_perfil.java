@@ -1,4 +1,4 @@
-package com.homney.app.ui.nav_mi_perfil;
+package com.homney.app.ui.nav_menu_secundario;
 
 import android.Manifest;
 import android.app.Activity;
@@ -465,7 +465,7 @@ public class fragment_mi_perfil extends Fragment {
         }
 
         Map<String, String> params = new HashMap<>();
-        params.put("tipo", "perfiles");
+        params.put("tipo", "perfil");   // backend acepta: "perfil" | "muro"
         params.put("id",   String.valueOf(idUsuario));
 
         String nombreFich = Utilidades.nombreFicheroImagen("usuario", idUsuario);

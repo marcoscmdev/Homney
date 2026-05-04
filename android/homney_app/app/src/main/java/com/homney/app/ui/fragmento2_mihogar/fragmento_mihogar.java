@@ -139,7 +139,11 @@ public class fragmento_mihogar extends Fragment {
 
                             if (resp.data != null && !resp.data.isEmpty()) {
                                 Hogar h = resp.data.get(0);
-                                tvHogarTitulo.setText("Hogar #" + h.getId_hogar());
+                                if(h.getNombre() != null){
+                                    tvHogarTitulo.setText(h.getNombre());
+                                }else{
+                                    tvHogarTitulo.setText("Hogar");
+                                }
                                 tvClaveHogar.setText(h.getClave_inv());
                             }
                         }

@@ -57,8 +57,20 @@
 
     <fragment
         android:id="@+id/nav_mi_perfil"
-        android:name="com.homney.app.ui.nav_mi_perfil.fragment_mi_perfil"
+        android:name="com.homney.app.ui.nav_menu_secundario.fragment_mi_perfil"
         android:label="Mi perfil"
         tools:layout="@layout/fragment_mi_perfil" />
+
+    <fragment
+        android:id="@+id/nav_ajustes_hogar"
+        android:name="com.homney.app.ui.nav_menu_secundario.fragment_ajustes_hogar"
+        android:label="Ajustes"
+        tools:layout="@layout/fragment_ajustes_hogar" />
+
+    <fragment
+        android:id="@+id/nav_ayuda"
+        android:name="com.homney.app.ui.nav_menu_secundario.fragment_ayuda"
+        android:label="Ayuda"
+        tools:layout="@layout/fragment_ayuda" />
 
 </navigation>
