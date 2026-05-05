@@ -26,6 +26,9 @@
             android:name=".login_registro.Activity3_gastos_recurrentes"
             android:exported="false" />
         <activity
+            android:name=".login_registro.Activity4_resumen_registro"
+            android:exported="false" />
+        <activity
             android:name=".loginActivity"
             android:exported="true"
             android:theme="@style/Theme.HomneyApp.NoActionBar">

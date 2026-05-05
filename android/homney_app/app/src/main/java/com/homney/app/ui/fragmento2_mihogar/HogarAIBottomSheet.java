@@ -48,8 +48,20 @@ import java.util.Map;
  * - Responde solo preguntas relacionadas con el hogar.
  * - Puede publicar en el muro, crear tareas y registrar gastos (con confirmación del usuario).
  * - Historial persistente por hogar (SharedPreferences), auto-borrado a los 30 días.
+ * - Modo bienvenida: presentación inicial para usuarios recién registrados.
  */
 public class HogarAIBottomSheet extends BottomSheetDialogFragment {
+
+    private static final String ARG_BIENVENIDA = "es_bienvenida";
+
+    /** Instancia en modo bienvenida: HomneyMate se presenta al nuevo usuario. */
+    public static HogarAIBottomSheet newBienvenida() {
+        HogarAIBottomSheet sheet = new HogarAIBottomSheet();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_BIENVENIDA, true);
+        sheet.setArguments(args);
+        return sheet;
+    }
 
     private static final String PREFS_IA       = "homney_ia";
     private static final long   MILLIS_30_DIAS = 30L * 24 * 60 * 60 * 1000;
@@ -154,7 +166,9 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void lanzarAnalisisInicial() {
-        llamarAsistente("", true);
+        boolean esBienvenida = getArguments() != null
+                && getArguments().getBoolean(ARG_BIENVENIDA, false);
+        llamarAsistente("", true, esBienvenida);
     }
 
     /* ════════════════════════════════════════════
@@ -162,6 +176,10 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
     ════════════════════════════════════════════ */
 
     private void llamarAsistente(final String pregunta, boolean esInicial) {
+        llamarAsistente(pregunta, esInicial, false);
+    }
+
+    private void llamarAsistente(final String pregunta, boolean esInicial, boolean esBienvenida) {
         if (esInicial && analisisdoUnaVez) return;
         if (esInicial) analisisdoUnaVez = true;
 
@@ -175,6 +193,7 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
         loadingIa.setVisibility(View.VISIBLE);
 
         final String historialStr = historial.toString();
+        final String modoParam    = esBienvenida ? "bienvenida" : "";
 
         StringRequest req = new StringRequest(Request.Method.POST, WebService.URL_AsistenteIA,
                 respuestaStr -> {
@@ -234,6 +253,7 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
                 params.put("id_usuario", String.valueOf(idUsuario));
                 params.put("pregunta",   pregunta);
                 params.put("historial",  historialStr);
+                params.put("modo",       modoParam);
                 return params;
             }
         };

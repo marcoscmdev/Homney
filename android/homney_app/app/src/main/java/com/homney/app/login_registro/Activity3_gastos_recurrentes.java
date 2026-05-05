@@ -371,9 +371,8 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
     }
 
     private void irAMain() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        // → Resumen final del wizard antes de entrar a MainActivity
+        startActivity(new Intent(this, Activity4_resumen_registro.class));
     }
 
     /* ════════════════════════════════════════════════════════

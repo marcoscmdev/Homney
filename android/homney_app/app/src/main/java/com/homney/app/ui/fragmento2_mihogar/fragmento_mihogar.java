@@ -356,17 +356,23 @@ public class fragmento_mihogar extends Fragment {
        HELPERS
     ════════════════════════════════════════════════════════ */
 
-    /**
-     * Devuelve el drawable correspondiente al tipo de habitación.
-     * Cuando tengamos iconos propios sustituiremos ic_home2 por cada uno.
-     */
     private int iconoParaTipo(String tipo) {
         if (tipo == null) return R.drawable.ic_home2;
         switch (tipo.toLowerCase(Locale.getDefault())) {
-            case "cocina":   return R.drawable.ic_home2;
-            case "aseo":     return R.drawable.ic_home2;
-            case "garaje":   return R.drawable.ic_home2;
-            case "exterior": return R.drawable.ic_home2;
+            case "cocina":          return R.drawable.ic_cocina;
+            case "aseo":            return R.drawable.outline_bathroom_24;
+            case "garaje":          return R.drawable.outline_garage_24;
+            case "exterior":        return R.drawable.outline_outdoor_garden_24;
+            case "dormitorio":      return R.drawable.ic_dormitorio;
+            case "infantil":        return R.drawable.outline_bedroom_baby_24;
+            case "comedor":         return R.drawable.ic_comedor;
+            case "salon":           return R.drawable.outline_chair_24;
+            case "oficina":         return R.drawable.outline_add_home_work_24;
+            case "trastero":        return R.drawable.outline_inventory_2_24;
+            case "recibidor":       return R.drawable.outline_meeting_room_24;
+            case "terraza":         return R.drawable.outline_balcony_24;
+            case "deportiva":       return R.drawable.outline_fitness_center_24;
+            case "generica":        return R.drawable.outline_nest_multi_room_24;
             default:         return R.drawable.ic_home2;
         }
     }

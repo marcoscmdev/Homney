@@ -78,5 +78,7 @@
     <string name="contenido_publi">Contenido *</string>
     <string name="ejemplo_publicacion">Escribe aquí tu mensaje para el hogar</string>
     <string name="btn_publicar">Publicar</string>
+    <string name="texto_sugerencia_soporte">Si tienes alguna duda, sugerencia o necesitas soporte personalizado, escríbenos. Estaremos encantados de ayudarte.</string>
+    <string name="texto_titulo_soporte">¿Necesitas más ayuda?</string>
 
 </resources>
