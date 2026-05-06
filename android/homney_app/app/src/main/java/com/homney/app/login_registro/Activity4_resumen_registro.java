@@ -37,7 +37,6 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.homney.app.MainActivity;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
@@ -154,8 +153,6 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         tvNumHabitaciones = findViewById(R.id.tv_num_habitaciones);
         tvTotalGastos     = findViewById(R.id.tv_total_gastos);
 
-        FloatingActionButton fab = findViewById(R.id.fab_homney_mate_resumen);
-
         // Rellenar datos de perfil
         tvNombre.setText(nombreSesion);
         tvEmail.setText(email);
@@ -166,10 +163,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         ivAvatar.setOnClickListener(v -> mostrarDialogElegirFoto());
         tvCambiarFoto.setOnClickListener(v -> mostrarDialogElegirFoto());
 
-        // FAB → HomneyMate
-        fab.setOnClickListener(v -> abrirHomneyMate(false));
-
-        // Botón entrar a MainActivity
+        // Botón "Ir a la colmena" — fallback directo a MainActivity
         findViewById(R.id.btn_entrar_colmena).setOnClickListener(v -> irAMain());
 
         // Cargar datos de la API
@@ -500,6 +494,10 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         HogarAIBottomSheet sheet = esBienvenida
                 ? HogarAIBottomSheet.newBienvenida()
                 : new HogarAIBottomSheet();
+        if (esBienvenida) {
+            // Al pulsar "Aceptar" en el BottomSheet → ir a MainActivity
+            sheet.setOnAceptarBienvenidaListener(this::irAMain);
+        }
         sheet.show(getSupportFragmentManager(), "hogar_ai_bienvenida");
     }
 

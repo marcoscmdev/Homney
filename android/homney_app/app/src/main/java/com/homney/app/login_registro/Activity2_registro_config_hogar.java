@@ -7,6 +7,9 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -40,23 +43,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Paso 2 del wizard de registro.
  * El usuario selecciona/añade las estancias de su hogar.
- * Cada estancia tiene un nombre visible y un tipo que encaja con el enum de la BD:
- *   generica | cocina | aseo | garaje | exterior | dormitorio | infantil |
- *   comedor  | salon  | oficina | trastero | recibidor | terraza | deportiva
+ *
+ * NOVEDAD: Se pueden añadir MÚLTIPLES instancias del mismo tipo.
+ * Cada instancia tiene un ALIAS editable (= el nombre guardado en la BD).
+ * El tipo enum es interno y no modificable por el usuario desde las sugerencias.
  */
 public class Activity2_registro_config_hogar extends AppCompatActivity {
 
-    /* ── Modelo de estancia ───────────────────────────────── */
+    /* ── Modelo de estancia ─────────────────────────────── */
     private static class Estancia {
-        final String nombre;
-        final String tipo;
-        Estancia(String nombre, String tipo) {
-            this.nombre = nombre;
-            this.tipo   = tipo;
+        String alias;         // nombre editable por el usuario (guardado en BD como `nombre`)
+        final String tipo;    // valor del enum: cocina, aseo, salon…
+        Estancia(String alias, String tipo) {
+            this.alias = alias;
+            this.tipo  = tipo;
         }
     }
 
-    /* ── Sugerencias predefinidas (nombre visible → tipo enum) ─ */
+    /* ── Sugerencias predefinidas (nombre visible → tipo enum) */
     private static final String[] SUGERENCIAS_NOMBRE = {
         "Cocina", "Baño", "Salón", "Comedor",
         "Dormitorio", "Infantil", "Terraza", "Exterior",
@@ -70,7 +74,7 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
         "deportiva", "generica"
     };
 
-    /** Todas las opciones del enum para el spinner del diálogo de tipo personalizado. */
+    /** Todas las opciones del enum para el selector de tipo personalizado. */
     private static final String[] TIPO_OPCIONES_NOMBRE = {
         "Genérica", "Cocina", "Baño / Aseo", "Garaje", "Exterior",
         "Dormitorio", "Habitación infantil", "Comedor", "Salón",
@@ -82,23 +86,24 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
         "oficina", "trastero", "recibidor", "terraza", "deportiva"
     };
 
-    /* ── Vistas ─────────────────────────────────────────────── */
+    /* ── Vistas ─────────────────────────────────────────── */
     private LinearLayout llChipsFila1, llChipsFila2, llChipsFila3, llChipsFila4;
     private LinearLayout llSelectedRooms;
     private TextView     tvSinSeleccion;
     private EditText     etCustomRoom;
     private Button       btnAddCustom, btnSiguiente;
 
-    /* ── Estado ─────────────────────────────────────────────── */
+    /* ── Estado ─────────────────────────────────────────── */
     private final List<Estancia> habitacionesSeleccionadas = new ArrayList<>();
-    private final View[]         chipViews = new View[SUGERENCIAS_NOMBRE.length];
+    private final TextView[]     chipLabels = new TextView[SUGERENCIAS_NOMBRE.length];
+    private final int[]          chipCounts = new int[SUGERENCIAS_NOMBRE.length]; // instancias activas por chip
 
     private int  idHogar  = -1;
     private LoadingDialog loadingDialog;
 
-    /* ════════════════════════════════════════════════════════
+    /* ════════════════════════════════════════════════════
        CICLO DE VIDA
-    ════════════════════════════════════════════════════════ */
+    ════════════════════════════════════════════════════ */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,13 +112,12 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
 
         SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
         idHogar = prefs.getInt("id_hogar", -1);
-
         loadingDialog = new LoadingDialog(this);
 
-        llChipsFila1   = findViewById(R.id.ll_chips_fila1);
-        llChipsFila2   = findViewById(R.id.ll_chips_fila2);
-        llChipsFila3   = findViewById(R.id.ll_chips_fila3);
-        llChipsFila4   = findViewById(R.id.ll_chips_fila4);
+        llChipsFila1    = findViewById(R.id.ll_chips_fila1);
+        llChipsFila2    = findViewById(R.id.ll_chips_fila2);
+        llChipsFila3    = findViewById(R.id.ll_chips_fila3);
+        llChipsFila4    = findViewById(R.id.ll_chips_fila4);
         llSelectedRooms = findViewById(R.id.ll_selected_rooms);
         tvSinSeleccion  = findViewById(R.id.tv_sin_seleccion);
         etCustomRoom    = findViewById(R.id.et_custom_room);
@@ -126,24 +130,23 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
         btnSiguiente.setOnClickListener(v -> guardarYContinuar());
     }
 
-    /* ════════════════════════════════════════════════════════
-       CHIPS DE SUGERENCIAS  (4 + 4 + 3 + 3)
-    ════════════════════════════════════════════════════════ */
+    /* ════════════════════════════════════════════════════
+       CHIPS (4 + 4 + 3 + 3)  — cada clic añade una instancia
+    ════════════════════════════════════════════════════ */
 
     private void construirChips() {
         int gap = dp(8);
         LinearLayout[] filas = { llChipsFila1, llChipsFila2, llChipsFila3, llChipsFila4 };
 
         for (int i = 0; i < SUGERENCIAS_NOMBRE.length; i++) {
-            final int idx    = i;
-            final String nom = SUGERENCIAS_NOMBRE[i];
+            final int idx = i;
 
             TextView chip = new TextView(this);
-            chip.setText(nom);
             chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
             chip.setPadding(dp(10), dp(6), dp(10), dp(6));
             chip.setBackground(crearChipDrawable(false));
             chip.setTextColor(getResources().getColor(R.color.text, null));
+            actualizarTextoChip(i, chip);  // establece texto inicial
 
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -152,148 +155,112 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
             lp.bottomMargin = gap / 2;
             chip.setLayoutParams(lp);
 
-            chip.setOnClickListener(v -> toggleChip(idx, chip));
+            chip.setOnClickListener(v -> añadirDesdeChip(idx, chip));
 
-            // Distribuir: 4 / 4 / 3 / 3
             int fila = i < 4 ? 0 : i < 8 ? 1 : i < 11 ? 2 : 3;
             filas[fila].addView(chip);
-            chipViews[idx] = chip;
+            chipLabels[idx] = chip;
         }
     }
 
-    private void toggleChip(int idx, TextView chip) {
-        String nombre = SUGERENCIAS_NOMBRE[idx];
-        String tipo   = SUGERENCIAS_TIPO[idx];
+    /** Cada clic en un chip AÑADE una nueva instancia (no toggle). */
+    private void añadirDesdeChip(int idx, TextView chip) {
+        String tipo  = SUGERENCIAS_TIPO[idx];
+        chipCounts[idx]++;
 
-        // ¿ya está seleccionada?
-        Estancia yaSeleccionada = buscarEstanciaPorNombre(nombre);
-        if (yaSeleccionada != null) {
-            habitacionesSeleccionadas.remove(yaSeleccionada);
-            chip.setBackground(crearChipDrawable(false));
-            chip.setTextColor(getResources().getColor(R.color.text, null));
-        } else {
-            habitacionesSeleccionadas.add(new Estancia(nombre, tipo));
-            chip.setBackground(crearChipDrawable(true));
-            chip.setTextColor(Color.WHITE);
-        }
+        // Alias por defecto: "Dormitorio" si es el primero, "Dormitorio 2" si hay más
+        String baseAlias = SUGERENCIAS_NOMBRE[idx];
+        String alias = chipCounts[idx] == 1
+                ? baseAlias
+                : baseAlias + " " + chipCounts[idx];
+
+        habitacionesSeleccionadas.add(new Estancia(alias, tipo));
+        actualizarTextoChip(idx, chip);
         actualizarListaSeleccionadas();
     }
 
-    /* ════════════════════════════════════════════════════════
+    /** Texto del chip: "Cocina" si 0 instancias, "Cocina ×2" si hay 2. */
+    private void actualizarTextoChip(int idx, TextView chip) {
+        int c = chipCounts[idx];
+        String base = SUGERENCIAS_NOMBRE[idx];
+        chip.setText(c > 0 ? base + " ×" + c : base);
+        // Color del chip: activo (accent) si hay al menos una instancia
+        chip.setBackground(crearChipDrawable(c > 0));
+        chip.setTextColor(c > 0 ? Color.WHITE
+                : getResources().getColor(R.color.text, null));
+    }
+
+    /* ════════════════════════════════════════════════════
        CAMPO PERSONALIZADO
-    ════════════════════════════════════════════════════════ */
+    ════════════════════════════════════════════════════ */
 
     private void añadirEstanciaPersonalizada() {
-        String nombre = etCustomRoom.getText().toString().trim();
-        if (nombre.isEmpty()) return;
+        String alias = etCustomRoom.getText().toString().trim();
+        if (alias.isEmpty()) return;
 
-        // Evitar duplicados
-        if (buscarEstanciaPorNombre(nombre) != null) {
-            etCustomRoom.setText("");
-            return;
-        }
-
-        String tipoDeducido = resolverTipo(nombre);
+        String tipoDeducido = resolverTipo(alias);
         if (tipoDeducido != null) {
-            // Coincide con algún tipo conocido → añadir directamente
-            habitacionesSeleccionadas.add(new Estancia(nombre, tipoDeducido));
+            habitacionesSeleccionadas.add(new Estancia(alias, tipoDeducido));
             actualizarListaSeleccionadas();
             etCustomRoom.setText("");
         } else {
-            // Nombre desconocido → pedir al usuario que elija el tipo
-            mostrarDialogElegirTipo(nombre);
+            mostrarDialogElegirTipo(alias);
         }
     }
 
     /**
-     * Intenta deducir el tipo enum a partir del nombre escrito por el usuario.
-     * Comprueba primero si el nombre en minúsculas ES un valor del enum,
-     * luego si coincide con alguno de los nombres de sugerencia.
+     * Intenta deducir el tipo enum a partir del alias escrito.
      * Devuelve null si no se puede determinar.
      */
-    private String resolverTipo(String nombre) {
-        String norm = nombre.toLowerCase(Locale.getDefault()).trim();
+    private String resolverTipo(String alias) {
+        String norm = alias.toLowerCase(Locale.getDefault()).trim();
 
-        // Comprobación directa contra los valores del enum
         for (String val : TIPO_OPCIONES_VALOR) {
             if (norm.equals(val)) return val;
         }
-
-        // Comprobación contra los nombres de sugerencia (display names)
         for (int i = 0; i < SUGERENCIAS_NOMBRE.length; i++) {
-            if (norm.equals(SUGERENCIAS_NOMBRE[i].toLowerCase(Locale.getDefault()))) {
+            if (norm.equals(SUGERENCIAS_NOMBRE[i].toLowerCase(Locale.getDefault())))
                 return SUGERENCIAS_TIPO[i];
-            }
         }
 
-        // Comprobaciones parciales habituales
-        if (norm.contains("cocin"))          return "cocina";
-        if (norm.contains("baño") ||
-            norm.contains("aseo") ||
-            norm.contains("bano"))           return "aseo";
-        if (norm.contains("garaje") ||
-            norm.contains("parking"))        return "garaje";
-        if (norm.contains("jard") ||
-            norm.contains("patio") ||
-            norm.contains("exterior"))       return "exterior";
-        if (norm.contains("dormit") ||
-            norm.contains("habitaci") ||
-            norm.contains("cuarto") ||
-            norm.contains("alcoba"))         return "dormitorio";
-        if (norm.contains("infantil") ||
-            norm.contains("niño") ||
-            norm.contains("nino"))           return "infantil";
-        if (norm.contains("comedor"))        return "comedor";
-        if (norm.contains("salon") ||
-            norm.contains("salón") ||
-            norm.contains("living"))         return "salon";
-        if (norm.contains("oficin") ||
-            norm.contains("despacho") ||
-            norm.contains("estudio"))        return "oficina";
-        if (norm.contains("trastero") ||
-            norm.contains("almacen") ||
-            norm.contains("almacén"))        return "trastero";
-        if (norm.contains("recibidor") ||
-            norm.contains("pasillo") ||
-            norm.contains("entrada") ||
-            norm.contains("hall"))           return "recibidor";
-        if (norm.contains("terraza") ||
-            norm.contains("balcon") ||
-            norm.contains("balcón"))         return "terraza";
-        if (norm.contains("gym") ||
-            norm.contains("gimnasio") ||
-            norm.contains("deport"))         return "deportiva";
-
-        return null; // Desconocido → el usuario deberá elegir
+        if (norm.contains("cocin"))                             return "cocina";
+        if (norm.contains("baño") || norm.contains("aseo") || norm.contains("bano")) return "aseo";
+        if (norm.contains("garaje") || norm.contains("parking"))                     return "garaje";
+        if (norm.contains("jard") || norm.contains("patio") || norm.contains("exterior")) return "exterior";
+        if (norm.contains("dormit") || norm.contains("habitaci") ||
+            norm.contains("cuarto") || norm.contains("alcoba"))                      return "dormitorio";
+        if (norm.contains("infantil") || norm.contains("niño") || norm.contains("nino")) return "infantil";
+        if (norm.contains("comedor"))                           return "comedor";
+        if (norm.contains("salon") || norm.contains("salón") || norm.contains("living")) return "salon";
+        if (norm.contains("oficin") || norm.contains("despacho") || norm.contains("estudio")) return "oficina";
+        if (norm.contains("trastero") || norm.contains("almacen") || norm.contains("almacén")) return "trastero";
+        if (norm.contains("recibidor") || norm.contains("pasillo") ||
+            norm.contains("entrada") || norm.contains("hall"))                       return "recibidor";
+        if (norm.contains("terraza") || norm.contains("balcon") || norm.contains("balcón")) return "terraza";
+        if (norm.contains("gym") || norm.contains("gimnasio") || norm.contains("deport")) return "deportiva";
+        return null;
     }
 
-    /**
-     * Muestra un AlertDialog con un Spinner para que el usuario elija el tipo
-     * de la estancia personalizada que escribió.
-     */
-    private void mostrarDialogElegirTipo(String nombreEstancia) {
-        // Spinner con los nombres amigables de los tipos
+    /** Diálogo para que el usuario elija el tipo de una estancia personalizada. */
+    private void mostrarDialogElegirTipo(String aliasEstancia) {
         Spinner spinner = new Spinner(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_item,
-                TIPO_OPCIONES_NOMBRE);
+                this, android.R.layout.simple_spinner_item, TIPO_OPCIONES_NOMBRE);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
-        // Margen para que el Spinner no quede pegado al borde del diálogo
         LinearLayout container = new LinearLayout(this);
         container.setPadding(dp(20), dp(8), dp(20), dp(4));
         container.addView(spinner);
 
         new AlertDialog.Builder(this)
-                .setTitle("¿Qué tipo es " + nombreEstancia + "?")
+                .setTitle("¿Qué tipo es "+ aliasEstancia + "?")
                 .setMessage("Elige el tipo que mejor describe esta estancia:")
                 .setView(container)
                 .setPositiveButton("Añadir", (dialog, which) -> {
                     int selIdx = spinner.getSelectedItemPosition();
-                    String tipoElegido = TIPO_OPCIONES_VALOR[selIdx];
-                    habitacionesSeleccionadas.add(new Estancia(nombreEstancia, tipoElegido));
+                    habitacionesSeleccionadas.add(
+                            new Estancia(aliasEstancia, TIPO_OPCIONES_VALOR[selIdx]));
                     actualizarListaSeleccionadas();
                     etCustomRoom.setText("");
                 })
@@ -301,13 +268,13 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
                 .show();
     }
 
-    /* ════════════════════════════════════════════════════════
+    /* ════════════════════════════════════════════════════
        LISTA DE SELECCIONADAS
-    ════════════════════════════════════════════════════════ */
+    ════════════════════════════════════════════════════ */
 
     private void actualizarListaSeleccionadas() {
-        int childCount = llSelectedRooms.getChildCount();
-        for (int i = childCount - 1; i >= 0; i--) {
+        // Limpiar vistas (menos tvSinSeleccion)
+        for (int i = llSelectedRooms.getChildCount() - 1; i >= 0; i--) {
             View v = llSelectedRooms.getChildAt(i);
             if (v != tvSinSeleccion) llSelectedRooms.removeViewAt(i);
         }
@@ -316,34 +283,57 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
             tvSinSeleccion.setVisibility(View.VISIBLE);
             return;
         }
-
         tvSinSeleccion.setVisibility(View.GONE);
-        for (Estancia e : habitacionesSeleccionadas) {
-            llSelectedRooms.addView(crearTagSeleccionado(e));
+
+        for (int pos = 0; pos < habitacionesSeleccionadas.size(); pos++) {
+            llSelectedRooms.addView(crearTagSeleccionado(pos));
         }
     }
 
-    /** Fila "Nombre del usuario  ·  tipo  ✕" */
-    private View crearTagSeleccionado(Estancia estancia) {
+    /**
+     * Fila editable:
+     *  [EditText alias] [tipo muted] [✕]
+     * El EditText está conectado via TextWatcher a estancia.alias.
+     */
+    private View crearTagSeleccionado(final int pos) {
+        Estancia estancia = habitacionesSeleccionadas.get(pos);
+
         LinearLayout fila = new LinearLayout(this);
         fila.setOrientation(LinearLayout.HORIZONTAL);
         fila.setGravity(Gravity.CENTER_VERTICAL);
-
         LinearLayout.LayoutParams filaLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         filaLp.bottomMargin = dp(6);
         fila.setLayoutParams(filaLp);
 
-        // Nombre visible elegido por el usuario
-        TextView tvNombre = new TextView(this);
-        tvNombre.setText(estancia.nombre);
-        tvNombre.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        tvNombre.setLayoutParams(new LinearLayout.LayoutParams(
+        // EditText del alias
+        EditText etAlias = new EditText(this);
+        etAlias.setText(estancia.alias);
+        etAlias.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        etAlias.setTextColor(getResources().getColor(R.color.text, null));
+        etAlias.setHint("Alias de la estancia");
+        etAlias.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        etAlias.setBackground(null); // sin borde por defecto, aspecto limpio
+        etAlias.setPadding(0, 0, dp(6), 0);
+        etAlias.setMaxLines(1);
+        etAlias.setLayoutParams(new LinearLayout.LayoutParams(
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        fila.addView(tvNombre);
 
-        // Tipo (muted, más pequeño)
+        // TextWatcher: actualiza el alias de la Estancia en tiempo real
+        etAlias.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+            @Override public void onTextChanged(CharSequence s, int st, int b, int c) {}
+            @Override public void afterTextChanged(Editable s) {
+                // Comprobar que la posición sigue siendo válida
+                if (pos < habitacionesSeleccionadas.size()) {
+                    habitacionesSeleccionadas.get(pos).alias = s.toString().trim();
+                }
+            }
+        });
+        fila.addView(etAlias);
+
+        // Tipo (muted)
         TextView tvTipo = new TextView(this);
         tvTipo.setText(estancia.tipo);
         tvTipo.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
@@ -351,44 +341,56 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
         tvTipo.setPadding(0, 0, dp(6), 0);
         fila.addView(tvTipo);
 
-        // Botón eliminar "✕"
+        // Botón ✕
         TextView tvRemove = new TextView(this);
         tvRemove.setText("✕");
         tvRemove.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         tvRemove.setTextColor(getResources().getColor(R.color.danger, null));
         tvRemove.setTypeface(null, Typeface.BOLD);
         tvRemove.setPadding(dp(8), 0, 0, 0);
-        tvRemove.setOnClickListener(v -> eliminarSeleccionada(estancia));
+        tvRemove.setOnClickListener(v -> eliminarSeleccionada(pos, estancia));
         fila.addView(tvRemove);
 
         return fila;
     }
 
-    private void eliminarSeleccionada(Estancia estancia) {
-        habitacionesSeleccionadas.remove(estancia);
+    private void eliminarSeleccionada(int pos, Estancia estancia) {
+        if (pos < 0 || pos >= habitacionesSeleccionadas.size()) return;
+        habitacionesSeleccionadas.remove(pos);
 
-        // Desactivar chip si coincide con una sugerencia predefinida
-        for (int i = 0; i < SUGERENCIAS_NOMBRE.length; i++) {
-            if (SUGERENCIAS_NOMBRE[i].equals(estancia.nombre)
-                    && chipViews[i] instanceof TextView) {
-                TextView chip = (TextView) chipViews[i];
-                chip.setBackground(crearChipDrawable(false));
-                chip.setTextColor(getResources().getColor(R.color.text, null));
-                break;
+        // Si era un chip sugerido, decrementar el contador del chip
+        for (int i = 0; i < SUGERENCIAS_TIPO.length; i++) {
+            if (SUGERENCIAS_TIPO[i].equals(estancia.tipo)) {
+                // Comprobar si la raíz del alias coincide (chip o personalizado)
+                if (chipCounts[i] > 0) {
+                    chipCounts[i]--;
+                    actualizarTextoChip(i, chipLabels[i]);
+                    break;
+                }
             }
         }
         actualizarListaSeleccionadas();
     }
 
-    /* ════════════════════════════════════════════════════════
-       GUARDAR Y CONTINUAR → Activity3 (Gastos recurrentes)
-    ════════════════════════════════════════════════════════ */
+    /* ════════════════════════════════════════════════════
+       GUARDAR Y CONTINUAR → Activity2b (tareas)
+    ════════════════════════════════════════════════════ */
 
     private void guardarYContinuar() {
         if (habitacionesSeleccionadas.isEmpty()) {
             Toast.makeText(this, "Añade al menos una estancia", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        // Validar que ningún alias esté vacío
+        for (Estancia e : habitacionesSeleccionadas) {
+            if (e.alias == null || e.alias.isEmpty()) {
+                Toast.makeText(this, "El alias de cada estancia no puede estar vacío",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
         if (idHogar == -1) {
             Toast.makeText(this, "Error: hogar no identificado", Toast.LENGTH_SHORT).show();
             return;
@@ -414,8 +416,8 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
                                   AtomicInteger pendiente, AtomicInteger errores) {
         try {
             JSONObject body = new JSONObject();
-            body.put("nombre",   estancia.nombre);
-            body.put("tipo",     estancia.tipo);       // valor real del enum
+            body.put("nombre",   estancia.alias);   // alias = nombre visible en la BD
+            body.put("tipo",     estancia.tipo);     // valor real del enum
             body.put("id_hogar", idHogar);
 
             PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
@@ -453,21 +455,13 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
                         errores + " estancia(s) no pudieron guardarse. Puedes añadirlas después.",
                         Toast.LENGTH_LONG).show();
             }
-
-            startActivity(new Intent(this, Activity3_gastos_recurrentes.class));
+            startActivity(new Intent(this, Activity2b_tareas_hogar.class));
         });
     }
 
-    /* ════════════════════════════════════════════════════════
+    /* ════════════════════════════════════════════════════
        HELPERS
-    ════════════════════════════════════════════════════════ */
-
-    private Estancia buscarEstanciaPorNombre(String nombre) {
-        for (Estancia e : habitacionesSeleccionadas) {
-            if (e.nombre.equals(nombre)) return e;
-        }
-        return null;
-    }
+    ════════════════════════════════════════════════════ */
 
     private GradientDrawable crearChipDrawable(boolean activo) {
         GradientDrawable gd = new GradientDrawable();

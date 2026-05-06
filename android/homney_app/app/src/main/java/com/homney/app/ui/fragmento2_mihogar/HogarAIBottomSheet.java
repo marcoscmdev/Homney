@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -51,6 +52,17 @@ import java.util.Map;
  * - Modo bienvenida: presentación inicial para usuarios recién registrados.
  */
 public class HogarAIBottomSheet extends BottomSheetDialogFragment {
+
+    /** Callback para el modo bienvenida: notifica cuando el usuario pulsa Aceptar. */
+    public interface OnAceptarBienvenidaListener {
+        void onAceptar();
+    }
+
+    private OnAceptarBienvenidaListener onAceptarListener;
+
+    public void setOnAceptarBienvenidaListener(OnAceptarBienvenidaListener listener) {
+        this.onAceptarListener = listener;
+    }
 
     private static final String ARG_BIENVENIDA = "es_bienvenida";
 
@@ -108,6 +120,24 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
         btnEnviar.setOnClickListener(v -> enviarPregunta());
         btnLimpiar.setOnClickListener(v -> confirmarLimpiarHistorial());
 
+        // ── Modo bienvenida: ocultar entrada, mostrar botón Aceptar ──────
+        boolean esBienvenida = getArguments() != null
+                && getArguments().getBoolean(ARG_BIENVENIDA, false);
+        if (esBienvenida) {
+            View barraEntrada = view.findViewById(R.id.ll_barra_entrada);
+            if (barraEntrada != null) barraEntrada.setVisibility(View.GONE);
+            if (btnLimpiar   != null) btnLimpiar.setVisibility(View.GONE);
+
+            Button btnAceptar = view.findViewById(R.id.btn_aceptar_bienvenida);
+            if (btnAceptar != null) {
+                btnAceptar.setVisibility(View.VISIBLE);
+                btnAceptar.setOnClickListener(v -> {
+                    dismiss();
+                    if (onAceptarListener != null) onAceptarListener.onAceptar();
+                });
+            }
+        }
+
         iniciarChat();
         return view;
     }
@@ -152,7 +182,7 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
                     boolean esUsuario = "user".equals(msg.optString("role"));
                     agregarBurbuja(msg.optString("content", ""), esUsuario);
                 }
-                agregarBurbuja("🐝 ¡Aquí estoy de nuevo! ¿En qué puedo ayudarte?", false);
+
                 analisisdoUnaVez = true;
                 setEntradaActiva(true);
             } catch (JSONException e) {

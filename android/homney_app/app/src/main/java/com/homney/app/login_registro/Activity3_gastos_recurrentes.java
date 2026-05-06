@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.homney.app.MainActivity;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
 import com.homney.app.utils.LoadingDialog;
@@ -54,22 +53,24 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
         final String nombre;
         final double importeDefault;
         final String modo;
-        GastoSugest(String nombre, double importeDefault, String modo) {
+        final String categoria;
+        GastoSugest(String nombre, double importeDefault, String modo, String categoria) {
             this.nombre          = nombre;
             this.importeDefault  = importeDefault;
             this.modo            = modo;
+            this.categoria       = categoria;
         }
     }
 
     private static final GastoSugest[] SUGERENCIAS = {
-        new GastoSugest("Alquiler",  700, "transferencia"),
-        new GastoSugest("Luz",        80, "domiciliacion"),
-        new GastoSugest("Agua",       35, "domiciliacion"),
-        new GastoSugest("Gas",        55, "domiciliacion"),
-        new GastoSugest("Internet",   45, "domiciliacion"),
-        new GastoSugest("Netflix",    13, "tarjeta"),
-        new GastoSugest("Spotify",    11, "tarjeta"),
-        new GastoSugest("Comunidad",  60, "transferencia"),
+        new GastoSugest("Alquiler",  700, "transferencia", "Alquiler / Hipoteca"),
+        new GastoSugest("Luz",        80, "transferencia", "Suministros"),
+        new GastoSugest("Agua",       35, "transferencia", "Suministros"),
+        new GastoSugest("Gas",        55, "transferencia", "Suministros"),
+        new GastoSugest("Internet",   45, "transferencia", "Suministros"),
+        new GastoSugest("Netflix",    13, "tarjeta",       "Ocio / Entretenimiento"),
+        new GastoSugest("Spotify",    11, "tarjeta",       "Ocio / Entretenimiento"),
+        new GastoSugest("Comunidad",  60, "transferencia", "Alquiler / Hipoteca"),
     };
 
     /* ── Vistas ─────────────────────────────────────────── */
@@ -271,9 +272,10 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
         }
 
         // Construir lista de gastos a crear
-        List<String>  nombres   = new ArrayList<>();
-        List<Double>  importes  = new ArrayList<>();
-        List<String>  modos     = new ArrayList<>();
+        List<String>  nombres    = new ArrayList<>();
+        List<Double>  importes   = new ArrayList<>();
+        List<String>  modos      = new ArrayList<>();
+        List<String>  categorias = new ArrayList<>();
 
         for (int i = 0; i < SUGERENCIAS.length; i++) {
             if (checkBoxes[i] != null && checkBoxes[i].isChecked()) {
@@ -285,6 +287,7 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
                 } catch (NumberFormatException ignored) {}
                 importes.add(imp);
                 modos.add(SUGERENCIAS[i].modo);
+                categorias.add(SUGERENCIAS[i].categoria);
             }
         }
         for (int i = 0; i < nombresCustom.size(); i++) {
@@ -292,12 +295,13 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
                 nombres.add(nombresCustom.get(i));
                 importes.add(gastosCustom.get(i)[0]);
                 modos.add("efectivo");
+                categorias.add("Otros");
             }
         }
 
         if (nombres.isEmpty()) {
             // Sin gastos: ir directamente al main
-            irAMain();
+            irAResumen();
             return;
         }
 
@@ -315,16 +319,16 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
         String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         for (int i = 0; i < nombres.size(); i++) {
-            crearGasto(nombres.get(i), importes.get(i), modos.get(i), hoy, pendiente, errores);
+            crearGasto(nombres.get(i), importes.get(i), modos.get(i), categorias.get(i), hoy, pendiente, errores);
         }
     }
 
-    private void crearGasto(String concepto, double importe, String modo, String fecha,
-                             AtomicInteger pendiente, AtomicInteger errores) {
+    private void crearGasto(String concepto, double importe, String modo, String categoria,
+                             String fecha, AtomicInteger pendiente, AtomicInteger errores) {
         try {
             JSONObject body = new JSONObject();
             body.put("fecha",              fecha);
-            body.put("categoria",          "Hogar");     // categoría genérica inicial
+            body.put("categoria",          categoria);
             body.put("concepto",           concepto);
             body.put("modo",               modo);
             body.put("tipo",               "fijo");       // gasto recurrente = fijo
@@ -360,17 +364,17 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
         runOnUiThread(() -> {
             loadingDialog.dismiss();
             btnComenzar.setEnabled(true);
-            btnComenzar.setText("Comenzar →");
+            btnComenzar.setText("Comenzar ");
             if (errores > 0) {
                 Toast.makeText(this,
                         errores + " gasto(s) no pudieron guardarse. Puedes añadirlos después.",
                         Toast.LENGTH_LONG).show();
             }
-            irAMain();
+            irAResumen();
         });
     }
 
-    private void irAMain() {
+    private void irAResumen() {
         // → Resumen final del wizard antes de entrar a MainActivity
         startActivity(new Intent(this, Activity4_resumen_registro.class));
     }
