@@ -258,10 +258,22 @@ public class Utilidades {
         return prefijo + "_" + id + ".jpg";
     }
 
-    public static void mostrar_error_peticion(Context contexto,String tag,String mensaje, int method, String endPoint,Exception e) {
-        String[] str_methods= { "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH" };
-        String mensajeError = mensaje + " (" + (e!=null?e.toString():"") + ") " + str_methods[method] + ": " + endPoint ;
-        Toast.makeText(contexto, mensajeError, Toast.LENGTH_SHORT).show();
-        Log.e(tag,mensajeError + "\n" + (e!=null?Log.getStackTraceString(e):""));
+    /**
+     * Muestra un mensaje genérico al usuario y registra el detalle técnico completo en Logcat.
+     * <p>
+     * De cara al usuario: sólo el parámetro {@code mensaje} (sin URL ni stack trace).
+     * De cara al desarrollador: método HTTP, endpoint completo y stack trace en Log.e().
+     */
+    public static void mostrar_error_peticion(Context contexto, String tag, String mensaje,
+                                              int method, String endPoint, Exception e) {
+        // — Toast: mensaje legible para el usuario, sin datos técnicos internos —
+        Toast.makeText(contexto, mensaje, Toast.LENGTH_SHORT).show();
+
+        // — Logcat: detalle completo para el desarrollador —
+        String[] str_methods = {"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE", "PATCH"};
+        String detalle = mensaje
+                + " | " + str_methods[method] + " " + endPoint
+                + (e != null ? " | " + e.toString() : "");
+        Log.e(tag, detalle + (e != null ? "\n" + Log.getStackTraceString(e) : ""));
     }
 }

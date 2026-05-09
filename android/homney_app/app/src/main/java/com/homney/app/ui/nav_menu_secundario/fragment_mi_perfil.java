@@ -51,6 +51,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
+import com.homney.app.loginActivity;
 import com.homney.app.VolleyMultipartRequest;
 import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
@@ -77,7 +78,7 @@ public class fragment_mi_perfil extends Fragment {
     private TextView  tvCambiarFoto, tvEmail;
     private EditText  etNombre, etTelefono, etFechaNac;
     private Spinner   spinnerSexo;
-    private Button    btnCancelar, btnGuardar, btnCambiarPass;
+    private Button    btnCancelar, btnGuardar, btnCambiarPass, btnEliminarCuenta;
 
     /* ── Sesión ──────────────────────────────────────── */
     private int    idUsuario = -1;
@@ -153,9 +154,10 @@ public class fragment_mi_perfil extends Fragment {
         etTelefono     = v.findViewById(R.id.et_telefono_perfil);
         etFechaNac     = v.findViewById(R.id.et_fecha_nac_perfil);
         spinnerSexo    = v.findViewById(R.id.spinner_sexo_perfil);
-        btnCancelar    = v.findViewById(R.id.btn_cancelar_perfil);
-        btnGuardar     = v.findViewById(R.id.btn_guardar_perfil);
-        btnCambiarPass = v.findViewById(R.id.btn_cambiar_pass_perfil);
+        btnCancelar      = v.findViewById(R.id.btn_cancelar_perfil);
+        btnGuardar       = v.findViewById(R.id.btn_guardar_perfil);
+        btnCambiarPass   = v.findViewById(R.id.btn_cambiar_pass_perfil);
+        btnEliminarCuenta = v.findViewById(R.id.btn_eliminar_cuenta);
 
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
@@ -215,6 +217,9 @@ public class fragment_mi_perfil extends Fragment {
 
         /* Contraseña */
         btnCambiarPass.setOnClickListener(btn -> mostrarDialogCambiarPassword());
+
+        /* Eliminar cuenta */
+        btnEliminarCuenta.setOnClickListener(btn -> mostrarDialogEliminarCuenta());
 
         /* Cargar datos completos del servidor */
         cargarDatosPerfil();
@@ -292,8 +297,7 @@ public class fragment_mi_perfil extends Fragment {
     /** Muestra la foto real con Glide, o el círculo con inicial si no hay foto. */
     private void mostrarAvatarInicial(String nombre, String avatar) {
         boolean tieneAvatarReal = avatar != null
-                && !avatar.isEmpty()
-                && !avatar.contains("default.png");
+                && !avatar.isEmpty();
 
         if (tieneAvatarReal) {
             String url = WebService.PROTOCOLO + WebService.SERVIDOR
@@ -668,6 +672,78 @@ public class fragment_mi_perfil extends Fragment {
                     Utilidades.mostrar_error_peticion(requireContext(), TAG,
                             "Error al cambiar contraseña",
                             Request.Method.PUT, WebService.URL_Usuario, error);
+                }
+        ));
+    }
+
+    /* ════════════════════════════════════════════════════
+       ELIMINAR CUENTA
+    ════════════════════════════════════════════════════ */
+
+    /**
+     * Muestra un diálogo de confirmación con doble aviso antes de eliminar la cuenta.
+     * El usuario debe pulsar "Aceptar" para proceder; "Cancelar" cierra sin hacer nada.
+     */
+    private void mostrarDialogEliminarCuenta() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("⚠️ ATENCIÓN")
+                .setMessage("ATENCIÓN!! Esta acción es irreversible, perderás todos tus datos "
+                        + "y no podrás recuperarlos.\n\n¿Estás seguro de que quieres eliminar tu cuenta?")
+                .setPositiveButton("Aceptar", (dialog, which) -> eliminarCuenta())
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    /**
+     * Ejecuta el DELETE en usuario.php y, si tiene éxito, limpia la sesión
+     * y navega a la pantalla de login.
+     */
+    private void eliminarCuenta() {
+        loadingDialog.show();
+        String url = WebService.URL_Usuario + "?id_usuario=" + idUsuario;
+
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                Request.Method.DELETE, url, null,
+                response -> {
+                    loadingDialog.dismiss();
+                    if (!isAdded()) return;
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+
+                            // Limpiar sesión local
+                            requireContext()
+                                    .getSharedPreferences("sesion", Context.MODE_PRIVATE)
+                                    .edit().clear().apply();
+
+                            Toast.makeText(requireContext(),
+                                    "Cuenta eliminada. ¡Hasta pronto!",
+                                    Toast.LENGTH_LONG).show();
+
+                            // Volver a la pantalla de login cerrando toda la pila
+                            Intent intent = new Intent(requireActivity(), loginActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+
+                        } else {
+                            Toast.makeText(requireContext(),
+                                    response.optString("message",
+                                            "No se pudo eliminar la cuenta. Inténtalo de nuevo."),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(requireContext(),
+                                "Error al procesar la respuesta del servidor",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    loadingDialog.dismiss();
+                    if (!isAdded()) return;
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error al eliminar cuenta",
+                            Request.Method.DELETE, url, error);
                 }
         ));
     }

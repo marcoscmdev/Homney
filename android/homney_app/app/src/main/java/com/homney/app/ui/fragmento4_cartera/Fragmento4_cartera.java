@@ -1,19 +1,25 @@
 package com.homney.app.ui.fragmento4_cartera;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +51,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -811,6 +818,241 @@ public class Fragmento4_cartera extends Fragment {
         tvTag.setText(g.getTipo() != null ? g.getTipo().toUpperCase(Locale.getDefault()) : "—");
         tvTag.setBackgroundResource("fijo".equals(g.getTipo())
                 ? R.drawable.bg_tag_yellow : R.drawable.bg_tag_warn);
+
+        // ── Botón editar: solo visible si el usuario actual es el pagador ──────
+        ImageView btnEdit = row.findViewById(R.id.edit_gasto);
+        if (esPropio) {
+            btnEdit.setVisibility(View.VISIBLE);
+            btnEdit.setOnClickListener(v -> handleEditarGasto(g, userMap));
+        } else {
+            btnEdit.setVisibility(View.GONE);
+        }
+    }
+
+    /* ════════════════════════════════════════════
+       EDITAR GASTO
+    ════════════════════════════════════════════ */
+
+    /**
+     * Valida si el gasto puede editarse:
+     *  - Si algún deudor ya abonó su parte → error con nombre del usuario.
+     *  - En caso contrario → abre el diálogo de edición.
+     */
+    private void handleEditarGasto(Gasto g, Map<Integer, Usuario> userMap) {
+        List<RepartoGasto> deudores = (repartosDeDeudores != null)
+                ? repartosDeDeudores.getOrDefault(g.getId_gasto(), new ArrayList<>())
+                : new ArrayList<>();
+
+        for (RepartoGasto r : deudores) {
+            if (r.isAbonado()) {
+                Usuario u = userMap.get(r.getId_usuario());
+                String nombre = (u != null) ? u.getNombre() : "#" + r.getId_usuario();
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("No se puede editar")
+                        .setMessage("No es posible editar el gasto, ya ha sido compensado por "
+                                + nombre + ".")
+                        .setPositiveButton("Entendido", null)
+                        .show();
+                return;
+            }
+        }
+        mostrarDialogEditarGasto(g);
+    }
+
+    /** Diálogo con formulario pre-relleno para editar un gasto. */
+    private void mostrarDialogEditarGasto(Gasto g) {
+        Context ctx = requireContext();
+        int pad = dp(16);
+
+        ScrollView scrollView = new ScrollView(ctx);
+        LinearLayout layout = new LinearLayout(ctx);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(pad, pad / 2, pad, pad / 2);
+        scrollView.addView(layout);
+
+        // ── Concepto ──
+        layout.addView(crearLabel(ctx, "CONCEPTO"));
+        EditText etConcepto = new EditText(ctx);
+        etConcepto.setText(g.getConcepto());
+        etConcepto.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        etConcepto.setSingleLine(true);
+        layout.addView(etConcepto);
+
+        // ── Importe ──
+        layout.addView(crearLabel(ctx, "IMPORTE (€)"));
+        EditText etImporte = new EditText(ctx);
+        etImporte.setText(String.valueOf(g.getImporte()));
+        etImporte.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        layout.addView(etImporte);
+
+        // ── Fecha ──
+        layout.addView(crearLabel(ctx, "FECHA"));
+        EditText etFecha = new EditText(ctx);
+        etFecha.setText(g.getFecha() != null ? g.getFecha() : "");
+        etFecha.setFocusable(false);
+        etFecha.setClickable(true);
+        etFecha.setOnClickListener(btnF -> {
+            Calendar cal = Calendar.getInstance();
+            try {
+                Date d = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        .parse(etFecha.getText().toString());
+                if (d != null) cal.setTime(d);
+            } catch (Exception ignored) {}
+            new DatePickerDialog(ctx,
+                    (picker, year, month, day) ->
+                            etFecha.setText(String.format(Locale.getDefault(),
+                                    "%04d-%02d-%02d", year, month + 1, day)),
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DAY_OF_MONTH)
+            ).show();
+        });
+        layout.addView(etFecha);
+
+        // ── Categoría ──
+        layout.addView(crearLabel(ctx, "CATEGORÍA"));
+        EditText etCategoria = new EditText(ctx);
+        etCategoria.setText(g.getCategoria() != null ? g.getCategoria() : "");
+        etCategoria.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        layout.addView(etCategoria);
+
+        // ── Modo de pago ──
+        layout.addView(crearLabel(ctx, "MODO DE PAGO"));
+        Spinner spinnerModo = new Spinner(ctx);
+        String[] modos = ctx.getResources().getStringArray(R.array.modo_pago_options);
+        ArrayAdapter<String> adapterModo = new ArrayAdapter<>(
+                ctx, android.R.layout.simple_spinner_item, modos);
+        adapterModo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerModo.setAdapter(adapterModo);
+        if (g.getModo() != null) {
+            for (int i = 0; i < modos.length; i++) {
+                if (modos[i].equalsIgnoreCase(g.getModo())) {
+                    spinnerModo.setSelection(i);
+                    break;
+                }
+            }
+        }
+        layout.addView(spinnerModo);
+
+        // ── Tipo de gasto ──
+        layout.addView(crearLabel(ctx, "TIPO DE GASTO"));
+        Spinner spinnerTipo = new Spinner(ctx);
+        String[] tipos = ctx.getResources().getStringArray(R.array.tipo_gasto_options);
+        ArrayAdapter<String> adapterTipo = new ArrayAdapter<>(
+                ctx, android.R.layout.simple_spinner_item, tipos);
+        adapterTipo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipo.setAdapter(adapterTipo);
+        if (g.getTipo() != null) {
+            for (int i = 0; i < tipos.length; i++) {
+                if (tipos[i].equalsIgnoreCase(g.getTipo())) {
+                    spinnerTipo.setSelection(i);
+                    break;
+                }
+            }
+        }
+        layout.addView(spinnerTipo);
+
+        // ── AlertDialog ──
+        AlertDialog dialog = new AlertDialog.Builder(ctx)
+                .setTitle("✏️ Editar gasto")
+                .setView(scrollView)
+                .setPositiveButton("Guardar", null)   // null → no auto-dismiss
+                .setNegativeButton("Cancelar", null)
+                .create();
+        dialog.show();
+
+        // Override del botón positivo para validar antes de cerrar
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String concepto   = etConcepto.getText().toString().trim();
+            String importeStr = etImporte.getText().toString().trim().replace(",", ".");
+            String fecha      = etFecha.getText().toString().trim();
+            String categoria  = etCategoria.getText().toString().trim();
+
+            if (concepto.isEmpty() || importeStr.isEmpty() || fecha.isEmpty()) {
+                Toast.makeText(ctx, "Rellena todos los campos obligatorios",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            double importe;
+            try {
+                importe = Double.parseDouble(importeStr);
+                if (importe <= 0) throw new NumberFormatException();
+            } catch (NumberFormatException e) {
+                Toast.makeText(ctx, "Importe inválido", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (categoria.isEmpty()) categoria = "Otros";
+
+            String modo = modos[spinnerModo.getSelectedItemPosition()];
+            String tipo = tipos[spinnerTipo.getSelectedItemPosition()];
+
+            JSONObject body = new JSONObject();
+            try {
+                body.put("id_gasto",           g.getId_gasto());
+                body.put("concepto",           concepto);
+                body.put("importe",            importe);
+                body.put("fecha",              fecha);
+                body.put("categoria",          categoria);
+                body.put("modo",               modo);
+                body.put("tipo",               tipo);
+                body.put("id_usuario_pagador", g.getId_usuario_pagador());
+            } catch (JSONException e) {
+                Toast.makeText(ctx, "Error al preparar los datos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            dialog.dismiss();
+            enviarEdicionGasto(body);
+        });
+    }
+
+    /** Pequeño helper para crear etiquetas de formulario con estilo consistente. */
+    private TextView crearLabel(Context ctx, String texto) {
+        TextView tv = new TextView(ctx);
+        tv.setText(texto);
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+        tv.setTextColor(0xFF9A8A6A);
+        tv.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.topMargin = dp(12);
+        lp.bottomMargin = dp(4);
+        tv.setLayoutParams(lp);
+        return tv;
+    }
+
+    /** Envía PUT a gasto.php con los datos editados y recarga la cartera. */
+    private void enviarEdicionGasto(JSONObject body) {
+        loadingDialog.show();
+        String url = WebService.URL_Gasto;
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                Request.Method.PUT, url, body,
+                response -> {
+                    loadingDialog.dismiss();
+                    if (!isAdded()) return;
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+                            Toast.makeText(requireContext(),
+                                    "Gasto actualizado ✓", Toast.LENGTH_SHORT).show();
+                            recargarCartera();
+                        } else {
+                            Toast.makeText(requireContext(),
+                                    response.optString("message", "Error al actualizar"),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(requireContext(),
+                                "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    loadingDialog.dismiss();
+                    if (!isAdded()) return;
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error al editar gasto", Request.Method.PUT, url, error);
+                }
+        ));
     }
 
     /* ════════════════════════════════════════════

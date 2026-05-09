@@ -14,7 +14,7 @@
     <string name="login_footer">Homney · Tu colmena organizada</string>
     <string name="tab_login">Iniciar sesión</string>
     <string name="tab_registro">Crear cuenta</string>
-    <string name="field_email">Correo electrónico</string>
+    <string name="field_email">Email *</string>
     <string name="field_password">Contraseña</string>
     <string name="field_nombre">Nombre completo *</string>
     <string name="field_telefono">Teléfono *</string>

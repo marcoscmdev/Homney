@@ -31,13 +31,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Fragment de creación de cuenta nueva.
  * <p>
  * Flujo:
- * - Modo 0 "Crear hogar nuevo"  → POST hogar.php (clave_inv generada) → POST usuario.php (rol=admin)
+ * - Modo 0 "Crear hogar nuevo"  → POST hogar.php (clave_inv generada) → POST usuario.php (rol=fundador)
  * - Modo 1 "Unirme a un hogar" → GET  hogar.php?clave_inv=X           → POST usuario.php (rol=miembro)
  * <p>
  * Tras el registro arranca Activity2_registro_config_hogar (wizard de estancias).
@@ -116,6 +116,11 @@ public class activity_fragment_nueva_cuenta extends Fragment {
             return;
         }
 
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(getContext(), "Introduce un email válido", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (password.length() < 5) {
             Toast.makeText(getContext(), "La contraseña debe tener al menos 5 caracteres", Toast.LENGTH_SHORT).show();
             return;
@@ -141,7 +146,7 @@ public class activity_fragment_nueva_cuenta extends Fragment {
         loadingDialog.show();
 
         if (modo == 0) {
-            crearHogarYUsuario(generarClaveInv(), nombre, email, telefono, password, sexo, "admin");
+            crearHogarYUsuario(generarClaveInv(), nombre, email, telefono, password, sexo, "fundador");
         } else {
             buscarHogarPorClave(claveInv, nombre, email, telefono, password, sexo);
         }
@@ -164,7 +169,8 @@ public class activity_fragment_nueva_cuenta extends Fragment {
                 try {
                     if (response.getString(WebService.JSON.STATUS).equals(WebService.JSON.SUCCESS)) {
                         int idHogar = response.getJSONObject(WebService.JSON.DATA).getInt("autoincrement");
-                        crearUsuario(nombre, email, telefono, password, sexo, idHogar, rol);
+                        String passEncriptada = Utilidades.encriptaMD5(password);
+                        crearUsuario(nombre, email, telefono, passEncriptada, sexo, idHogar, rol);
                     } else {
                         loadingDialog.dismiss();
                         mostrarError("hogar fail: " + response);
@@ -301,10 +307,11 @@ public class activity_fragment_nueva_cuenta extends Fragment {
 
     /**
      * Genera una clave de invitación aleatoria de 6 caracteres (ej: "H3K9MX").
+     * Usa SecureRandom para que no sea predecible.
      */
     private String generarClaveInv() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random rnd = new Random();
+        SecureRandom rnd = new SecureRandom();
         StringBuilder sb = new StringBuilder(6);
         for (int i = 0; i < 6; i++) sb.append(chars.charAt(rnd.nextInt(chars.length())));
         return sb.toString();

@@ -134,14 +134,33 @@
         <!-- ══════════════════════════════════════════
              SECCIÓN: HABITACIONES
         ══════════════════════════════════════════ -->
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Homney.Text.Title"
-            android:text="Habitaciones"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="@style/Homney.Text.Title"
+                android:text="Habitaciones" />
+
+            <ImageView
+                android:id="@+id/btn_anadir_habitacion"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_add"
+                android:background="@color/accent_background"
+                android:padding="6dp"
+                android:contentDescription="Añadir habitación" />
+
+        </LinearLayout>
 
         <!-- Grid de habitaciones (filas de 2 columnas, se rellena desde Java) -->
         <LinearLayout
@@ -162,40 +181,6 @@
                 android:text="Cargando habitaciones…"
                 android:visibility="visible" />
         </LinearLayout>
-
-        <!-- ══════════════════════════════════════════
-             SECCIÓN: CALENDARIO
-        ══════════════════════════════════════════ -->
-        <TextView
-            android:id="@+id/tv_calendar_titulo"
-            style="@style/Homney.Text.Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"
-            tools:text="Titulo calendario Mes - Año" />
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/surface"
-            app:strokeColor="@color/border"
-            app:strokeWidth="1dp"
-            app:cardCornerRadius="14dp"
-            app:cardElevation="2dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp">
-
-            <CalendarView
-                android:id="@+id/calendar_hogar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:dateTextAppearance="@style/Homney.Text.Body"
-                android:weekDayTextAppearance="@style/Homney.Text.Muted"
-                />
-        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 </ScrollView>

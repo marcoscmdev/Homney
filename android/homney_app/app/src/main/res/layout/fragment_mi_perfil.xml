@@ -193,6 +193,15 @@
             android:textSize="14sp"
             android:layout_marginBottom="20dp" />
 
+        <Button
+            android:id="@+id/btn_eliminar_cuenta"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            style="@style/Homney.Button.Ghost"
+            android:text="⛔️ Eliminar cuenta"
+            android:textSize="14sp"
+            android:layout_marginBottom="20dp" />
+
         <!-- Separador -->
         <View style="@style/Homney.Divider" android:layout_marginBottom="16dp" />
 

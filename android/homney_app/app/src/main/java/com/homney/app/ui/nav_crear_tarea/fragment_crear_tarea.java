@@ -230,7 +230,7 @@ public class fragment_crear_tarea extends Fragment {
         for (int i = 0; i < listaUsuarios.size(); i++) {
             Usuario u = listaUsuarios.get(i);
             String label = u.getNombre() != null ? u.getNombre() : "Usuario " + u.getId_usuario();
-            if ("admin".equalsIgnoreCase(u.getRol())) label += " [Admin]";
+            if ("fundador".equalsIgnoreCase(u.getRol())) label += " [Fundador]";
             nombres.add(label);
             if (u.getId_usuario() == idUsuario) indexPropio = i;
         }

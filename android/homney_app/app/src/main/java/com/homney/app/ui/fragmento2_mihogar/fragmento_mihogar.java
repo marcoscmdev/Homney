@@ -7,7 +7,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,8 +33,6 @@ import com.homney.app.webservice.respuestas.RespuestaLista;
 import org.json.JSONException;
 
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,14 +40,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class fragmento_mihogar extends Fragment {
 
     /* ── Vistas del layout ──────────────────────────────── */
-    private TextView    tvHogarTitulo;
-    private TextView    tvClaveHogar;
-    private TextView    tvCalendarTitulo;
-    private TextView    tvSinUsuarios;
-    private TextView    tvSinHabitaciones;
+    private TextView     tvHogarTitulo;
+    private TextView     tvClaveHogar;
+    private TextView     tvSinUsuarios;
+    private TextView     tvSinHabitaciones;
     private LinearLayout containerUsuarios;
     private LinearLayout gridHabitaciones;
-    private CalendarView calendarHogar;
+    private ImageView    btnAnadirHabitacion;
 
     /* ── Datos de sesión ────────────────────────────────── */
     private int    idHogar   = -1;
@@ -69,16 +65,22 @@ public class fragmento_mihogar extends Fragment {
         View root = inflater.inflate(R.layout.fragment2_hogar, container, false);
 
         // Enlazar vistas
-        tvHogarTitulo      = root.findViewById(R.id.tv_hogar_titulo);
-        tvClaveHogar       = root.findViewById(R.id.tareas_pendientes);
-        tvCalendarTitulo   = root.findViewById(R.id.tv_calendar_titulo);
-        tvSinUsuarios      = root.findViewById(R.id.tv_sin_usuarios);
-        tvSinHabitaciones  = root.findViewById(R.id.tv_sin_habitaciones);
-        containerUsuarios  = root.findViewById(R.id.container_usuarios);
-        gridHabitaciones   = root.findViewById(R.id.grid_habitaciones);
-        calendarHogar      = root.findViewById(R.id.calendar_hogar);
+        tvHogarTitulo        = root.findViewById(R.id.tv_hogar_titulo);
+        tvClaveHogar         = root.findViewById(R.id.tareas_pendientes);
+        tvSinUsuarios        = root.findViewById(R.id.tv_sin_usuarios);
+        tvSinHabitaciones    = root.findViewById(R.id.tv_sin_habitaciones);
+        containerUsuarios    = root.findViewById(R.id.container_usuarios);
+        gridHabitaciones     = root.findViewById(R.id.grid_habitaciones);
+        btnAnadirHabitacion  = root.findViewById(R.id.btn_anadir_habitacion);
 
         loadingDialog = new LoadingDialog(requireContext());
+
+        // Botón "+" → abre el BottomSheet para añadir habitación
+        btnAnadirHabitacion.setOnClickListener(v -> {
+            AnadirHabitacionBottomSheet sheet = new AnadirHabitacionBottomSheet();
+            sheet.setOnHabitacionAnadidaListener(() -> recargarHabitaciones());
+            sheet.show(getChildFragmentManager(), "anadir_habitacion");
+        });
 
         // Leer datos de sesión guardados en login
         SharedPreferences prefs = requireContext()
@@ -86,8 +88,6 @@ public class fragmento_mihogar extends Fragment {
         idHogar    = prefs.getInt("id_hogar", -1);
         rolUsuario = prefs.getString("rol", "");
 
-        // Título del calendario con mes y año en español
-        ponerTituloCalendario();
 
         // Iniciar las tres peticiones en paralelo
         if (idHogar != -1) {
@@ -108,15 +108,6 @@ public class fragmento_mihogar extends Fragment {
 
         return root;
     }
-
-    private void ponerTituloCalendario() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", new Locale("es", "ES"));
-        String mesAnho = sdf.format(new Date());
-        // Poner en mayúscula la primera letra
-        mesAnho = Character.toUpperCase(mesAnho.charAt(0)) + mesAnho.substring(1);
-        tvCalendarTitulo.setText("Calendario -"+mesAnho);
-    }
-
     // PETICIONES WEB SERVICE
 
     private void cargarInfoHogar() {
@@ -279,7 +270,7 @@ public class fragmento_mihogar extends Fragment {
             String rol = u.getRol() != null ? u.getRol() : "miembro";
             tvRol.setText(rol.toUpperCase(Locale.getDefault()));
 
-            if ("admin".equalsIgnoreCase(rol)) {
+            if ("fundador".equalsIgnoreCase(rol)) {
                 tvRol.setBackgroundResource(R.drawable.bg_tag_yellow);
             } else {
                 tvRol.setBackgroundResource(R.drawable.bg_tag_green);
@@ -382,5 +373,20 @@ public class fragmento_mihogar extends Fragment {
         return Math.round(TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics()));
+    }
+
+    /* ════════════════════════════════════════════════════════
+       RECARGA DEL GRID DE HABITACIONES
+       Llamado desde AnadirHabitacionBottomSheet tras un POST exitoso
+    ════════════════════════════════════════════════════════ */
+
+    private void recargarHabitaciones() {
+        // Limpiar el grid conservando el placeholder tv_sin_habitaciones
+        gridHabitaciones.removeAllViews();
+        gridHabitaciones.addView(tvSinHabitaciones);
+        tvSinHabitaciones.setText("Cargando habitaciones…");
+        tvSinHabitaciones.setVisibility(View.VISIBLE);
+
+        cargarHabitaciones();
     }
 }

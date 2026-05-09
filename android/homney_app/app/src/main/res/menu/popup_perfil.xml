@@ -11,10 +11,6 @@
         android:title="Mi perfil" />
 
     <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings" />
-
-    <item
         android:id="@+id/menu_ayuda"
         android:title="@string/main_menu" />
 

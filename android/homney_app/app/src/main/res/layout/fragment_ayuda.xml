@@ -215,11 +215,6 @@
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_green" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Calendario del mes actual para tener la fecha siempre a mano." />
-                        </LinearLayout>
-
-                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
-                            <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_green" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
                             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Lista de miembros con nombre, correo y rol. El administrador aparece con etiqueta amarilla y el resto en verde." />
                         </LinearLayout>
 

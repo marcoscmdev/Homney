@@ -226,11 +226,6 @@ public class MainActivity extends AppCompatActivity {
                     .navigate(R.id.nav_mi_perfil);
             return true;
         }
-        if (item.getItemId() == R.id.action_settings) {
-            Navigation.findNavController(this, R.id.nav_host_fragment)
-                    .navigate(R.id.nav_ajustes_hogar);
-            return true;
-        }
         if(item.getItemId() == R.id.menu_ayuda) {
             Navigation.findNavController(this, R.id.nav_host_fragment)
                     .navigate(R.id.nav_ayuda);
@@ -342,7 +337,6 @@ public class MainActivity extends AppCompatActivity {
         float offsetRight = 8f;
         canvas.drawCircle(size / 2f, size / 2f, size / 2f, bgPaint);
 
-
         // Texto de la inicial centrado
         Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.WHITE);
@@ -355,3 +349,4 @@ public class MainActivity extends AppCompatActivity {
         return new BitmapDrawable(getResources(), bitmap);
     }
 }
+

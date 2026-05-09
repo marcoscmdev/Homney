@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tarjeta usada en el BottomSheet de selección de tipo de habitación.
+    Se selecciona cambiando el fondo a accent_background y el borde a accent.
+-->
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_tipo_hab"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/surface"
+    app:strokeColor="@color/border"
+    app:strokeWidth="1dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="14dp">
+
+        <ImageView
+            android:id="@+id/img_tipo_selector"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="4dp"
+            android:layout_marginBottom="6dp"
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/ic_home2" />
+
+        <TextView
+            android:id="@+id/tv_nombre_tipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textColor="@color/text"
+            tools:text="Cocina" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

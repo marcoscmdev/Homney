@@ -1,58 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Item card del muro. Flujo vertical garantizado (LinearLayout):
+      1. TITULO
+      2. CUERPO
+      3. IMAGEN de publicación  (GONE por defecto, visible cuando hay imagen)
+      4. FECHA · AUTOR
+    imagen_publi_muro se conserva con visibility="gone" por compatibilidad con el adapter.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:background="@drawable/bg_card"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="10dp"
-    android:padding="14dp">
+    android:padding="14dp"
+    android:layout_margin="16dp">
 
+    <!-- 1. TITULO -->
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/titulo_publi_muro"
-        style="@style/Homney.Text.Title"
-        android:layout_centerInParent="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="20dp"
-        android:text="Titulo"/>
-
-    <ImageView
-        android:layout_width="150dp"
-        android:layout_height="100dp"
-        android:layout_below="@id/titulo_publi_muro"
-        android:layout_centerInParent="true"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:id="@+id/imagen_publi_muro"
-        android:visibility="gone"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/fecha_nombre"
-        style="@style/Homney.Text.Muted"
-        android:layout_below="@id/imagen_publi_muro"
-        android:layout_centerInParent="true"
-        android:text="Lunes - 23 Febrero 2026 Usuario"
-        />
-    <ImageView
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:id="@+id/img_muro_publi"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/fecha_nombre"
-        android:visibility="gone"/>
-
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/body_muro"
-        style="@style/Homney.Text.Body"
-        android:layout_below="@id/img_muro_publi"
-        android:layout_centerInParent="true"
-        android:textAlignment="textStart"
-        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
-        android:layout_margin="@dimen/fab_margin"/>
+        style="@style/Homney.Text.Title"
+        android:gravity="center_horizontal"
+        android:text="Titulo"
+        android:layout_marginBottom="10dp" />
 
-    
-</RelativeLayout>
+    <!-- Separador decorativo bajo el título -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#1A000000"
+        android:layout_marginBottom="10dp" />
+
+    <!-- 2. CUERPO -->
+    <TextView
+        android:id="@+id/body_muro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Homney.Text.Body"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        android:layout_marginBottom="10dp" />
+
+    <!-- 3. IMAGEN PRINCIPAL de la publicación (visible solo si el adapter la carga) -->
+    <ImageView
+        android:id="@+id/img_muro_publi"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone" />
+
+    <!-- Legacy: imagen_publi_muro — siempre oculto, mantenido por compatibilidad -->
+    <ImageView
+        android:id="@+id/imagen_publi_muro"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
+
+    <!-- 4. FECHA · AUTOR -->
+    <TextView
+        android:id="@+id/fecha_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Homney.Text.Muted"
+        android:gravity="center_horizontal"
+        android:text="Lunes - 23 Febrero 2026 · Usuario"
+        android:layout_marginTop="4dp" />
+
+</LinearLayout>

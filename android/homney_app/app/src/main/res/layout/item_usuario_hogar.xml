@@ -57,12 +57,12 @@
                 tools:text="marcos@email.com" />
         </LinearLayout>
 
-        <!-- Etiqueta rol: ADMIN (amarillo) o MIEMBRO (verde) -->
+        <!-- Etiqueta rol: FUNDADOR (amarillo) o MIEMBRO (verde) -->
         <TextView
             android:id="@+id/tv_rol"
             style="@style/Homney.Tag.Yellow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="ADMIN" />
+            tools:text="FUNDADOR" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
