@@ -17,7 +17,7 @@ captures/
 google-services.json
 
 # ========================
-# PHP
+# PHP — CREDENCIALES Y CONFIGURACIÓN SENSIBLE
 # ========================
 vendor/
 composer.lock
@@ -28,6 +28,19 @@ composer.lock
 cache/
 tmp/
 temp/
+
+# Archivos PHP con credenciales hardcodeadas — NUNCA subir
+backend/conexion.php
+backend/asistenteia.php
+
+# ========================
+# ANDROID — CLAVES Y SECRETOS
+# ========================
+secrets.properties
+keystore.properties
+release.keystore
+*.jks
+*.keystore
 
 # ========================
 # MYSQL / BASE DE DATOS
