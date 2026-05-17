@@ -545,6 +545,17 @@ public class Fragmento3_tareas extends Fragment {
             if (deleteBtn != null)
                 deleteBtn.setOnClickListener(v -> borrarTarea(t, (View) row.getParent()));
         }
+
+        // ── Click: "otras tareas" → asignarse ──────────────────
+        if (!esMia) {
+            TypedValue outValue2 = new TypedValue();
+            requireContext().getTheme().resolveAttribute(
+                    android.R.attr.selectableItemBackground, outValue2, true);
+            row.setForeground(requireContext().getDrawable(outValue2.resourceId));
+            row.setClickable(true);
+            row.setFocusable(true);
+            row.setOnClickListener(v -> mostrarDialogAsignarme(t, asigByTarea, userMap));
+        }
     }
 
     /* ════════════════════════════════════════════
@@ -795,6 +806,83 @@ public class Fragmento3_tareas extends Fragment {
                     if (isAdded())
                         Utilidades.mostrar_error_peticion(requireContext(), TAG,
                                 "Error al marcar realizada", Request.Method.POST, url, error);
+                }
+        );
+        PeticionesRed.anhadirPeticionACola(peticion);
+    }
+
+    /* ════════════════════════════════════════════
+       DIALOG: asignarse una tarea de "Otras tareas"
+    ════════════════════════════════════════════ */
+
+    private void mostrarDialogAsignarme(Tarea t,
+                                        Map<Integer, List<Integer>> asigByTarea,
+                                        Map<Integer, Usuario> userMap) {
+        List<Integer> asigs = asigByTarea.containsKey(t.getId_tarea())
+                ? asigByTarea.get(t.getId_tarea()) : new ArrayList<>();
+
+        StringBuilder msg = new StringBuilder();
+        if (asigs.isEmpty()) {
+            msg.append("Esta tarea no está asignada a nadie.\n\n¿Quieres asignártela?");
+        } else {
+            msg.append("Asignada a: ");
+            for (int i = 0; i < asigs.size(); i++) {
+                Usuario u = userMap.get(asigs.get(i));
+                msg.append(u != null ? u.getNombre() : "#" + asigs.get(i));
+                if (i < asigs.size() - 1) msg.append(", ");
+            }
+            msg.append(".\n\n¿Quieres asignártela también a ti?");
+        }
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("«" + t.getNombre() + "»")
+                .setMessage(msg.toString())
+                .setPositiveButton("Asignarme", (dialog, which) -> asignarseaTarea(t))
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void asignarseaTarea(Tarea t) {
+        loadingDialog.show();
+        JSONObject body = new JSONObject();
+        try {
+            body.put("id_tarea",   t.getId_tarea());
+            body.put("id_usuario", idUsuario);
+        } catch (JSONException e) {
+            loadingDialog.dismiss();
+            Toast.makeText(requireContext(), "Error al preparar la petición", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String url = WebService.URL_Asignacion_Tarea;
+        JsonObjectRequest peticion = new JsonObjectRequest(
+                Request.Method.POST, url, body,
+                response -> {
+                    loadingDialog.dismiss();
+                    if (!isAdded()) return;
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+                            Toast.makeText(requireContext(),
+                                    "¡Tarea asignada! Ahora aparece en \"Mis tareas\"",
+                                    Toast.LENGTH_SHORT).show();
+                            // Recargar toda la pantalla para reflejar el cambio
+                            resetContainers();
+                            cargarDatos();
+                        } else {
+                            Toast.makeText(requireContext(),
+                                    response.optString("message", "No se pudo asignar la tarea"),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(requireContext(),
+                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    loadingDialog.dismiss();
+                    if (isAdded())
+                        Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                                "Error al asignar tarea", Request.Method.POST, url, error);
                 }
         );
         PeticionesRed.anhadirPeticionACola(peticion);

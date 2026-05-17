@@ -25,6 +25,9 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.homney.app.R;
@@ -36,8 +39,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -75,8 +80,19 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
         return sheet;
     }
 
+    /* ── Groq (llamada directa desde Android; AwardSpace bloquea puerto 443 saliente) ── */
+    private static final String GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions";
+    private static final String GROQ_KEY   = "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";
+    private static final String GROQ_MODEL = "llama-3.3-70b-versatile";
+
     private static final String PREFS_IA       = "homney_ia";
     private static final long   MILLIS_30_DIAS = 30L * 24 * 60 * 60 * 1000;
+
+    /** System prompt cacheado tras la primera carga de contexto. */
+    private String systemPrompt    = null;
+    private int    numHabs         = 0;
+    private String listaHabs       = "";
+    private String nombreDelHogar  = "";  // cargado desde contexto_ia o SharedPreferences
 
     /* ── Vistas ── */
     private LinearLayout llMensajes;
@@ -114,8 +130,9 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
 
         SharedPreferences sesion = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
-        idHogar   = sesion.getInt("id_hogar",   -1);
-        idUsuario = sesion.getInt("id_usuario", -1);
+        idHogar        = sesion.getInt("id_hogar",       -1);
+        idUsuario      = sesion.getInt("id_usuario",     -1);
+        nombreDelHogar = sesion.getString("nombre_hogar", "");
 
         btnEnviar.setOnClickListener(v -> enviarPregunta());
         btnLimpiar.setOnClickListener(v -> confirmarLimpiarHistorial());
@@ -202,7 +219,11 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
     }
 
     /* ════════════════════════════════════════════
-       COMUNICACIÓN CON EL BACKEND
+       COMUNICACIÓN CON EL BACKEND Y GROQ
+       Flujo:
+         1) GET contexto_ia.php → datos del hogar desde la BD (AwardSpace OK)
+         2) Construir system prompt en Android
+         3) POST api.groq.com directamente (Android no tiene restricción de salida)
     ════════════════════════════════════════════ */
 
     private void llamarAsistente(final String pregunta, boolean esInicial) {
@@ -222,75 +243,291 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
         setEntradaActiva(false);
         loadingIa.setVisibility(View.VISIBLE);
 
-        final String historialStr = historial.toString();
-        final String modoParam    = esBienvenida ? "bienvenida" : "";
+        if (systemPrompt == null) {
+            // Primera vez: obtener contexto de la BD y luego llamar a Groq
+            fetchContextoYLlamar(pregunta, esBienvenida);
+        } else {
+            // Contexto ya cacheado: llamar a Groq directamente
+            llamarGroq(pregunta, esBienvenida);
+        }
+    }
 
-        StringRequest req = new StringRequest(Request.Method.POST, WebService.URL_AsistenteIA,
-                respuestaStr -> {
+    /** Paso 1: descarga el contexto del hogar desde el backend PHP. */
+    private void fetchContextoYLlamar(final String pregunta, final boolean esBienvenida) {
+        String url = WebService.URL_ContextoIA + "?id_hogar=" + idHogar;
+
+        StringRequest req = new StringRequest(Request.Method.GET, url,
+                respStr -> {
                     try {
-                        JSONObject json = new JSONObject(respuestaStr);
-                        if (WebService.JSON.SUCCESS.equals(json.getString(WebService.JSON.STATUS))) {
-
-                            JSONObject data  = json.getJSONObject(WebService.JSON.DATA);
-                            String texto     = data.getString("respuesta");
-                            JSONObject accion = data.optJSONObject("accion"); // puede ser null
-
-                            // Guardar turno en historial
-                            try {
-                                if (!pregunta.isEmpty()) {
-                                    historial.put(new JSONObject()
-                                            .put("role", "user").put("content", pregunta));
-                                }
-                                historial.put(new JSONObject()
-                                        .put("role", "assistant").put("content", texto));
-                            } catch (JSONException ignored) {}
-
-                            guardarHistorial();
-
-                            // Mostrar respuesta y, si hay acción, pedir confirmación
-                            if (getActivity() == null) return;
-                            requireActivity().runOnUiThread(() -> {
-                                loadingIa.setVisibility(View.GONE);
-                                agregarBurbuja(texto, false);
-                                esperando = false;
-                                setEntradaActiva(true);
-                                if (accion != null) {
-                                    mostrarConfirmacionAccion(accion);
-                                }
-                            });
-
-                        } else {
-                            String msg = json.optString(WebService.JSON.DATA, "Error desconocido");
-                            mostrarErrorIa(msg);
+                        JSONObject json = new JSONObject(respStr);
+                        if (!WebService.JSON.SUCCESS.equals(json.getString(WebService.JSON.STATUS))) {
+                            mostrarErrorIa("❌ No se pudo cargar el contexto del hogar");
+                            return;
                         }
+                        JSONObject data = json.getJSONObject(WebService.JSON.DATA);
+
+                        // Datos para el mensaje de bienvenida
+                        String nhFromServer = data.optString("nombre_hogar", "");
+                        if (!nhFromServer.isEmpty()) nombreDelHogar = nhFromServer;
+
+                        JSONArray habs = data.optJSONArray("habitaciones");
+                        numHabs = habs != null ? habs.length() : 0;
+                        List<String> nombresHabs = new ArrayList<>();
+                        if (habs != null) {
+                            for (int i = 0; i < habs.length(); i++)
+                                nombresHabs.add(habs.getJSONObject(i).optString("nombre", ""));
+                        }
+                        listaHabs = android.text.TextUtils.join(", ", nombresHabs);
+
+                        systemPrompt = construirSystemPrompt(data);
+                        llamarGroq(pregunta, esBienvenida);
+
                     } catch (JSONException e) {
-                        mostrarErrorIa("⚠️ Respuesta inesperada del servidor");
+                        mostrarErrorIa("❌ Error al procesar el contexto del hogar");
                     }
                 },
-                error -> {
-                    int code = (error.networkResponse != null)
-                            ? error.networkResponse.statusCode : -1;
-                    String msg = (code == -1)
-                            ? "⚠️ Sin respuesta del servidor — ¿está encendido el backend?"
-                            : "⚠️ Error HTTP " + code + " del servidor";
-                    mostrarErrorIa(msg);
-                }
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("id_hogar",   String.valueOf(idHogar));
-                params.put("id_usuario", String.valueOf(idUsuario));
-                params.put("pregunta",   pregunta);
-                params.put("historial",  historialStr);
-                params.put("modo",       modoParam);
-                return params;
-            }
-        };
-
-        req.setRetryPolicy(new DefaultRetryPolicy(
-                30_000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                error -> mostrarErrorIa("❌ No se pudo conectar al servidor — ¿backend activo?")
+        );
+        req.setRetryPolicy(new DefaultRetryPolicy(15_000, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         PeticionesRed.anhadirPeticionACola(req);
+    }
+
+    /** Construye el system prompt a partir del contexto recibido. */
+    private String construirSystemPrompt(JSONObject data) throws JSONException {
+        JSONArray miembros     = data.optJSONArray("miembros");
+        JSONArray habitaciones = data.optJSONArray("habitaciones");
+        JSONArray tareas       = data.optJSONArray("tareas");
+        JSONArray gastosArr    = data.optJSONArray("gastos");
+        JSONArray categoriasArr = data.optJSONArray("categorias");
+
+        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        // Nombre del hogar: usar el campo del contexto o el valor ya cargado
+        String nomHogar = data.optString("nombre_hogar", "");
+        if (nomHogar.isEmpty()) nomHogar = nombreDelHogar;
+        String hogarLabel = nomHogar.isEmpty() ? "la colmena" : "«" + nomHogar + "»";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Eres «Homney Mate» 🐝, la abeja obrera del hogar compartido ").append(hogarLabel).append(". ");
+        sb.append("Eres muy simpática, cariñosa y trabajadora. ");
+        sb.append("Adoras a los miembros del hogar como si fueran tu abeja reina y los llamas por su nombre cuando puedes. ");
+        sb.append("Siempre que menciones el hogar, llámalo por su nombre: ").append(hogarLabel).append(". ");
+        sb.append("Eres pacificadora: cuando hay desequilibrios en tareas o gastos los presentas con diplomacia y propones soluciones amables y pragmáticas. ");
+        sb.append("Usas emojis 🐝🍯 con moderación. Responde siempre en español. Sé concisa y práctica.\n\n");
+        sb.append("RESTRICCIÓN: Solo respondes preguntas sobre el hogar (tareas, gastos, miembros, organización, convivencia). ");
+        sb.append("Si te preguntan otra cosa di: «🐝 ¡Ese tema se escapa de mi colmena! Solo puedo ayudarte con asuntos de la colmena 🍯».\n\n");
+        sb.append("Nombre del hogar: ").append(hogarLabel).append("\n");
+        sb.append("Fecha actual: ").append(hoy).append("\n\n");
+
+        sb.append("👥 MIEMBROS DEL HOGAR:\n");
+        if (miembros != null) {
+            for (int i = 0; i < miembros.length(); i++) {
+                JSONObject m = miembros.getJSONObject(i);
+                sb.append("• id=").append(m.optInt("id_usuario"))
+                  .append(" | ").append(m.optString("nombre"))
+                  .append(" — ").append(m.optString("rol")).append("\n");
+            }
+        }
+
+        sb.append("\n🏠 HABITACIONES:\n");
+        if (habitaciones == null || habitaciones.length() == 0) {
+            sb.append("• (no hay habitaciones registradas)\n");
+        } else {
+            for (int i = 0; i < habitaciones.length(); i++) {
+                JSONObject h = habitaciones.getJSONObject(i);
+                sb.append("• id=").append(h.optInt("id_habitacion"))
+                  .append(" | ").append(h.optString("nombre")).append("\n");
+            }
+        }
+
+        int numTareas = tareas != null ? tareas.length() : 0;
+        sb.append("\n📋 TAREAS (").append(numTareas).append("):\n");
+        if (tareas != null) {
+            for (int i = 0; i < tareas.length(); i++) {
+                JSONObject t = tareas.getJSONObject(i);
+                sb.append("• ").append(t.optString("nombre"))
+                  .append(" | ").append(t.optString("habitacion"))
+                  .append(" | ").append(t.optString("frecuencia"))
+                  .append(" ×").append(t.optInt("num_veces")).append("\n");
+            }
+        }
+
+        double total = 0;
+        int numGastos = gastosArr != null ? gastosArr.length() : 0;
+        if (gastosArr != null) {
+            for (int i = 0; i < gastosArr.length(); i++)
+                total += gastosArr.getJSONObject(i).optDouble("importe", 0);
+        }
+        sb.append("\n💰 ÚLTIMOS GASTOS (").append(numGastos)
+          .append(" — total ").append(String.format(Locale.getDefault(), "%.2f", total))
+          .append(" €):\n");
+        if (gastosArr != null) {
+            for (int i = 0; i < gastosArr.length(); i++) {
+                JSONObject g = gastosArr.getJSONObject(i);
+                sb.append("• ").append(g.optString("fecha"))
+                  .append(" | ").append(g.optString("concepto"))
+                  .append(" | ").append(g.optDouble("importe", 0))
+                  .append(" € | ").append(g.optString("categoria")).append("\n");
+            }
+        }
+
+        List<String> cats = new ArrayList<>();
+        if (categoriasArr != null) {
+            for (int i = 0; i < categoriasArr.length(); i++)
+                cats.add(categoriasArr.optString(i, ""));
+        }
+        sb.append("\n🏷️ CATEGORÍAS DISPONIBLES: ")
+          .append(android.text.TextUtils.join(", ", cats)).append("\n");
+
+        sb.append("\n═══════════════════════════════════\n");
+        sb.append("ACCIONES QUE PUEDES REALIZAR:\n");
+        sb.append("Cuando el usuario te pida EXPLÍCITAMENTE publicar, crear una tarea o registrar un gasto,\n");
+        sb.append("añade EXACTAMENTE esto al FINAL de tu respuesta (sin saltos de línea dentro del bloque):\n\n");
+        sb.append("[[ACCION]]{\"tipo\":\"TIPO\",\"datos\":{...}}[[/ACCION]]\n\n");
+        sb.append("TIPOS DISPONIBLES:\n\n");
+        sb.append("1) publicar_muro\n   {\"tipo\":\"publicar_muro\",\"datos\":{\"titulo\":\"...\",\"cuerpo\":\"...\"}}\n\n");
+        sb.append("2) crear_tarea\n   {\"tipo\":\"crear_tarea\",\"datos\":{\"nombre\":\"...\",\"frecuencia\":\"dia|semana|mes|variable\",\"num_veces\":N,\"id_habitacion\":ID_O_NULL,\"nombre_habitacion\":\"NOMBRE_O_null\",\"duracion\":MINUTOS_O_NULL,\"id_usuario_asignar\":ID_O_NULL,\"nombre_usuario_asignar\":\"NOMBRE_O_null\"}}\n\n");
+        sb.append("3) crear_gasto\n   {\"tipo\":\"crear_gasto\",\"datos\":{\"concepto\":\"...\",\"importe\":DECIMAL,\"categoria\":\"CATEGORIA_EXACTA\",\"fecha\":\"").append(hoy).append("\",\"modo\":\"efectivo|transferencia|tarjeta|bizum\",\"tipo\":\"ocasional|fijo\"}}\n\n");
+        sb.append("REGLAS ESTRICTAS:\n");
+        sb.append("- Usa ÚNICAMENTE los IDs de las listas de arriba.\n");
+        sb.append("- Usa ÚNICAMENTE las categorías de la lista. Si no encaja, usa la más parecida.\n");
+        sb.append("- Si el usuario no especifica un campo opcional, usa null.\n");
+        sb.append("- NUNCA incluyas [[ACCION]] si el usuario solo pregunta o conversa.\n");
+        sb.append("- El JSON debe estar en UNA sola línea, sin comentarios.\n");
+        sb.append("═══════════════════════════════════\n");
+
+        return sb.toString();
+    }
+
+    /** Paso 2: llama directamente a la API de Groq desde Android. */
+    private void llamarGroq(final String pregunta, final boolean esBienvenida) {
+        try {
+            JSONArray mensajes = new JSONArray();
+            mensajes.put(new JSONObject().put("role", "system").put("content", systemPrompt));
+
+            // Historial reciente (máx. 20 turnos)
+            for (int i = Math.max(0, historial.length() - 20); i < historial.length(); i++) {
+                mensajes.put(historial.get(i));
+            }
+
+            // Mensaje del usuario (o el mensaje inicial si pregunta vacía)
+            String userMsg;
+            if (!pregunta.isEmpty()) {
+                userMsg = pregunta;
+            } else if (esBienvenida) {
+                String hogarBienvenida = nombreDelHogar.isEmpty()
+                        ? "la colmena" : "«" + nombreDelHogar + "»";
+                userMsg = "Acabo de configurar mi hogar en Homney. Soy completamente nuevo aquí y quiero saber qué puedes hacer por mí.\n\n"
+                        + "Por favor:\n"
+                        + "1. 🐝 Preséntate con tu personalidad de abeja trabajadora y cariñosa, y da la bienvenida al hogar " + hogarBienvenida + ".\n"
+                        + "2. 📋 Explícame QUÉ PUEDES HACER por mí (tareas, gastos, muro, consejos, análisis de reparto…).\n"
+                        + "3. 🏠 Menciona que el hogar " + hogarBienvenida + " tiene " + numHabs + " habitacion(es)"
+                        + (numHabs > 0 ? " (" + listaHabs + ")" : "") + " y que ya las conoces.\n"
+                        + "4. Termina con una frase motivadora y cálida de bienvenida usando el nombre del hogar.\n\n"
+                        + "Sé cercana, entusiasta y breve (máx. 5-6 párrafos cortos).";
+            } else {
+                userMsg = "Saluda al hogar con tu personalidad de abeja y haz un resumen inicial:\n"
+                        + "1. ¿El reparto de tareas es equilibrado? ¿Alguna habitación sin tareas?\n"
+                        + "2. ¿Cuáles son las mayores partidas de gasto? ¿Algo llamativo?\n"
+                        + "3. Dame 2-3 consejos concretos para mejorar el día a día.\n"
+                        + "Sé breve y cariñosa.";
+            }
+            mensajes.put(new JSONObject().put("role", "user").put("content", userMsg));
+
+            JSONObject body = new JSONObject();
+            body.put("model",       GROQ_MODEL);
+            body.put("messages",    mensajes);
+            body.put("max_tokens",  1400);
+            body.put("temperature", 0.7);
+
+            final String preguntaFinal = pregunta;
+            JsonObjectRequest req = new JsonObjectRequest(
+                    Request.Method.POST, GROQ_URL, body,
+                    response -> procesarRespuestaGroq(response, preguntaFinal),
+                    error -> {
+                        String msg;
+                        if (error.networkResponse != null) {
+                            int code = error.networkResponse.statusCode;
+                            if (code == 429) msg = "⚠️ Límite de peticiones alcanzado. Espera un momento.";
+                            else if (code == 401) msg = "⚠️ Clave de API no válida.";
+                            else msg = "⚠️ Error HTTP " + code + " del proveedor IA";
+                        } else {
+                            msg = "⚠️ Sin respuesta del proveedor IA — comprueba la conexión";
+                        }
+                        mostrarErrorIa(msg);
+                    }
+            ) {
+                @Override
+                public Map<String, String> getHeaders() {
+                    Map<String, String> h = new HashMap<>();
+                    h.put("Authorization", "Bearer " + GROQ_KEY);
+                    return h;
+                }
+            };
+
+            req.setRetryPolicy(new DefaultRetryPolicy(
+                    30_000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            PeticionesRed.anhadirPeticionACola(req);
+
+        } catch (JSONException e) {
+            mostrarErrorIa("❌ Error al preparar la solicitud al asistente");
+        }
+    }
+
+    /** Parsea la respuesta OpenAI-format de Groq y extrae texto + acción opcional. */
+    private void procesarRespuestaGroq(JSONObject response, String pregunta) {
+        try {
+            String textoCompleto = response
+                    .getJSONArray("choices")
+                    .getJSONObject(0)
+                    .getJSONObject("message")
+                    .getString("content");
+
+            // Extraer bloque de acción [[ACCION]]...[[/ACCION]]
+            JSONObject accion = extraerAccion(textoCompleto);
+            String texto = accion != null
+                    ? textoCompleto.replaceAll("(?s)\\[\\[ACCION\\]\\].*?\\[\\[/ACCION\\]\\]", "").trim()
+                    : textoCompleto;
+
+            // Guardar turno en historial
+            try {
+                if (!pregunta.isEmpty()) {
+                    historial.put(new JSONObject().put("role", "user").put("content", pregunta));
+                }
+                historial.put(new JSONObject().put("role", "assistant").put("content", texto));
+            } catch (JSONException ignored) {}
+            guardarHistorial();
+
+            if (getActivity() == null) return;
+            final JSONObject accionFinal = accion;
+            final String textoFinal = texto;
+            requireActivity().runOnUiThread(() -> {
+                loadingIa.setVisibility(View.GONE);
+                agregarBurbuja(textoFinal, false);
+                esperando = false;
+                setEntradaActiva(true);
+                if (accionFinal != null) mostrarConfirmacionAccion(accionFinal);
+            });
+
+        } catch (JSONException e) {
+            mostrarErrorIa("⚠️ Respuesta inesperada del proveedor IA");
+        }
+    }
+
+    /** Extrae el primer bloque [[ACCION]]…[[/ACCION]] del texto del modelo. */
+    private JSONObject extraerAccion(String texto) {
+        try {
+            Pattern p = Pattern.compile(
+                    "\\[\\[ACCION\\]\\]\\s*(?:```json\\s*)?(.*?)(?:\\s*```\\s*)?\\[\\[/ACCION\\]\\]",
+                    Pattern.DOTALL);
+            Matcher m = p.matcher(texto);
+            if (m.find()) {
+                JSONObject obj = new JSONObject(m.group(1).trim());
+                if (obj.has("tipo") && obj.has("datos")) return obj;
+            }
+        } catch (Exception ignored) {}
+        return null;
     }
 
     /* ════════════════════════════════════════════
@@ -444,7 +681,7 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
             body.put("categoria",          datos.optString("categoria", "Otros"));
             body.put("concepto",           datos.optString("concepto",  "Gasto"));
             body.put("modo",               datos.optString("modo",      "efectivo"));
-            body.put("tipo",               datos.optString("tipo",      "compartido"));
+            body.put("tipo",               datos.optString("tipo",      "ocasional"));
             body.put("importe",            datos.optDouble("importe",   0));
             body.put("id_hogar",           idHogar);
             body.put("id_usuario_pagador", idUsuario);
@@ -503,6 +740,7 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
 
     private void limpiarHistorial() {
         while (historial.length() > 0) historial.remove(0);
+        systemPrompt = null; // forzar re-fetch del contexto en el próximo mensaje
         if (getContext() != null) {
             getContext().getSharedPreferences(PREFS_IA, Context.MODE_PRIVATE)
                     .edit()

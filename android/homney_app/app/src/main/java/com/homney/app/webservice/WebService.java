@@ -5,10 +5,10 @@ import android.os.Build;
 
 public class WebService {
     public static final String PROTOCOLO = "http://";
-    public static final String CARPETA ="/homney/backend";
+    public static final String CARPETA ="/backend";
+    public static final String SERVIDOR = "homneyapp.atwebpages.com";
 
-    public static final String SERVIDOR = enLocal() ? "10.0.2.2" : "192.168.1.77";
-
+    // enLocal() ? "10.0.2.2/homney" :
     private static boolean enLocal() {
         return Build.FINGERPRINT.startsWith("generic");
     }
@@ -29,7 +29,9 @@ public class WebService {
     public static final String URL_Tarea_Realizada =PROTOCOLO + SERVIDOR + CARPETA + "/tareas_realizadas.php";
     public static final String URL_Usuario =PROTOCOLO + SERVIDOR + CARPETA + "/usuario.php";
     public static final String URL_Login       = PROTOCOLO + SERVIDOR + CARPETA + "/login.php";
+    public static final String URL_LoginSocial = PROTOCOLO + SERVIDOR + CARPETA + "/login_social.php";
     public static final String URL_AsistenteIA    = PROTOCOLO + SERVIDOR + CARPETA + "/asistenteia.php";
+    public static final String URL_ContextoIA     = PROTOCOLO + SERVIDOR + CARPETA + "/contexto_ia.php";
     public static final String URL_AsignacionTarea = PROTOCOLO + SERVIDOR + CARPETA + "/asignacion_tarea.php";
     public static final String URL_SubirImagen     = PROTOCOLO + SERVIDOR + CARPETA + "/subir_imagen.php";
     public static final String URL_EjemploImagen ="https://tesdai.com/imagenes/logoTESDAI.png";

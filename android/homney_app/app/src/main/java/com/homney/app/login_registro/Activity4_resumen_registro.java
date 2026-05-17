@@ -70,6 +70,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
     private ImageView  ivAvatar;
     private TextView   tvCambiarFoto;
     private TextView   tvNombre, tvEmail, tvRol;
+    private TextView   tvNombreHogar;
     private LinearLayout llHabitaciones, llGastos;
     private TextView   tvHabLoading, tvGastosLoading;
     private TextView   tvNumHabitaciones, tvTotalGastos;
@@ -77,17 +78,18 @@ public class Activity4_resumen_registro extends AppCompatActivity {
     /* ── Sesión ────────────────────────────────────────── */
     private int    idUsuario = -1;
     private int    idHogar   = -1;
-    private String nombreSesion = "?";
-    private String avatarSesion = null;
+    private String nombreSesion  = "?";
+    private String avatarSesion  = null;
+    private String nombreHogar   = "";   // se pone al nombrarlo
 
     /* ── Estado foto ───────────────────────────────────── */
     private Uri avatarUri   = null;
     private Uri cameraUri   = null;
     private LoadingDialog loadingDialog;
 
-    /* ── Control de carga para lanzar IA cuando todo esté listo ── */
-    private final AtomicInteger peticionesPendientes = new AtomicInteger(2); // habitaciones + gastos
-    private boolean bienvenidaLanzada = false;
+    /* ── Control de navegación ───────────────────────────── */
+    private boolean bienvenidaLanzada  = false;
+    private boolean bloqueadoAtras     = false; // true tras abrir el asistente
 
     /* ════════════════════════════════════════════════════
        LAUNCHERS  (registrados antes de onCreate)
@@ -101,6 +103,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                                 && result.getData().getData() != null) {
                             avatarUri = result.getData().getData();
                             mostrarAvatarPreview(avatarUri);
+                            subirFotoAhora(); // sube inmediatamente al seleccionar
                         }
                     });
 
@@ -110,6 +113,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                         if (Boolean.TRUE.equals(success) && cameraUri != null) {
                             avatarUri = cameraUri;
                             mostrarAvatarPreview(avatarUri);
+                            subirFotoAhora(); // sube inmediatamente al seleccionar
                         }
                     });
 
@@ -146,6 +150,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         tvNombre          = findViewById(R.id.tv_nombre_resumen);
         tvEmail           = findViewById(R.id.tv_email_resumen);
         tvRol             = findViewById(R.id.tv_rol_resumen);
+        tvNombreHogar     = findViewById(R.id.tv_nombre_hogar_resumen);
         llHabitaciones    = findViewById(R.id.ll_habitaciones_resumen);
         llGastos          = findViewById(R.id.ll_gastos_resumen);
         tvHabLoading      = findViewById(R.id.tv_hab_loading);
@@ -163,7 +168,10 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         ivAvatar.setOnClickListener(v -> mostrarDialogElegirFoto());
         tvCambiarFoto.setOnClickListener(v -> mostrarDialogElegirFoto());
 
-        // Botón "Ir a la colmena" — fallback directo a MainActivity
+        // Botón "Nombrar hogar"
+        findViewById(R.id.btn_nombrar_hogar).setOnClickListener(v -> mostrarDialogNombrarHogar());
+
+        // Botón "Entrar a la colmena" — activo hasta que se nombre el hogar y abra el asistente
         findViewById(R.id.btn_entrar_colmena).setOnClickListener(v -> irAMain());
 
         // Cargar datos de la API
@@ -230,16 +238,10 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         ));
     }
 
-    /** Lanza la bienvenida IA cuando ambas peticiones hayan terminado. */
+    /** Marca que una de las dos peticiones (habitaciones/gastos) ha terminado. */
     private void registrarPeticionCompletada() {
-        if (peticionesPendientes.decrementAndGet() == 0) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (!bienvenidaLanzada && !isFinishing()) {
-                    bienvenidaLanzada = true;
-                    abrirHomneyMate(true);
-                }
-            }, 1200);
-        }
+        // Ya no lanza el asistente automáticamente:
+        // el asistente se abre solo después de que el usuario nombre el hogar.
     }
 
     /* ════════════════════════════════════════════════════
@@ -404,6 +406,94 @@ public class Activity4_resumen_registro extends AppCompatActivity {
     }
 
     /* ════════════════════════════════════════════════════
+       BACK PRESS — bloqueado tras abrir el asistente
+    ════════════════════════════════════════════════════ */
+
+    @Override
+    public void onBackPressed() {
+        if (!bloqueadoAtras) super.onBackPressed();
+        // Si el asistente ya se mostró, no se puede volver atrás
+    }
+
+    /* ════════════════════════════════════════════════════
+       NOMBRAR HOGAR
+    ════════════════════════════════════════════════════ */
+
+    private void mostrarDialogNombrarHogar() {
+        android.widget.EditText etNombre = new android.widget.EditText(this);
+        etNombre.setHint("Ej: Casa de la playa, Piso compartido…");
+        etNombre.setInputType(android.text.InputType.TYPE_CLASS_TEXT
+                | android.text.InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        if (!nombreHogar.isEmpty()) etNombre.setText(nombreHogar);
+        int pad = dp(20);
+        etNombre.setPadding(pad, dp(12), pad, dp(12));
+
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("¿Cómo se llama tu hogar?")
+                .setView(etNombre)
+                .setPositiveButton("Confirmar", (dialog, which) -> {
+                    String nombre = etNombre.getText().toString().trim();
+                    if (nombre.isEmpty()) {
+                        Toast.makeText(this, "Escribe un nombre para tu hogar", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    guardarNombreHogar(nombre);
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void guardarNombreHogar(String nombre) {
+        loadingDialog.show();
+        JSONObject body = new JSONObject();
+        try {
+            body.put("id_hogar",     idHogar);
+            body.put("value_nombre", nombre);
+        } catch (JSONException e) {
+            loadingDialog.dismiss();
+            return;
+        }
+        String url = WebService.URL_Hogar;
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                Request.Method.PUT, url, body,
+                response -> {
+                    loadingDialog.dismiss();
+                    try {
+                        if (WebService.JSON.SUCCESS.equals(
+                                response.getString(WebService.JSON.STATUS))) {
+                            nombreHogar = nombre;
+                            // Guardar en SharedPreferences para que el asistente lo use
+                            getSharedPreferences("sesion", MODE_PRIVATE).edit()
+                                    .putString("nombre_hogar", nombre).apply();
+                            runOnUiThread(() -> {
+                                tvNombreHogar.setText(nombre);
+                                tvNombreHogar.setTextColor(
+                                        getResources().getColor(R.color.text, null));
+                                // Bloquear atrás y abrir el asistente
+                                bloqueadoAtras = true;
+                                if (!bienvenidaLanzada) {
+                                    bienvenidaLanzada = true;
+                                    abrirHomneyMate(true);
+                                }
+                            });
+                        } else {
+                            Toast.makeText(this,
+                                    "No se pudo guardar el nombre", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(this,
+                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    loadingDialog.dismiss();
+                    Utilidades.mostrar_error_peticion(this, "Activity4",
+                            "Error al nombrar hogar", Request.Method.PUT, url, error);
+                }
+        ));
+    }
+
+    /* ════════════════════════════════════════════════════
        SELECCIÓN DE FOTO
     ════════════════════════════════════════════════════ */
 
@@ -429,22 +519,28 @@ public class Activity4_resumen_registro extends AppCompatActivity {
 
     private void lanzarCamara() {
         try {
-            File f = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                    "homney_avatar_" + System.currentTimeMillis() + ".jpg");
+            // Usamos getExternalFilesDir con fallback a getCacheDir
+            File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            if (dir == null) dir = getCacheDir();
+            File f = new File(dir, "homney_avatar_" + System.currentTimeMillis() + ".jpg");
+            // Autoridad debe coincidir con AndroidManifest: ${applicationId}.fileprovider
             cameraUri = FileProvider.getUriForFile(this,
-                    getPackageName() + ".provider", f);
+                    getPackageName() + ".fileprovider", f);
             camaraLauncher.launch(cameraUri);
         } catch (Exception e) {
             Toast.makeText(this, "Error al acceder a la cámara", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /** Sube la foto y actualiza SharedPreferences; si no hay foto nueva, no hace nada. */
-    private void subirFotoSiHay(Runnable onDone) {
-        if (avatarUri == null) { onDone.run(); return; }
+    /**
+     * Sube la foto inmediatamente al seleccionarla (no espera a ir a MainActivity).
+     * Actualiza SharedPreferences y la BD mediante subir_imagen.php.
+     */
+    private void subirFotoAhora() {
+        if (avatarUri == null) return;
 
         byte[] bytes = Utilidades.uriABytesJpeg(this, avatarUri, 400, 85);
-        if (bytes == null) { onDone.run(); return; }
+        if (bytes == null) return;
 
         loadingDialog.show();
 
@@ -467,13 +563,16 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                         JSONObject json = new JSONObject(new String(nr.data, "UTF-8"));
                         if (WebService.JSON.SUCCESS.equals(json.getString(WebService.JSON.STATUS))) {
                             String ruta = json.getJSONObject(WebService.JSON.DATA).getString("ruta");
+                            // Persiste en SharedPreferences y en DB (subir_imagen.php ya hace el UPDATE)
                             getSharedPreferences("sesion", Context.MODE_PRIVATE)
                                     .edit().putString("avatar", ruta).apply();
+                            runOnUiThread(() ->
+                                    Toast.makeText(this, "Foto de perfil guardada ✓",
+                                            Toast.LENGTH_SHORT).show());
                         }
                     } catch (Exception ignored) {}
-                    onDone.run();
                 },
-                error -> { loadingDialog.dismiss(); onDone.run(); }
+                error -> loadingDialog.dismiss()
         );
         PeticionesRed.anhadirPeticionACola(req);
     }
@@ -483,11 +582,9 @@ public class Activity4_resumen_registro extends AppCompatActivity {
     ════════════════════════════════════════════════════ */
 
     private void irAMain() {
-        subirFotoSiHay(() -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void abrirHomneyMate(boolean esBienvenida) {

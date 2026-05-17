@@ -23,6 +23,10 @@ public class loginActivity extends AppCompatActivity {
     boolean remember;
     String mail;
 
+    // Mantenemos referencias a los fragments para poder pre-rellenar datos
+    activity_fragment_registro     fragment_registro;
+    com.homney.app.login_registro.activity_fragment_nueva_cuenta fragment_nueva_cuenta;
+
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -34,8 +38,8 @@ public class loginActivity extends AppCompatActivity {
         tab_login = findViewById(R.id.tab_login);
         tab_registro = findViewById(R.id.tab_registro);
 
-        activity_fragment_registro fragment_registro = new activity_fragment_registro();
-        activity_fragment_nueva_cuenta fragment_nueva_cuenta = new activity_fragment_nueva_cuenta();
+        fragment_registro     = new activity_fragment_registro();
+        fragment_nueva_cuenta = new com.homney.app.login_registro.activity_fragment_nueva_cuenta();
 
         getSupportFragmentManager().beginTransaction().replace(R.id.contenedor_fragmento, fragment_registro).commit();
 
@@ -57,6 +61,21 @@ public class loginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    /**
+     * Llamado desde activity_fragment_registro cuando un login social (Google/Apple)
+     * detecta que el usuario aún no tiene cuenta en Homney.
+     * Cambia al tab de Registro y pre-rellena el nombre y email.
+     */
+    public void irARegistroConDatos(String nombre, String email) {
+        tab_registro.setBackgroundResource(R.drawable.bg_tab_active);
+        tab_login.setBackgroundResource(android.R.color.transparent);
+        fragment_nueva_cuenta.prerellenarDesdeLoginSocial(nombre, email);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.contenedor_fragmento, fragment_nueva_cuenta)
+                .commit();
     }
 
     @Override

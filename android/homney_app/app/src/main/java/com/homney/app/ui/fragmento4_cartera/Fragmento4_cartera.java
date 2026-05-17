@@ -190,7 +190,10 @@ public class Fragmento4_cartera extends Fragment {
         }
         if (misGastos.isEmpty()) {
             repartosDeDeudores = new HashMap<>();
-            renderCartera();
+            if (isAdded()) {
+                loadingDialog.dismiss();
+                renderCartera();
+            }
             return;
         }
         repartosDeDeudores = new HashMap<>();
@@ -1073,13 +1076,17 @@ public class Fragmento4_cartera extends Fragment {
                         } else {
                             callback.accept(new ArrayList<>());
                         }
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
+                        // JSONException o cualquier error de parseo Gson:
+                        // garantizamos que el callback se ejecuta para no colgar el AtomicInteger
                         callback.accept(new ArrayList<>());
                     }
                 },
                 error -> {
-                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                            "Error petición", Request.Method.GET, url, error);
+                    if (isAdded()) {
+                        Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                                "Error petición", Request.Method.GET, url, error);
+                    }
                     callback.accept(new ArrayList<>());
                 }
         );
@@ -1200,8 +1207,8 @@ public class Fragmento4_cartera extends Fragment {
                 body.put("concepto",           g.getConcepto());
                 body.put("importe",            g.getImporte());
                 body.put("tipo",               "fijo");
-                body.put("modo",               g.getModo() != null ? g.getModo() : "");
-                body.put("categoria",          g.getCategoria() != null ? g.getCategoria() : "");
+                body.put("modo",               g.getModo() != null && !g.getModo().isEmpty() ? g.getModo() : "efectivo");
+                body.put("categoria",          g.getCategoria() != null && !g.getCategoria().isEmpty() ? g.getCategoria() : "Otros");
                 body.put("id_hogar",           idHogar);
                 body.put("id_usuario_pagador", idUsuario);
             } catch (org.json.JSONException e) { continue; }

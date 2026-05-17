@@ -44,6 +44,49 @@
                 android:gravity="center"
                 android:layout_marginBottom="20dp" />
 
+            <!-- ══ TARJETA 0: NOMBRE DEL HOGAR ══════════════════ -->
+            <LinearLayout
+                android:id="@+id/card_hogar_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_auth_box"
+                android:padding="16dp"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="🏡  Tu hogar"
+                    android:textColor="@color/text"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_nombre_hogar_resumen"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Sin nombre"
+                    android:textColor="@color/muted"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:ellipsize="end"
+                    android:maxLines="1" />
+
+                <Button
+                    android:id="@+id/btn_nombrar_hogar"
+                    style="@style/Homney.Button.Primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombrar"
+                    android:textSize="13sp"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp" />
+            </LinearLayout>
+
             <!-- ══ TARJETA 1: PERFIL ══════════════════════════ -->
             <LinearLayout
                 android:layout_width="match_parent"

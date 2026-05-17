@@ -577,6 +577,9 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
         }
     }
 
+    /**
+     * Crea la tarea en la BD. El usuario podrá asignársela después desde la sección Tareas.
+     */
     private void crearTarea(String nombre, String frecuencia, int numVeces,
                              int idHabitacion,
                              AtomicInteger pendiente, AtomicInteger errores) {

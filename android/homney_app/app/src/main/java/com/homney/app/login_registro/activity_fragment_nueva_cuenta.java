@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.homney.app.MainActivity;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
 import com.homney.app.utils.LoadingDialog;
@@ -74,6 +75,10 @@ public class activity_fragment_nueva_cuenta extends Fragment {
         reg_modo = vista.findViewById(R.id.reg_modo);
         btn_registro = vista.findViewById(R.id.btn_registro);
         loadingDialog = new LoadingDialog(requireContext());
+
+        // Si venimos de un login social, aplicar datos pre-cargados
+        if (pendingNombre != null && !pendingNombre.isEmpty()) reg_nombre.setText(pendingNombre);
+        if (pendingEmail  != null && !pendingEmail.isEmpty())  reg_email.setText(pendingEmail);
 
         reg_modo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -207,7 +212,12 @@ public class activity_fragment_nueva_cuenta extends Fragment {
                 if (status.equals(WebService.JSON.SUCCESS) && hayDatos) {
                     JSONArray data = response.getJSONArray(WebService.JSON.DATA);
                     if (data.length() > 0) {
-                        int idHogar = data.getJSONObject(0).getInt("id_hogar");
+                        JSONObject hogar = data.getJSONObject(0);
+                        int idHogar = hogar.getInt("id_hogar");
+                        // Guardar nombre del hogar en sesión para que MainActivity lo tenga disponible
+                        String nomHogar = hogar.optString("nombre", "");
+                        requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE)
+                                .edit().putString("nombre_hogar", nomHogar).apply();
                         String passEncriptada = Utilidades.encriptaMD5(password);
                         crearUsuario(nombre, email, telefono, passEncriptada, sexo, idHogar, "miembro");
                     } else {
@@ -287,9 +297,40 @@ public class activity_fragment_nueva_cuenta extends Fragment {
         editor.putString("avatar", "uploads/perfiles/default.png");
         editor.apply();
 
-        startActivity(new Intent(requireActivity(), Activity2_registro_config_hogar.class));
+        // Los miembros que se unen con clave de invitación van directo a MainActivity:
+        // el hogar ya está configurado (habitaciones, gastos, tareas), no necesitan el wizard.
+        // Los fundadores de un hogar nuevo pasan por el wizard completo (Activity2 → 2b → 3 → 4).
+        if ("miembro".equals(rol)) {
+            Intent intent = new Intent(requireActivity(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        } else {
+            startActivity(new Intent(requireActivity(), Activity2_registro_config_hogar.class));
+        }
         requireActivity().finish();
     }
+
+    /* ════════════════════════════════════════════════════════
+       PRE-RELLENADO DESDE LOGIN SOCIAL
+    ════════════════════════════════════════════════════════ */
+
+    /**
+     * Llamado desde loginActivity cuando un usuario de Google/Apple
+     * no tiene cuenta en Homney todavía.
+     * Pre-rellena nombre y email para que complete el resto del formulario.
+     */
+    public void prerellenarDesdeLoginSocial(String nombre, String email) {
+        // Las vistas pueden ser null si el Fragment aún no se ha inflado.
+        // En ese caso guardamos los valores en campos temporales y los aplicamos en onCreateView.
+        pendingNombre = nombre;
+        pendingEmail  = email;
+        if (reg_nombre != null && !nombre.isEmpty()) reg_nombre.setText(nombre);
+        if (reg_email  != null && !email.isEmpty())  reg_email.setText(email);
+    }
+
+    // Campos temporales para pre-rellenado antes de que las vistas estén listas
+    private String pendingNombre = null;
+    private String pendingEmail  = null;
 
     /* ════════════════════════════════════════════════════════
        HELPERS

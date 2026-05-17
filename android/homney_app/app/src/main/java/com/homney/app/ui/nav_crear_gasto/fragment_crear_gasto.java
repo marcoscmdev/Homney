@@ -204,9 +204,16 @@ public class fragment_crear_gasto extends Fragment {
                                     }
                                 }
                             }
-                            poblarSpinnerCategorias();
+                            // Si la BD está vacía o no devolvió categorías, usamos el fallback
+                            if (listaCategorias.isEmpty()) {
+                                poblarCategoriasFallback();
+                            } else {
+                                poblarSpinnerCategorias();
+                            }
                         }
-                    } catch (JSONException ignored) {
+                    } catch (Exception ignored) {
+                        // Capturamos Exception (no solo JSONException) para que
+                        // RuntimeException de Gson tampoco bloquee el spinner
                         poblarCategoriasFallback();
                     }
                 },
@@ -328,8 +335,13 @@ public class fragment_crear_gasto extends Fragment {
     }
 
     private void poblarCategoriasFallback() {
-        String[] defaults = {"Alimentación", "Suministros", "Limpieza",
-                "Transporte", "Ocio", "Salud", "Hogar", "Otros"};
+        // Nombres exactos de la tabla CATEGORIA de producción (fk_gasto_categoria lo exige)
+        String[] defaults = {
+                "Alimentación", "Alquiler / Hipoteca", "Educación", "Inversiones",
+                "Limpieza / Hogar", "Mascotas", "Ocio / Entretenimiento", "Otros",
+                "Ropa / Calzado", "Salud / Farmacia", "Suministros",
+                "Tecnología", "Transporte"
+        };
         listaCategorias = new ArrayList<>();
         hijosPorPadre   = new HashMap<>();
         for (String s : defaults) listaCategorias.add(new Categoria(s, null, null));
