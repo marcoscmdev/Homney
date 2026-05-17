@@ -81,6 +81,18 @@ public class Fragmento4_cartera extends Fragment {
     private LinearLayout containerMesAnterior;
     private TextView tvSinMesAnterior;
 
+    /* ── Colapsables ─────────────────────────────── */
+    private LinearLayout llHeaderMeDeben;
+    private LinearLayout llHeaderDebo;
+    private LinearLayout llHeaderHistorial;
+    private TextView     chevronMeDeben;
+    private TextView     chevronDebo;
+    private TextView     chevronHistorial;
+    private View         dividerHistorial;
+    private boolean      sec1MeDebenExpanded  = true;
+    private boolean      sec2DeboExpanded     = true;
+    private boolean      sec3HistorialExpanded = true;
+
     private LoadingDialog loadingDialog;
 
     /* ── Sesión ──────────────────────────────────── */
@@ -127,6 +139,16 @@ public class Fragmento4_cartera extends Fragment {
         containerMesAnterior      = root.findViewById(R.id.container_mes_anterior);
         tvSinMesAnterior          = root.findViewById(R.id.tv_sin_mes_anterior);
 
+        llHeaderMeDeben   = root.findViewById(R.id.ll_header_me_deben);
+        llHeaderDebo      = root.findViewById(R.id.ll_header_debo);
+        llHeaderHistorial = root.findViewById(R.id.ll_header_historial);
+        chevronMeDeben    = root.findViewById(R.id.chevron_me_deben);
+        chevronDebo       = root.findViewById(R.id.chevron_debo);
+        chevronHistorial  = root.findViewById(R.id.chevron_historial);
+        dividerHistorial  = root.findViewById(R.id.divider_historial);
+
+        setupColapsables();
+
         loadingDialog = new LoadingDialog(requireContext());
 
         SharedPreferences prefs = requireContext()
@@ -146,6 +168,48 @@ public class Fragmento4_cartera extends Fragment {
 
         cargarDatos();
         return root;
+    }
+
+    /* ════════════════════════════════════════════
+       COLAPSABLES
+    ════════════════════════════════════════════ */
+
+    private void setupColapsables() {
+        // Sección 1 — Lo que te deben
+        if (llHeaderMeDeben != null) {
+            llHeaderMeDeben.setClickable(true);
+            llHeaderMeDeben.setFocusable(true);
+            llHeaderMeDeben.setOnClickListener(v -> {
+                sec1MeDebenExpanded = !sec1MeDebenExpanded;
+                containerMeDeben.setVisibility(sec1MeDebenExpanded ? View.VISIBLE : View.GONE);
+                if (chevronMeDeben != null)
+                    chevronMeDeben.setText(sec1MeDebenExpanded ? "▲" : "▼");
+            });
+        }
+        // Sección 2 — Lo que debes tú
+        if (llHeaderDebo != null) {
+            llHeaderDebo.setClickable(true);
+            llHeaderDebo.setFocusable(true);
+            llHeaderDebo.setOnClickListener(v -> {
+                sec2DeboExpanded = !sec2DeboExpanded;
+                containerDebo.setVisibility(sec2DeboExpanded ? View.VISIBLE : View.GONE);
+                if (chevronDebo != null)
+                    chevronDebo.setText(sec2DeboExpanded ? "▲" : "▼");
+            });
+        }
+        // Sección 3 — Historial de gastos
+        if (llHeaderHistorial != null) {
+            llHeaderHistorial.setClickable(true);
+            llHeaderHistorial.setFocusable(true);
+            llHeaderHistorial.setOnClickListener(v -> {
+                sec3HistorialExpanded = !sec3HistorialExpanded;
+                int vis = sec3HistorialExpanded ? View.VISIBLE : View.GONE;
+                containerHistorial.setVisibility(vis);
+                if (dividerHistorial != null) dividerHistorial.setVisibility(vis);
+                if (chevronHistorial != null)
+                    chevronHistorial.setText(sec3HistorialExpanded ? "▲" : "▼");
+            });
+        }
     }
 
     /* ════════════════════════════════════════════

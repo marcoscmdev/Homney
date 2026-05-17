@@ -128,7 +128,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
 
     /* ********************************** */
     if (count($_GET) == 1 && isset($id_usuario) && $id_usuario != null) {
+
+        // 1. Obtener el id_hogar del usuario antes de borrarlo
+        $res_hogar = @mysqli_query($conexion,
+            "SELECT id_hogar FROM USUARIO WHERE id_usuario = '$id_usuario'");
+        if (!$res_hogar) die_por_fallo_en_consulta("SELECT id_hogar", $conexion);
+        $fila_hogar = mysqli_fetch_assoc($res_hogar);
+        $id_hogar_usuario = $fila_hogar ? (int)$fila_hogar['id_hogar'] : 0;
+
+        // 2. Historial de tareas del usuario
+        @mysqli_query($conexion,
+            "DELETE FROM TAREAS_REALIZADAS WHERE id_usuario = '$id_usuario'");
+
+        // 3. Asignaciones de tareas del usuario
+        @mysqli_query($conexion,
+            "DELETE FROM ASIGNACION_TAREA WHERE id_usuario = '$id_usuario'");
+
+        // 4. Repartos en los que el usuario participa (no es pagador)
+        @mysqli_query($conexion,
+            "DELETE FROM REPARTO_GASTO WHERE id_usuario = '$id_usuario'");
+
+        // 5. Repartos de los gastos pagados por el usuario
+        @mysqli_query($conexion,
+            "DELETE FROM REPARTO_GASTO
+             WHERE id_gasto IN (SELECT id_gasto FROM GASTO WHERE id_usuario_pagador = '$id_usuario')");
+
+        // 6. Gastos pagados por el usuario
+        @mysqli_query($conexion,
+            "DELETE FROM GASTO WHERE id_usuario_pagador = '$id_usuario'");
+
+        // 7. Publicaciones del muro del usuario
+        @mysqli_query($conexion,
+            "DELETE FROM MURO WHERE id_usuario = '$id_usuario'");
+
+        // 8-9-10. Tareas e historial de las habitaciones del hogar
+        if ($id_hogar_usuario > 0) {
+            @mysqli_query($conexion,
+                "DELETE tr FROM TAREAS_REALIZADAS tr
+                 JOIN TAREA t ON tr.id_tarea = t.id_tarea
+                 JOIN HABITACION h ON t.id_habitacion = h.id_habitacion
+                 WHERE h.id_hogar = '$id_hogar_usuario'");
+
+            @mysqli_query($conexion,
+                "DELETE asig FROM ASIGNACION_TAREA asig
+                 JOIN TAREA t ON asig.id_tarea = t.id_tarea
+                 JOIN HABITACION h ON t.id_habitacion = h.id_habitacion
+                 WHERE h.id_hogar = '$id_hogar_usuario'");
+
+            @mysqli_query($conexion,
+                "DELETE t FROM TAREA t
+                 JOIN HABITACION h ON t.id_habitacion = h.id_habitacion
+                 WHERE h.id_hogar = '$id_hogar_usuario'");
+
+            // 11. Habitaciones del hogar
+            @mysqli_query($conexion,
+                "DELETE FROM HABITACION WHERE id_hogar = '$id_hogar_usuario'");
+        }
+
+        // 12. Por último, el propio usuario (el hogar NO se borra)
         $consulta_delete = "DELETE FROM `USUARIO` WHERE `id_usuario` = '$id_usuario'";
+
     } else {
         die_por_fallo_en_sintaxis_peticion();
     }

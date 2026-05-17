@@ -361,21 +361,19 @@ public class HomeFragment extends Fragment {
         Cartesian lineChart = AnyChart.line();
         lineChart.animation(true);
 
-        // Preparar etiquetas de los últimos 7 días
-        String[] dayLabels = new String[7];
-        String[] fullDates = new String[7]; // formato yyyy-MM-dd para comparar
-        String[] dayNames  = {"D", "L", "M", "X", "J", "V", "S"};
+        // Preparar etiquetas de los últimos 30 días
+        final int DIAS = 30;
+        String[] dayLabels = new String[DIAS];
+        String[] fullDates = new String[DIAS];
+        SimpleDateFormat sdfDay  = new SimpleDateFormat("dd/MM", Locale.getDefault());
+        SimpleDateFormat sdfFull = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Calendar cal = Calendar.getInstance();
-        for (int i = 6; i >= 0; i--) {
+        for (int i = DIAS - 1; i >= 0; i--) {
             cal.setTime(new Date());
             cal.add(Calendar.DAY_OF_YEAR, -i);
-            int dayIdx = 6 - i;
-            String label = i == 0 ? "Hoy"
-                    : i == 1 ? "Ayer"
-                    : dayNames[cal.get(Calendar.DAY_OF_WEEK) - 1];
-            dayLabels[dayIdx] = label;
-            fullDates[dayIdx] = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    .format(cal.getTime());
+            int idx = (DIAS - 1) - i;
+            dayLabels[idx] = i == 0 ? "Hoy" : i == 1 ? "Ayer" : sdfDay.format(cal.getTime());
+            fullDates[idx] = sdfFull.format(cal.getTime());
         }
 
         for (int ci = 0; ci < usuarios.size(); ci++) {
@@ -384,7 +382,7 @@ public class HomeFragment extends Fragment {
                     realizadasPorUsuario.getOrDefault(u.getId_usuario(), new ArrayList<>());
 
             List<DataEntry> puntos = new ArrayList<>();
-            for (int d = 0; d < 7; d++) {
+            for (int d = 0; d < DIAS; d++) {
                 final String fecha = fullDates[d];
                 long count = realizadas.stream()
                         .filter(r -> r.getFecha_realizacion() != null
@@ -421,26 +419,39 @@ public class HomeFragment extends Fragment {
         Cartesian colChart = AnyChart.column();
         colChart.animation(true);
 
-        // Calcular total pagado por cada usuario (id_usuario_pagador)
-        Map<Integer, Double> pagadoPorUsuario = new HashMap<>();
-        for (Gasto g : gastos) {
-            int uid = g.getId_usuario_pagador();
-            pagadoPorUsuario.merge(uid, g.getImporte(), Double::sum);
+        // Últimos 6 meses: una barra por mes con el total de gastos del hogar
+        final int MESES = 6;
+        String[] monthLabels = new String[MESES];
+        double[] monthTotals = new double[MESES];
+
+        SimpleDateFormat sdfKey   = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
+        SimpleDateFormat sdfLabel = new SimpleDateFormat("MMM yy", new Locale("es"));
+        Calendar cal = Calendar.getInstance();
+        for (int i = MESES - 1; i >= 0; i--) {
+            Calendar temp = Calendar.getInstance();
+            temp.setTime(new Date());
+            temp.add(Calendar.MONTH, -i);
+            int idx = (MESES - 1) - i;
+            String key = sdfKey.format(temp.getTime());
+            String label = sdfLabel.format(temp.getTime());
+            monthLabels[idx] = Character.toUpperCase(label.charAt(0)) + label.substring(1);
+            double total = 0;
+            for (Gasto g : gastos) {
+                if (g.getFecha() != null && g.getFecha().startsWith(key)) {
+                    total += g.getImporte();
+                }
+            }
+            monthTotals[idx] = total;
         }
 
         List<DataEntry> data = new ArrayList<>();
-        for (int ci = 0; ci < usuarios.size(); ci++) {
-            Usuario u = usuarios.get(ci);
-            double total = pagadoPorUsuario.getOrDefault(u.getId_usuario(), 0.0);
-            data.add(new ValueDataEntry(u.getNombre(), total));
+        for (int i = 0; i < MESES; i++) {
+            data.add(new ValueDataEntry(monthLabels[i], monthTotals[i]));
         }
 
         Column column = (Column) colChart.column(data);
         column.tooltip().format("{%Value}{groupsSeparator: ,} €");
-
-        // Colorear cada barra con el color del usuario
-        String colorJs = buildColumnColorJs(usuarios);
-        column.fill(colorJs);
+        column.fill("#F5C518");
         column.stroke("none");
 
         colChart.tooltip().positionMode(TooltipPositionMode.POINT);
@@ -450,18 +461,6 @@ public class HomeFragment extends Fragment {
         colChart.background().fill("#FFFFFFFF");
 
         chartGastos.setChart(colChart);
-    }
-
-    /** Genera una función JS para colorear cada columna con el color del usuario. */
-    private String buildColumnColorJs(List<Usuario> lista) {
-        if (lista.isEmpty()) return "'#F5C518'";
-        StringBuilder sb = new StringBuilder("function() { var colors = [");
-        for (int i = 0; i < lista.size(); i++) {
-            sb.append("'").append(USER_COLORS_HEX[i % USER_COLORS_HEX.length]).append("'");
-            if (i < lista.size() - 1) sb.append(",");
-        }
-        sb.append("]; return colors[this.index % colors.length]; }");
-        return sb.toString();
     }
 
     /* ════════════════════════════════════════════

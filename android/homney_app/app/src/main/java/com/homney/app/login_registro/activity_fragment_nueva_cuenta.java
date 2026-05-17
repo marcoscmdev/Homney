@@ -116,28 +116,40 @@ public class activity_fragment_nueva_cuenta extends Fragment {
         int modo = reg_modo.getSelectedItemPosition();
         String claveInv = reg_clave.getText().toString().trim();
 
-        if (nombre.isEmpty() || email.isEmpty() || telefono.isEmpty() || password.isEmpty() || password2.isEmpty()) {
-            Toast.makeText(getContext(), "Rellena todos los campos obligatorios", Toast.LENGTH_SHORT).show();
+        if (nombre.isEmpty()) {
+            enfocarCampo(reg_nombre, "Campo obligatorio");
             return;
         }
-
+        if (email.isEmpty()) {
+            enfocarCampo(reg_email, "Campo obligatorio");
+            return;
+        }
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(getContext(), "Introduce un email válido", Toast.LENGTH_SHORT).show();
+            enfocarCampo(reg_email, "Introduce un email válido");
             return;
         }
-
+        if (telefono.isEmpty()) {
+            enfocarCampo(reg_telefono, "Campo obligatorio");
+            return;
+        }
+        if (password.isEmpty()) {
+            enfocarCampo(reg_password, "Campo obligatorio");
+            return;
+        }
         if (password.length() < 5) {
-            Toast.makeText(getContext(), "La contraseña debe tener al menos 5 caracteres", Toast.LENGTH_SHORT).show();
+            enfocarCampo(reg_password, "Mínimo 5 caracteres");
             return;
         }
-
+        if (password2.isEmpty()) {
+            enfocarCampo(reg_password2, "Campo obligatorio");
+            return;
+        }
         if (!password.equals(password2)) {
-            Toast.makeText(getContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+            enfocarCampo(reg_password2, "Las contraseñas no coinciden");
             return;
         }
-
         if (modo == 1 && claveInv.isEmpty()) {
-            Toast.makeText(getContext(), "Introduce la clave de invitación del hogar", Toast.LENGTH_SHORT).show();
+            enfocarCampo(reg_clave, "Introduce la clave de invitación del hogar");
             return;
         }
 
@@ -335,6 +347,15 @@ public class activity_fragment_nueva_cuenta extends Fragment {
     /* ════════════════════════════════════════════════════════
        HELPERS
     ════════════════════════════════════════════════════════ */
+
+    private void enfocarCampo(EditText campo, String error) {
+        campo.setError(error);
+        campo.requestFocus();
+        android.view.inputmethod.InputMethodManager imm =
+                (android.view.inputmethod.InputMethodManager)
+                        requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
+        if (imm != null) imm.showSoftInput(campo, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+    }
 
     private void mostrarError(String mensaje) {
         loadingDialog.dismiss();

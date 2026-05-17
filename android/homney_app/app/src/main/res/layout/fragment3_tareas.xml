@@ -39,6 +39,7 @@
 
                 <!-- Cabecera: título + badge contador de pendientes -->
                 <LinearLayout
+                    android:id="@+id/ll_header_mis_tareas"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -62,6 +63,7 @@
 
                 <!-- Divider -->
                 <View
+                    android:id="@+id/divider_mis_tareas"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/border" />
@@ -88,16 +90,37 @@
         <!-- ══════════════════════════════════════════
              SECCIÓN 2 — OTRAS TAREAS DEL HOGAR
         ══════════════════════════════════════════ -->
-        <TextView
-            style="@style/Homney.Text.Title"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/ll_header_otras_tareas"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"
-            android:text="Otras tareas del hogar" />
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                style="@style/Homney.Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Otras tareas del hogar" />
+
+            <TextView
+                android:id="@+id/chevron_otras_tareas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▲"
+                android:textSize="12sp"
+                android:textColor="@color/accent_dark"
+                android:paddingStart="8dp"
+                android:paddingEnd="4dp" />
+        </LinearLayout>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_otras_tareas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/surface"
@@ -127,18 +150,39 @@
         </androidx.cardview.widget.CardView>
 
         <!-- ══════════════════════════════════════════
-             SECCIÓN 3 — COMPLETADAS ESTA SEMANA
+             SECCIÓN 3 — COMPLETADAS ESTE MES
         ══════════════════════════════════════════ -->
-        <TextView
-            style="@style/Homney.Text.Title"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/ll_header_completadas"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"
-            android:text="Completadas este mes" />
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                style="@style/Homney.Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Completadas este mes" />
+
+            <TextView
+                android:id="@+id/chevron_completadas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▲"
+                android:textSize="12sp"
+                android:textColor="@color/accent_dark"
+                android:paddingStart="8dp"
+                android:paddingEnd="4dp" />
+        </LinearLayout>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_completadas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/surface"
@@ -178,6 +222,7 @@
             android:visibility="gone">
 
             <LinearLayout
+                android:id="@+id/ll_header_historial_mes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -201,9 +246,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="0 completadas" />
+
+                <TextView
+                    android:id="@+id/chevron_historial_mes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="▲"
+                    android:textSize="12sp"
+                    android:textColor="@color/accent_dark"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="4dp" />
             </LinearLayout>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card_historial_mes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@color/surface"

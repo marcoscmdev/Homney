@@ -40,17 +40,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') { // INSERT
     $datos_recibidos = sanarDatos($conexion, $datos_recibidos);
 
     /* ********************************** */
-    // id_hogar y clave_inv obligatorios
-    if (!isset($datos_recibidos->id_hogar) || $datos_recibidos->id_hogar == null ||
-        !isset($datos_recibidos->clave_inv) || $datos_recibidos->clave_inv == null) {
+    // id_hogar obligatorio; clave_inv opcional (si no se envía, se mantiene la actual)
+    if (!isset($datos_recibidos->id_hogar) || $datos_recibidos->id_hogar == null) {
         die_por_fallo_en_sintaxis_peticion();
     }
-$value_nombre= (isset($datos_recibidos->value_nombre) && $datos_recibidos->value_nombre != null)
+    $value_nombre = (isset($datos_recibidos->value_nombre) && $datos_recibidos->value_nombre != null)
         ? "'$datos_recibidos->value_nombre'" : "NULL";
 
-    $consulta_update = "UPDATE `HOGAR`
-                        SET `clave_inv` = '$datos_recibidos->clave_inv', `nombre` = $value_nombre
-                        WHERE `id_hogar` = '$datos_recibidos->id_hogar'";
+    if (isset($datos_recibidos->clave_inv) && $datos_recibidos->clave_inv != null) {
+        $consulta_update = "UPDATE `HOGAR`
+                            SET `clave_inv` = '$datos_recibidos->clave_inv', `nombre` = $value_nombre
+                            WHERE `id_hogar` = '$datos_recibidos->id_hogar'";
+    } else {
+        $consulta_update = "UPDATE `HOGAR`
+                            SET `nombre` = $value_nombre
+                            WHERE `id_hogar` = '$datos_recibidos->id_hogar'";
+    }
     /* ********************************** */
 
     $resultado_consulta = @mysqli_query($conexion, $consulta_update);

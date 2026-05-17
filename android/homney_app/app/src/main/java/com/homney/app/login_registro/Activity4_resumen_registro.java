@@ -51,7 +51,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -89,7 +92,6 @@ public class Activity4_resumen_registro extends AppCompatActivity {
 
     /* ── Control de navegación ───────────────────────────── */
     private boolean bienvenidaLanzada  = false;
-    private boolean bloqueadoAtras     = false; // true tras abrir el asistente
 
     /* ════════════════════════════════════════════════════
        LAUNCHERS  (registrados antes de onCreate)
@@ -210,32 +212,21 @@ public class Activity4_resumen_registro extends AppCompatActivity {
     }
 
     private void cargarGastos() {
-        if (idHogar == -1) { registrarPeticionCompletada(); return; }
-
-        String url = WebService.URL_Gasto + "?id_hogar=" + idHogar;
-        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
-                Request.Method.GET, url, null,
-                response -> {
-                    try {
-                        if (WebService.JSON.SUCCESS.equals(response.getString(WebService.JSON.STATUS))) {
-                            JSONArray data = response.getJSONArray(WebService.JSON.DATA);
-                            runOnUiThread(() -> mostrarGastos(data));
-                        } else {
-                            runOnUiThread(() -> {
-                                tvGastosLoading.setText("Sin gastos recurrentes configurados");
-                                tvTotalGastos.setText("0 €");
-                            });
-                        }
-                    } catch (JSONException e) {
-                        runOnUiThread(() -> tvGastosLoading.setText("Error al leer gastos"));
-                    }
-                    registrarPeticionCompletada();
-                },
-                error -> {
-                    runOnUiThread(() -> tvGastosLoading.setText("Sin conexión — revisa más tarde"));
-                    registrarPeticionCompletada();
-                }
-        ));
+        // Los gastos se guardaron localmente en Activity3 — los mostramos desde SharedPreferences.
+        String gastosStr = getSharedPreferences("registro_wizard", MODE_PRIVATE)
+                .getString("registro_gastos", null);
+        if (gastosStr == null) {
+            tvGastosLoading.setText("Sin gastos recurrentes configurados");
+            tvTotalGastos.setText("0 €");
+            return;
+        }
+        try {
+            JSONArray data = new JSONArray(gastosStr);
+            mostrarGastos(data);
+        } catch (JSONException e) {
+            tvGastosLoading.setText("Sin gastos recurrentes configurados");
+            tvTotalGastos.setText("0 €");
+        }
     }
 
     /** Marca que una de las dos peticiones (habitaciones/gastos) ha terminado. */
@@ -406,13 +397,12 @@ public class Activity4_resumen_registro extends AppCompatActivity {
     }
 
     /* ════════════════════════════════════════════════════
-       BACK PRESS — bloqueado tras abrir el asistente
+       BACK PRESS — siempre bloqueado en el paso final
     ════════════════════════════════════════════════════ */
 
     @Override
     public void onBackPressed() {
-        if (!bloqueadoAtras) super.onBackPressed();
-        // Si el asistente ya se mostró, no se puede volver atrás
+        Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show();
     }
 
     /* ════════════════════════════════════════════════════
@@ -470,7 +460,6 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                                 tvNombreHogar.setTextColor(
                                         getResources().getColor(R.color.text, null));
                                 // Bloquear atrás y abrir el asistente
-                                bloqueadoAtras = true;
                                 if (!bienvenidaLanzada) {
                                     bienvenidaLanzada = true;
                                     abrirHomneyMate(true);
@@ -578,10 +567,101 @@ public class Activity4_resumen_registro extends AppCompatActivity {
     }
 
     /* ════════════════════════════════════════════════════
-       NAVEGACIÓN
+       NAVEGACIÓN — commit tareas+gastos y lanzar Main
     ════════════════════════════════════════════════════ */
 
     private void irAMain() {
+        SharedPreferences wizardPrefs = getSharedPreferences("registro_wizard", MODE_PRIVATE);
+        String tareasStr = wizardPrefs.getString("registro_tareas", null);
+        String gastosStr = wizardPrefs.getString("registro_gastos", null);
+
+        JSONArray tareas = null, gastos = null;
+        try { if (tareasStr != null) tareas = new JSONArray(tareasStr); } catch (JSONException ignored) {}
+        try { if (gastosStr != null) gastos = new JSONArray(gastosStr); } catch (JSONException ignored) {}
+
+        int totalPeticiones = (tareas != null ? tareas.length() : 0)
+                            + (gastos != null ? gastos.length() : 0);
+
+        if (totalPeticiones == 0 || !Utilidades.hayConexionInternet(this)) {
+            limpiarWizardPrefs();
+            lanzarMain();
+            return;
+        }
+
+        loadingDialog.show();
+        AtomicInteger pendiente = new AtomicInteger(totalPeticiones);
+        AtomicInteger errores   = new AtomicInteger(0);
+        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        if (tareas != null) {
+            for (int i = 0; i < tareas.length(); i++) {
+                try {
+                    JSONObject t    = tareas.getJSONObject(i);
+                    JSONObject body = new JSONObject();
+                    body.put("nombre",        t.getString("nombre"));
+                    body.put("frecuencia",    t.getString("frecuencia"));
+                    body.put("num_veces",     t.getInt("num_veces"));
+                    body.put("id_habitacion", t.getInt("id_habitacion"));
+                    PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                            Request.Method.POST, WebService.URL_Tarea, body,
+                            r -> { if (pendiente.decrementAndGet() == 0) onCommitDone(errores.get()); },
+                            e -> { errores.incrementAndGet(); if (pendiente.decrementAndGet() == 0) onCommitDone(errores.get()); }
+                    ));
+                } catch (JSONException e) {
+                    errores.incrementAndGet();
+                    if (pendiente.decrementAndGet() == 0) onCommitDone(errores.get());
+                }
+            }
+        }
+
+        if (gastos != null) {
+            for (int i = 0; i < gastos.length(); i++) {
+                try {
+                    JSONObject g    = gastos.getJSONObject(i);
+                    JSONObject body = new JSONObject();
+                    body.put("fecha",              hoy);
+                    body.put("categoria",          g.getString("categoria"));
+                    body.put("concepto",           g.getString("concepto"));
+                    body.put("modo",               g.getString("modo"));
+                    body.put("tipo",               "fijo");
+                    body.put("importe",            g.getDouble("importe"));
+                    body.put("id_hogar",           idHogar);
+                    body.put("id_usuario_pagador", idUsuario);
+                    PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                            Request.Method.POST, WebService.URL_Gasto, body,
+                            r -> { if (pendiente.decrementAndGet() == 0) onCommitDone(errores.get()); },
+                            e -> { errores.incrementAndGet(); if (pendiente.decrementAndGet() == 0) onCommitDone(errores.get()); }
+                    ));
+                } catch (JSONException e) {
+                    errores.incrementAndGet();
+                    if (pendiente.decrementAndGet() == 0) onCommitDone(errores.get());
+                }
+            }
+        }
+    }
+
+    private void onCommitDone(int errores) {
+        runOnUiThread(() -> {
+            loadingDialog.dismiss();
+            if (errores > 0) {
+                Toast.makeText(this,
+                        errores + " elemento(s) no pudieron guardarse. Puedes añadirlos después.",
+                        Toast.LENGTH_LONG).show();
+            }
+            limpiarWizardPrefs();
+            lanzarMain();
+        });
+    }
+
+    private void limpiarWizardPrefs() {
+        getSharedPreferences("registro_wizard", MODE_PRIVATE)
+                .edit()
+                .remove("registro_tareas")
+                .remove("registro_gastos")
+                .apply();
+    }
+
+    private void lanzarMain() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

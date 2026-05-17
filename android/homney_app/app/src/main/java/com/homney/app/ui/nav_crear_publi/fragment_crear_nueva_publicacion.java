@@ -143,8 +143,7 @@ public class fragment_crear_nueva_publicacion extends Fragment {
 
         /* ── Galería ──────────────────────────────────────── */
         img_sube_foto.setOnClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             galeriaLauncher.launch(intent);
         });

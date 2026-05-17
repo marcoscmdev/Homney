@@ -148,6 +148,7 @@
              SECCIÓN — LO QUE TE DEBEN
         ══════════════════════════════════════════ -->
         <LinearLayout
+            android:id="@+id/ll_header_me_deben"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -170,6 +171,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="12,50 € PENDIENTE" />
+
+            <TextView
+                android:id="@+id/chevron_me_deben"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▲"
+                android:textSize="12sp"
+                android:textColor="@color/accent_dark"
+                android:paddingStart="8dp"
+                android:paddingEnd="4dp" />
         </LinearLayout>
 
         <!-- Contenedor dinámico de bloques de deudores -->
@@ -195,6 +206,7 @@
              SECCIÓN — LO QUE DEBES TÚ
         ══════════════════════════════════════════ -->
         <LinearLayout
+            android:id="@+id/ll_header_debo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -217,6 +229,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="8,00 € PENDIENTE" />
+
+            <TextView
+                android:id="@+id/chevron_debo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▲"
+                android:textSize="12sp"
+                android:textColor="@color/accent_dark"
+                android:paddingStart="8dp"
+                android:paddingEnd="4dp" />
         </LinearLayout>
 
 
@@ -262,6 +284,7 @@
 
                 <!-- Cabecera historial -->
                 <LinearLayout
+                    android:id="@+id/ll_header_historial"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -284,9 +307,20 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="5 REGISTROS" />
+
+                    <TextView
+                        android:id="@+id/chevron_historial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="▲"
+                        android:textSize="12sp"
+                        android:textColor="@color/accent_dark"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="4dp" />
                 </LinearLayout>
 
                 <View
+                    android:id="@+id/divider_historial"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/border" />

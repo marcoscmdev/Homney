@@ -222,8 +222,13 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
         llSecciones   = findViewById(R.id.ll_secciones_habitaciones);
 
         findViewById(R.id.btn_siguiente_tareas).setOnClickListener(v -> guardarYContinuar());
-        findViewById(R.id.btn_omitir_tareas).setOnClickListener(v -> irAGastos());
-        findViewById(R.id.btn_atras_tareas).setOnClickListener(v -> finish());
+        findViewById(R.id.btn_omitir_tareas).setOnClickListener(v -> {
+            getSharedPreferences("registro_wizard", MODE_PRIVATE)
+                    .edit().remove("registro_tareas").apply();
+            irAGastos();
+        });
+        findViewById(R.id.btn_atras_tareas).setOnClickListener(v ->
+                Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show());
 
         cargarHabitaciones();
     }
@@ -530,110 +535,49 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
     }
 
     /* ══════════════════════════════════════════════════════════════
+       NAVEGACIÓN — sin retroceso durante el registro
+    ══════════════════════════════════════════════════════════════ */
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show();
+    }
+
+    /* ══════════════════════════════════════════════════════════════
        GUARDAR Y CONTINUAR
+       Las tareas se guardan localmente; se enviarán a la BD al
+       confirmar el registro en Activity4.
     ══════════════════════════════════════════════════════════════ */
 
     private void guardarYContinuar() {
-        if (!Utilidades.hayConexionInternet(this)) {
-            Toast.makeText(this, "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Recopilar tareas marcadas o custom
-        List<String>  nombres     = new ArrayList<>();
-        List<String>  frecuencias = new ArrayList<>();
-        List<Integer> numVeces    = new ArrayList<>();
-        List<Integer> idHabs      = new ArrayList<>();
-
+        JSONArray tareasJson = new JSONArray();
         for (SeccionHabitacion sec : secciones) {
             for (TareaItem item : sec.tareas) {
                 boolean incluir = item.esCustom
                         || (item.checkBox != null && item.checkBox.isChecked());
                 if (incluir) {
-                    nombres.add(item.nombre);
-                    frecuencias.add(item.frecuencia);
-                    numVeces.add(item.numVeces);
-                    idHabs.add(sec.idHabitacion);
+                    try {
+                        JSONObject t = new JSONObject();
+                        t.put("nombre",        item.nombre);
+                        t.put("frecuencia",    item.frecuencia);
+                        t.put("num_veces",     item.numVeces);
+                        t.put("id_habitacion", sec.idHabitacion);
+                        tareasJson.put(t);
+                    } catch (JSONException ignored) {}
                 }
             }
         }
 
-        if (nombres.isEmpty()) {
-            irAGastos();
-            return;
-        }
+        getSharedPreferences("registro_wizard", MODE_PRIVATE)
+                .edit()
+                .putString("registro_tareas", tareasJson.toString())
+                .apply();
 
-        Button btnSig = findViewById(R.id.btn_siguiente_tareas);
-        btnSig.setEnabled(false);
-        btnSig.setText("Guardando…");
-        loadingDialog.show();
-
-        AtomicInteger pendiente = new AtomicInteger(nombres.size());
-        AtomicInteger errores   = new AtomicInteger(0);
-
-        for (int i = 0; i < nombres.size(); i++) {
-            crearTarea(nombres.get(i), frecuencias.get(i), numVeces.get(i),
-                    idHabs.get(i), pendiente, errores);
-        }
-    }
-
-    /**
-     * Crea la tarea en la BD. El usuario podrá asignársela después desde la sección Tareas.
-     */
-    private void crearTarea(String nombre, String frecuencia, int numVeces,
-                             int idHabitacion,
-                             AtomicInteger pendiente, AtomicInteger errores) {
-        try {
-            JSONObject body = new JSONObject();
-            body.put("nombre",        nombre);
-            body.put("frecuencia",    frecuencia);
-            body.put("num_veces",     numVeces);
-            body.put("id_habitacion", idHabitacion);
-
-            PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
-                    Request.Method.POST, WebService.URL_Tarea, body,
-                    response -> {
-                        try {
-                            if (!WebService.JSON.SUCCESS.equals(
-                                    response.getString(WebService.JSON.STATUS))) {
-                                errores.incrementAndGet();
-                            }
-                        } catch (JSONException e) {
-                            errores.incrementAndGet();
-                        }
-                        if (pendiente.decrementAndGet() == 0) onTodasCreadas(errores.get());
-                    },
-                    error -> {
-                        errores.incrementAndGet();
-                        if (pendiente.decrementAndGet() == 0) onTodasCreadas(errores.get());
-                    }
-            ));
-        } catch (JSONException e) {
-            errores.incrementAndGet();
-            if (pendiente.decrementAndGet() == 0) onTodasCreadas(errores.get());
-        }
-    }
-
-    private void onTodasCreadas(int errores) {
-        runOnUiThread(() -> {
-            loadingDialog.dismiss();
-            Button btnSig = findViewById(R.id.btn_siguiente_tareas);
-            if (btnSig != null) {
-                btnSig.setEnabled(true);
-                btnSig.setText("Siguiente →");
-            }
-            if (errores > 0) {
-                Toast.makeText(this,
-                        errores + " tarea(s) no pudieron guardarse. Puedes añadirlas después.",
-                        Toast.LENGTH_LONG).show();
-            }
-            irAGastos();
-        });
+        irAGastos();
     }
 
     private void irAGastos() {
         startActivity(new Intent(this, Activity3_gastos_recurrentes.class));
-        // No se finaliza: el usuario puede volver con el botón atrás del sistema
     }
 
     /* ══════════════════════════════════════════════════════════════

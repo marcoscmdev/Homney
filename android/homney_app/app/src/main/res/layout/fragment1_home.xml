@@ -338,7 +338,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="6dp"
-            android:text="Tareas completadas — últimos 7 días" />
+            android:text="Tareas completadas — último mes" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -367,7 +367,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="6dp"
-            android:text="Total de gastos pagados por miembro" />
+            android:text="Gastos del hogar — últimos 6 meses" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

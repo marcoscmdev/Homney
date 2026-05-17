@@ -18,7 +18,26 @@
         android:id="@+id/fragmento2"
         android:name="com.homney.app.ui.fragmento2_mihogar.fragmento_mihogar"
         android:label="@string/menu_fragmento2"
-        tools:layout="@layout/fragment2_hogar" />
+        tools:layout="@layout/fragment2_hogar">
+        <action
+            android:id="@+id/action_fragmento2_to_tareas_habitacion"
+            app:destination="@id/nav_tareas_habitacion" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_tareas_habitacion"
+        android:name="com.homney.app.ui.fragmento2_mihogar.FragmentoTareasHabitacion"
+        android:label="Tareas de la habitación"
+        tools:layout="@layout/fragment_tareas_habitacion">
+        <argument
+            android:name="id_habitacion"
+            app:argType="integer"
+            android:defaultValue="-1" />
+        <argument
+            android:name="nombre_habitacion"
+            app:argType="string"
+            android:defaultValue="Habitación" />
+    </fragment>
 
     <fragment
         android:id="@+id/fragmento3"

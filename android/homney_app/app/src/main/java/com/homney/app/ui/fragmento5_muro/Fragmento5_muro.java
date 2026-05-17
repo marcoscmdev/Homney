@@ -47,7 +47,8 @@ public class Fragmento5_muro extends Fragment {
     private LoadingDialog loadingDialog;
 
     /* ── Sesión ─────────────────────────────────────────── */
-    private int idHogar = -1;
+    private int idHogar   = -1;
+    private int idUsuario = -1;
 
     /* ── Datos ──────────────────────────────────────────── */
     private List<Muro>    listaPublis   = new ArrayList<>();
@@ -77,7 +78,8 @@ public class Fragmento5_muro extends Fragment {
         // Leer sesión
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
-        idHogar = prefs.getInt("id_hogar", -1);
+        idHogar   = prefs.getInt("id_hogar",   -1);
+        idUsuario = prefs.getInt("id_usuario", -1);
 
         if (idHogar != -1) {
             if (Utilidades.hayConexionInternet(requireContext())) {
@@ -169,6 +171,61 @@ public class Fragmento5_muro extends Fragment {
 
         tvSinPublicaciones.setVisibility(View.GONE);
         recycler.setVisibility(View.VISIBLE);
-        recycler.setAdapter(new RvMuroAdapter(listaPublis, nombresPorUsuario));
+        recycler.setAdapter(new RvMuroAdapter(
+                listaPublis, nombresPorUsuario, idUsuario, this::eliminarPublicacion));
+    }
+
+    /* ════════════════════════════════════════════════════════
+       ELIMINAR PUBLICACIÓN
+    ════════════════════════════════════════════════════════ */
+
+    private void eliminarPublicacion(int idPub, int position) {
+        if (!isAdded()) return;
+
+        new android.app.AlertDialog.Builder(requireContext())
+                .setTitle("Eliminar publicación")
+                .setMessage("¿Seguro que quieres eliminar esta publicación? No se puede deshacer.")
+                .setPositiveButton("Eliminar", (dialog, which) -> {
+                    if (!Utilidades.hayConexionInternet(requireContext())) {
+                        Toast.makeText(requireContext(),
+                                "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String url = WebService.URL_Muro + "?id_pub=" + idPub;
+                    PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                            Request.Method.DELETE, url, null,
+                            response -> {
+                                if (!isAdded()) return;
+                                try {
+                                    if (WebService.JSON.SUCCESS.equals(
+                                            response.getString(WebService.JSON.STATUS))) {
+                                        requireActivity().runOnUiThread(() -> {
+                                            if (position >= 0 && position < listaPublis.size()) {
+                                                listaPublis.remove(position);
+                                                recycler.getAdapter().notifyItemRemoved(position);
+                                                if (listaPublis.isEmpty()) {
+                                                    tvSinPublicaciones.setText("El muro está vacío");
+                                                    tvSinPublicaciones.setVisibility(View.VISIBLE);
+                                                    recycler.setVisibility(View.GONE);
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        requireActivity().runOnUiThread(() ->
+                                                Toast.makeText(requireContext(),
+                                                        "No se pudo eliminar la publicación",
+                                                        Toast.LENGTH_SHORT).show());
+                                    }
+                                } catch (org.json.JSONException e) { /* ignorar */ }
+                            },
+                            error -> {
+                                if (!isAdded()) return;
+                                Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                                        "Error al eliminar", Request.Method.DELETE, url, error);
+                            }
+                    ));
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 }

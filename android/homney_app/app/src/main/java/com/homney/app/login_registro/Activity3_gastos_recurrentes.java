@@ -26,6 +26,7 @@ import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -122,7 +123,8 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
 
         btnAddGasto.setOnClickListener(v -> añadirGastoPersonalizado());
         btnComenzar.setOnClickListener(v -> guardarYContinuar());
-        btnAtras.setOnClickListener(v -> finish()); // vuelve a Activity2
+        btnAtras.setOnClickListener(v ->
+                Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show());
     }
 
     /* ════════════════════════════════════════════════════════
@@ -262,120 +264,62 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
     }
 
     /* ════════════════════════════════════════════════════════
-       GUARDAR Y LANZAR MAIN ACTIVITY
+       NAVEGACIÓN — sin retroceso durante el registro
+    ════════════════════════════════════════════════════════ */
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show();
+    }
+
+    /* ════════════════════════════════════════════════════════
+       GUARDAR LOCALMENTE Y CONTINUAR
+       Los gastos se persisten en SharedPreferences y se
+       enviarán a la BD al confirmar el registro en Activity4.
     ════════════════════════════════════════════════════════ */
 
     private void guardarYContinuar() {
-        if (!Utilidades.hayConexionInternet(this)) {
-            Toast.makeText(this, "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Construir lista de gastos a crear
-        List<String>  nombres    = new ArrayList<>();
-        List<Double>  importes   = new ArrayList<>();
-        List<String>  modos      = new ArrayList<>();
-        List<String>  categorias = new ArrayList<>();
+        JSONArray gastosJson = new JSONArray();
 
         for (int i = 0; i < SUGERENCIAS.length; i++) {
             if (checkBoxes[i] != null && checkBoxes[i].isChecked()) {
-                nombres.add(SUGERENCIAS[i].nombre);
                 double imp = SUGERENCIAS[i].importeDefault;
                 try {
                     String txt = etImportes[i].getText().toString().trim();
                     if (!txt.isEmpty()) imp = Double.parseDouble(txt);
                 } catch (NumberFormatException ignored) {}
-                importes.add(imp);
-                modos.add(SUGERENCIAS[i].modo);
-                categorias.add(SUGERENCIAS[i].categoria);
+                try {
+                    JSONObject g = new JSONObject();
+                    g.put("concepto",  SUGERENCIAS[i].nombre);
+                    g.put("importe",   imp);
+                    g.put("modo",      SUGERENCIAS[i].modo);
+                    g.put("categoria", SUGERENCIAS[i].categoria);
+                    gastosJson.put(g);
+                } catch (JSONException ignored) {}
             }
         }
         for (int i = 0; i < nombresCustom.size(); i++) {
             if (nombresCustom.get(i) != null) {
-                nombres.add(nombresCustom.get(i));
-                importes.add(gastosCustom.get(i)[0]);
-                modos.add("efectivo");
-                categorias.add("Otros");
+                try {
+                    JSONObject g = new JSONObject();
+                    g.put("concepto",  nombresCustom.get(i));
+                    g.put("importe",   gastosCustom.get(i)[0]);
+                    g.put("modo",      "efectivo");
+                    g.put("categoria", "Otros");
+                    gastosJson.put(g);
+                } catch (JSONException ignored) {}
             }
         }
 
-        if (nombres.isEmpty()) {
-            // Sin gastos: ir directamente al main
-            irAResumen();
-            return;
-        }
+        getSharedPreferences("registro_wizard", MODE_PRIVATE)
+                .edit()
+                .putString("registro_gastos", gastosJson.toString())
+                .apply();
 
-        if (idHogar == -1 || idUsuario == -1) {
-            Toast.makeText(this, "Error de sesión — vuelve a iniciar sesión", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        btnComenzar.setEnabled(false);
-        btnComenzar.setText("Guardando…");
-        loadingDialog.show();
-
-        AtomicInteger pendiente = new AtomicInteger(nombres.size());
-        AtomicInteger errores   = new AtomicInteger(0);
-        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
-        for (int i = 0; i < nombres.size(); i++) {
-            crearGasto(nombres.get(i), importes.get(i), modos.get(i), categorias.get(i), hoy, pendiente, errores);
-        }
-    }
-
-    private void crearGasto(String concepto, double importe, String modo, String categoria,
-                             String fecha, AtomicInteger pendiente, AtomicInteger errores) {
-        try {
-            JSONObject body = new JSONObject();
-            body.put("fecha",              fecha);
-            body.put("categoria",          categoria);
-            body.put("concepto",           concepto);
-            body.put("modo",               modo);
-            body.put("tipo",               "fijo");       // gasto recurrente = fijo
-            body.put("importe",            importe);
-            body.put("id_hogar",           idHogar);
-            body.put("id_usuario_pagador", idUsuario);
-
-            PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
-                    Request.Method.POST, WebService.URL_Gasto, body,
-                    response -> {
-                        try {
-                            if (!response.getString(WebService.JSON.STATUS)
-                                    .equals(WebService.JSON.SUCCESS)) {
-                                errores.incrementAndGet();
-                            }
-                        } catch (JSONException e) {
-                            errores.incrementAndGet();
-                        }
-                        if (pendiente.decrementAndGet() == 0) onTodosCreados(errores.get());
-                    },
-                    error -> {
-                        errores.incrementAndGet();
-                        if (pendiente.decrementAndGet() == 0) onTodosCreados(errores.get());
-                    }
-            ));
-        } catch (JSONException e) {
-            errores.incrementAndGet();
-            if (pendiente.decrementAndGet() == 0) onTodosCreados(errores.get());
-        }
-    }
-
-    private void onTodosCreados(int errores) {
-        runOnUiThread(() -> {
-            loadingDialog.dismiss();
-            btnComenzar.setEnabled(true);
-            btnComenzar.setText("Comenzar ");
-            if (errores > 0) {
-                Toast.makeText(this,
-                        errores + " gasto(s) no pudieron guardarse. Puedes añadirlos después.",
-                        Toast.LENGTH_LONG).show();
-            }
-            irAResumen();
-        });
+        irAResumen();
     }
 
     private void irAResumen() {
-        // → Resumen final del wizard antes de entrar a MainActivity
         startActivity(new Intent(this, Activity4_resumen_registro.class));
     }
 

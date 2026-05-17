@@ -297,7 +297,8 @@ public class fragment_mi_perfil extends Fragment {
     /** Muestra la foto real con Glide, o el círculo con inicial si no hay foto. */
     private void mostrarAvatarInicial(String nombre, String avatar) {
         boolean tieneAvatarReal = avatar != null
-                && !avatar.isEmpty();
+                && !avatar.isEmpty()
+                && !avatar.contains("default.png");
 
         if (tieneAvatarReal) {
             String url = WebService.PROTOCOLO + WebService.SERVIDOR
@@ -306,7 +307,8 @@ public class fragment_mi_perfil extends Fragment {
                     .load(url)
                     .apply(new RequestOptions()
                             .circleCrop()
-                            .placeholder(crearBitmapInicial(nombre)))
+                            .placeholder(crearBitmapInicial(nombre))
+                            .error(crearBitmapInicial(nombre)))
                     .into(ivAvatar);
         } else {
             ivAvatar.setImageDrawable(crearBitmapInicial(nombre));
@@ -364,8 +366,7 @@ public class fragment_mi_perfil extends Fragment {
                         }
                     } else {
                         // Galería
-                        Intent intent = new Intent(Intent.ACTION_PICK,
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                         intent.setType("image/*");
                         galeriaLauncher.launch(intent);
                     }

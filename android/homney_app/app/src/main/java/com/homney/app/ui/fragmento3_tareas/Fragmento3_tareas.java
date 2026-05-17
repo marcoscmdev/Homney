@@ -71,6 +71,23 @@ public class Fragmento3_tareas extends Fragment {
     private LinearLayout containerHistorialMesTareas;
     private TextView     tvSinHistorialMesTareas;
 
+    /* ── Colapso de secciones ─────────────────────── */
+    private LinearLayout llHeaderMisTareas;
+    private View         dividerMisTareas;
+    private LinearLayout llHeaderOtrasTareas;
+    private View         cardOtrasTareas;
+    private TextView     chevronOtrasTareas;
+    private LinearLayout llHeaderCompletadas;
+    private View         cardCompletadas;
+    private TextView     chevronCompletadas;
+    private LinearLayout llHeaderHistorialMes;
+    private View         cardHistorialMes;
+    private TextView     chevronHistorialMes;
+    private boolean      sec1Expanded = true;
+    private boolean      sec2Expanded = true;
+    private boolean      sec3Expanded = true;
+    private boolean      sec4Expanded = true;
+
     private LoadingDialog loadingDialog;
 
     /* ── Sesión ──────────────────────────────────── */
@@ -114,6 +131,20 @@ public class Fragmento3_tareas extends Fragment {
         containerHistorialMesTareas  = root.findViewById(R.id.container_historial_mes_tareas);
         tvSinHistorialMesTareas      = root.findViewById(R.id.tv_sin_historial_mes_tareas);
 
+        // Colapso
+        llHeaderMisTareas   = root.findViewById(R.id.ll_header_mis_tareas);
+        dividerMisTareas     = root.findViewById(R.id.divider_mis_tareas);
+        llHeaderOtrasTareas  = root.findViewById(R.id.ll_header_otras_tareas);
+        cardOtrasTareas      = root.findViewById(R.id.card_otras_tareas);
+        chevronOtrasTareas   = root.findViewById(R.id.chevron_otras_tareas);
+        llHeaderCompletadas  = root.findViewById(R.id.ll_header_completadas);
+        cardCompletadas      = root.findViewById(R.id.card_completadas);
+        chevronCompletadas   = root.findViewById(R.id.chevron_completadas);
+        llHeaderHistorialMes = root.findViewById(R.id.ll_header_historial_mes);
+        cardHistorialMes     = root.findViewById(R.id.card_historial_mes);
+        chevronHistorialMes  = root.findViewById(R.id.chevron_historial_mes);
+        setupColapsables();
+
         loadingDialog = new LoadingDialog(requireContext());
 
         SharedPreferences prefs = requireContext()
@@ -128,6 +159,62 @@ public class Fragmento3_tareas extends Fragment {
 
         // Los datos se cargan en onResume para refrescarse al volver de crear/editar
         return root;
+    }
+
+    /** Configura el comportamiento colapsar/expandir de cada sección. */
+    private void setupColapsables() {
+        // Sección 1 — Mis tareas (header dentro del CardView)
+        if (llHeaderMisTareas != null) {
+            llHeaderMisTareas.setClickable(true);
+            llHeaderMisTareas.setFocusable(true);
+            llHeaderMisTareas.setOnClickListener(v -> {
+                sec1Expanded = !sec1Expanded;
+                int vis = sec1Expanded ? View.VISIBLE : View.GONE;
+                if (dividerMisTareas != null)  dividerMisTareas.setVisibility(vis);
+                containerMisTareas.setVisibility(vis);
+                tvSinMisTareas.setVisibility(sec1Expanded ? View.VISIBLE : View.GONE);
+                // Actualiza el chevron del badge de pendientes (usa tag como chevron visual)
+                tagPendientes.setText(sec1Expanded
+                        ? tagPendientes.getText().toString().replace("▼", "").trim()
+                        : "▼");
+            });
+        }
+
+        // Sección 2 — Otras tareas
+        if (llHeaderOtrasTareas != null && cardOtrasTareas != null) {
+            llHeaderOtrasTareas.setClickable(true);
+            llHeaderOtrasTareas.setFocusable(true);
+            llHeaderOtrasTareas.setOnClickListener(v -> {
+                sec2Expanded = !sec2Expanded;
+                cardOtrasTareas.setVisibility(sec2Expanded ? View.VISIBLE : View.GONE);
+                if (chevronOtrasTareas != null)
+                    chevronOtrasTareas.setText(sec2Expanded ? "▲" : "▼");
+            });
+        }
+
+        // Sección 3 — Completadas este mes
+        if (llHeaderCompletadas != null && cardCompletadas != null) {
+            llHeaderCompletadas.setClickable(true);
+            llHeaderCompletadas.setFocusable(true);
+            llHeaderCompletadas.setOnClickListener(v -> {
+                sec3Expanded = !sec3Expanded;
+                cardCompletadas.setVisibility(sec3Expanded ? View.VISIBLE : View.GONE);
+                if (chevronCompletadas != null)
+                    chevronCompletadas.setText(sec3Expanded ? "▲" : "▼");
+            });
+        }
+
+        // Sección 4 — Historial mes anterior
+        if (llHeaderHistorialMes != null && cardHistorialMes != null) {
+            llHeaderHistorialMes.setClickable(true);
+            llHeaderHistorialMes.setFocusable(true);
+            llHeaderHistorialMes.setOnClickListener(v -> {
+                sec4Expanded = !sec4Expanded;
+                cardHistorialMes.setVisibility(sec4Expanded ? View.VISIBLE : View.GONE);
+                if (chevronHistorialMes != null)
+                    chevronHistorialMes.setText(sec4Expanded ? "▲" : "▼");
+            });
+        }
     }
 
     @Override

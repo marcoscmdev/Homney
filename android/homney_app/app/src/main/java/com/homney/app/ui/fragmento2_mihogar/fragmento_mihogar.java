@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -51,6 +52,7 @@ public class fragmento_mihogar extends Fragment {
     /* ── Datos de sesión ────────────────────────────────── */
     private int    idHogar   = -1;
     private String rolUsuario = "";
+    private String claveInvActual = "";
 
     private LoadingDialog loadingDialog;
     private final AtomicInteger peticionesPendientes = new AtomicInteger(0);
@@ -74,6 +76,9 @@ public class fragmento_mihogar extends Fragment {
         btnAnadirHabitacion  = root.findViewById(R.id.btn_anadir_habitacion);
 
         loadingDialog = new LoadingDialog(requireContext());
+
+        // Título del hogar → toca para editar el nombre
+        tvHogarTitulo.setOnClickListener(v -> editarNombreHogar());
 
         // Botón "+" → abre el BottomSheet para añadir habitación
         btnAnadirHabitacion.setOnClickListener(v -> {
@@ -130,12 +135,13 @@ public class fragmento_mihogar extends Fragment {
 
                             if (resp.data != null && !resp.data.isEmpty()) {
                                 Hogar h = resp.data.get(0);
-                                if(h.getNombre() != null){
+                                if (h.getNombre() != null) {
                                     tvHogarTitulo.setText(h.getNombre());
-                                }else{
+                                } else {
                                     tvHogarTitulo.setText("Hogar");
                                 }
-                                tvClaveHogar.setText(h.getClave_inv());
+                                claveInvActual = h.getClave_inv() != null ? h.getClave_inv() : "";
+                                tvClaveHogar.setText(claveInvActual);
                             }
                         }
                     } catch (JSONException e) {
@@ -330,6 +336,19 @@ public class fragmento_mihogar extends Fragment {
             ImageView imgTipo = cardHab.findViewById(R.id.img_tipo_hab);
             imgTipo.setImageResource(iconoParaTipo(h.getTipo()));
 
+            // Click → ver tareas de la habitación
+            final int habId = h.getId_habitacion();
+            final String habNombre = h.getNombre() != null ? h.getNombre() : "Habitación";
+            cardHab.setClickable(true);
+            cardHab.setFocusable(true);
+            cardHab.setOnClickListener(v -> {
+                Bundle args = new Bundle();
+                args.putInt(FragmentoTareasHabitacion.ARG_ID_HABITACION, habId);
+                args.putString(FragmentoTareasHabitacion.ARG_NOMBRE_HABITACION, habNombre);
+                Navigation.findNavController(v)
+                        .navigate(R.id.action_fragmento2_to_tareas_habitacion, args);
+            });
+
             fila.addView(cardHab);
         }
 
@@ -373,6 +392,81 @@ public class fragmento_mihogar extends Fragment {
         return Math.round(TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics()));
+    }
+
+    /* ════════════════════════════════════════════════════════
+       EDITAR NOMBRE DEL HOGAR
+    ════════════════════════════════════════════════════════ */
+
+    private void editarNombreHogar() {
+        android.widget.EditText etNombre = new android.widget.EditText(requireContext());
+        etNombre.setHint("Nombre del hogar");
+        etNombre.setText(tvHogarTitulo.getText());
+        etNombre.setSingleLine(true);
+        int pad = dp(16);
+        etNombre.setPadding(pad, pad / 2, pad, pad / 2);
+
+        new android.app.AlertDialog.Builder(requireContext())
+                .setTitle("Editar nombre del hogar")
+                .setView(etNombre)
+                .setPositiveButton("Guardar", (dialog, which) -> {
+                    String nombre = etNombre.getText().toString().trim();
+                    if (nombre.isEmpty()) {
+                        Toast.makeText(requireContext(),
+                                "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    guardarNombreHogar(nombre);
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void guardarNombreHogar(String nombre) {
+        if (!Utilidades.hayConexionInternet(requireContext())) {
+            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        org.json.JSONObject body = new org.json.JSONObject();
+        try {
+            body.put("id_hogar",     idHogar);
+            body.put("value_nombre", nombre);
+        } catch (org.json.JSONException e) {
+            return;
+        }
+
+        loadingDialog.show();
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                Request.Method.PUT, WebService.URL_Hogar, body,
+                response -> {
+                    loadingDialog.dismiss();
+                    if (!isAdded()) return;
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+                            tvHogarTitulo.setText(nombre);
+                            requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE)
+                                    .edit().putString("nombre_hogar", nombre).apply();
+                            Toast.makeText(requireContext(),
+                                    "Nombre actualizado ✓", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireContext(),
+                                    "No se pudo actualizar el nombre", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (org.json.JSONException e) {
+                        Toast.makeText(requireContext(),
+                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    loadingDialog.dismiss();
+                    if (!isAdded()) return;
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error al actualizar nombre",
+                            Request.Method.PUT, WebService.URL_Hogar, error);
+                }
+        ));
     }
 
     /* ════════════════════════════════════════════════════════

@@ -131,6 +131,15 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
     }
 
     /* ════════════════════════════════════════════════════
+       NAVEGACIÓN — sin retroceso durante el registro
+    ════════════════════════════════════════════════════ */
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show();
+    }
+
+    /* ════════════════════════════════════════════════════
        CHIPS (4 + 4 + 3 + 3)  — cada clic añade una instancia
     ════════════════════════════════════════════════════ */
 
