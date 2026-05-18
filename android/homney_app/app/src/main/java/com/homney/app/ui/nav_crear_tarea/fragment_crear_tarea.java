@@ -2,6 +2,7 @@ package com.homney.app.ui.nav_crear_tarea;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -406,10 +407,12 @@ public class fragment_crear_tarea extends Fragment {
         PeticionesRed.anhadirPeticionACola(peticion);
     }
 
-    /** Navega atrás de forma segura usando requireView() en lugar de la vista capturada. */
-    private void navegarAtras() {
-        if (isAdded() && getView() != null) {
-            Navigation.findNavController(requireView()).popBackStack();
-        }
+        private void navegarAtras() {
+            if (isAdded()) {
+                Intent intent = new Intent(requireContext(), com.homney.app.MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("destino", R.id.fragmento3);
+                startActivity(intent);
+            }
     }
 }

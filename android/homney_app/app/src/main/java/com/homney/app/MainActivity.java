@@ -121,12 +121,14 @@ public class MainActivity extends AppCompatActivity {
                 fab.hide();
             }
         });
-
-
+        // metodo para navegar a otro fragment segun contexto de creacion
+        int destino = getIntent().getIntExtra("destino", -1);
+        if (destino != -1) {
+            Navigation.findNavController(this, R.id.nav_host_fragment).navigate(destino);
+        }
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-
                 NavigationView navigationView = findViewById(R.id.nav_view);
                 long idMenuPrevioSeleccionado = -1;
                 for (int i = 0; i < navigationView.getMenu().size(); i++) {
@@ -134,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
                         idMenuPrevioSeleccionado = navigationView.getMenu().getItem(i).getItemId();
                     }
                 }
-
                 if (menuItem.getItemId() == R.id.nav_view) {
                     finish();
                 } else {
@@ -298,9 +299,11 @@ public class MainActivity extends AppCompatActivity {
                 && !avatar.contains("default.png");
 
         if (tieneAvatarReal) {
-            // URL completa de la imagen: mismo base que el backend
-            String avatarUrl = WebService.PROTOCOLO + WebService.SERVIDOR
-                    + WebService.CARPETA + "/" + avatar;
+            // La URL pasa por el proxy PHP (get_imagen.php) porque AwardSpace bloquea
+            // el acceso directo a ficheros estáticos en uploads/.
+            // Cache-buster ?t= para que Glide descargue la imagen nueva tras un cambio de foto.
+            long ts = prefs.getLong("avatar_ts", 0L);
+            String avatarUrl = WebService.urlImagen(avatar, ts);
 
             Glide.with(this)
                     .load(avatarUrl)
@@ -319,7 +322,6 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Genera un Drawable circular con la inicial del usuario.
-     * Equivale al avatar por defecto de la web:
      *   <div class="avatar" style="background:${color}">${inicial}</div>
      */
     private Drawable crearAvatarInicial(char inicial, int colorFondo) {

@@ -36,6 +36,23 @@ public class WebService {
     public static final String URL_SubirImagen     = PROTOCOLO + SERVIDOR + CARPETA + "/subir_imagen.php";
     public static final String URL_EjemploImagen ="https://tesdai.com/imagenes/logoTESDAI.png";
 
+    /**
+     * Construye la URL del proxy PHP para servir una imagen subida.
+     *
+     * AwardSpace bloquea el acceso directo a ficheros estáticos en uploads/.
+     * Este helper devuelve la URL de get_imagen.php que sirve el fichero vía PHP.
+     *
+     * @param rutaRelativa Ruta relativa devuelta por subir_imagen.php
+     *                     (p.ej. "uploads/perfiles/usuario_5.jpg")
+     * @param cacheBuster  Timestamp para forzar recarga (0 = sin cache-buster)
+     * @return URL completa lista para pasar a Glide
+     */
+    public static String urlImagen(String rutaRelativa, long cacheBuster) {
+        String url = PROTOCOLO + SERVIDOR + CARPETA + "/get_imagen.php?f=" + rutaRelativa;
+        if (cacheBuster > 0) url += "&t=" + cacheBuster;
+        return url;
+    }
+
     public final static class JSON {
         // Constantes para mensajes json. Formato: https://github.com/omniti-labs/jsend
         public final static String STATUS = "status"; // Puede ser: ERROR, FAIL, SUCCESS

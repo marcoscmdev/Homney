@@ -77,11 +77,11 @@ public class RvMuroAdapter extends RecyclerView.Adapter<RvMuroAdapter.MuroViewHo
 
         holder.fecha_nombre.setText(fechaTexto + "  ·  " + autor);
 
-        // Imagen de la publicación — si el servidor devolvió una ruta, la cargamos con Glide
+        // Imagen de la publicación — se sirve a través del proxy PHP para evitar
+        // el bloqueo de ficheros estáticos que aplica AwardSpace en uploads/
         String rutaImagen = pub.getImagen();
         if (rutaImagen != null && !rutaImagen.isEmpty()) {
-            String urlCompleta = WebService.PROTOCOLO + WebService.SERVIDOR
-                               + WebService.CARPETA + "/" + rutaImagen;
+            String urlCompleta = WebService.urlImagen(rutaImagen, 0);
             holder.img_muro_publi.setVisibility(View.VISIBLE);
             Glide.with(holder.img_muro_publi.getContext())
                     .load(urlCompleta)

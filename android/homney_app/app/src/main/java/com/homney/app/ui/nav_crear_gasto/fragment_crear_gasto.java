@@ -3,6 +3,7 @@ package com.homney.app.ui.nav_crear_gasto;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -508,6 +509,15 @@ public class fragment_crear_gasto extends Fragment {
         else if (huboError)  msg = "Gasto registrado (reparto parcial)";
         else                 msg = "Gasto registrado y repartido correctamente";
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
-        Navigation.findNavController(v).popBackStack();
+        navegarAtras();
+    }
+
+    private void navegarAtras() {
+        if (isAdded()) {
+            Intent intent = new Intent(requireContext(), com.homney.app.MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("destino", R.id.fragmento4);
+            startActivity(intent);
+        }
     }
 }

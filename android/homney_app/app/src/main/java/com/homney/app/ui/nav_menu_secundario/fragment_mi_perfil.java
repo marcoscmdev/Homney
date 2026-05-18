@@ -301,8 +301,14 @@ public class fragment_mi_perfil extends Fragment {
                 && !avatar.contains("default.png");
 
         if (tieneAvatarReal) {
-            String url = WebService.PROTOCOLO + WebService.SERVIDOR
-                    + WebService.CARPETA + "/" + avatar;
+            // La URL pasa por el proxy PHP (get_imagen.php) porque AwardSpace bloquea
+            // el acceso directo a ficheros estáticos en uploads/.
+            // El cache-buster ?t= fuerza a Glide a descargar la imagen cuando cambia
+            // (el servidor reutiliza el mismo nombre de fichero al sobreescribir).
+            long ts = requireContext()
+                    .getSharedPreferences("sesion", Context.MODE_PRIVATE)
+                    .getLong("avatar_ts", 0L);
+            String url = WebService.urlImagen(avatar, ts);
             Glide.with(this)
                     .load(url)
                     .apply(new RequestOptions()
@@ -542,6 +548,9 @@ public class fragment_mi_perfil extends Fragment {
                             editor.putString("nombre", etNombre.getText().toString().trim());
                             if (nuevaRutaAvatar != null) {
                                 editor.putString("avatar", nuevaRutaAvatar);
+                                // Cache-buster: fuerza a Glide a descargar la imagen nueva
+                                // (el servidor reutiliza el mismo nombre de fichero)
+                                editor.putLong("avatar_ts", System.currentTimeMillis());
                             }
                             editor.apply();
 

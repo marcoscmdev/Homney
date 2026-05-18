@@ -36,6 +36,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
 import com.homney.app.VolleyMultipartRequest;
+import com.homney.app.ui.fragmento5_muro.Fragmento5_muro;
 import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
@@ -384,12 +385,16 @@ public class fragment_crear_nueva_publicacion extends Fragment {
     /** Cierra el loading, muestra toast y navega atrás. */
     private void finalizarPublicacion() {
         loadingDialog.dismiss();
-        Toast.makeText(requireContext(), "Publicado ✓", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Publicado ", Toast.LENGTH_SHORT).show();
         navegarAtras();
     }
 
     private void navegarAtras() {
-        if (isAdded() && getView() != null)
-            Navigation.findNavController(requireView()).popBackStack();
+        if (isAdded()) {
+            Intent intent = new Intent(requireContext(), com.homney.app.MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.putExtra("destino", R.id.fragmento5);
+            startActivity(intent);
+        }
     }
 }
