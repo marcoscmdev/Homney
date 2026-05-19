@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -666,27 +667,63 @@ public class Fragmento3_tareas extends Fragment {
         tvNombreTarea.setLayoutParams(lpNombre);
         layout.addView(tvNombreTarea);
 
+        // ── Label "Tiempo empleado" ──────────────────────────────────────────
         TextView tvLabelDur = new TextView(requireContext());
-        tvLabelDur.setText("Tiempo empleado (min)");
+        tvLabelDur.setText("Tiempo empleado");
         tvLabelDur.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         tvLabelDur.setTypeface(null, Typeface.BOLD);
         tvLabelDur.setTextColor(0xFF9A8A6A);
         LinearLayout.LayoutParams lpLabel = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lpLabel.bottomMargin = dp(4);
+        lpLabel.bottomMargin = dp(8);
         tvLabelDur.setLayoutParams(lpLabel);
         layout.addView(tvLabelDur);
 
-        EditText etDuracion = new EditText(requireContext());
-        etDuracion.setInputType(InputType.TYPE_CLASS_NUMBER);
-        etDuracion.setHint("ej. 30");
-        if (t.getDuracion() != null)
-            etDuracion.setText(String.valueOf(t.getDuracion()));
-        LinearLayout.LayoutParams lpDur = new LinearLayout.LayoutParams(
+        // ── Fila horizontal con npHoras y npMinutos ──────────────────────────
+        // Misma mecánica que fragment_crear_tarea: valores en pasos de 5 min
+        final int stepMin = 5;
+        final int maxHoras = 12;
+        final int cantidadMin = 60 / stepMin;   // 12 valores: 00,05,10,...,55
+
+        // Construir displayedValues
+        String[] horasValores = new String[maxHoras + 1];
+        for (int i = 0; i <= maxHoras; i++) horasValores[i] = i + " h";
+
+        String[] minutosValores = new String[cantidadMin];
+        for (int i = 0; i < cantidadMin; i++)
+            minutosValores[i] = String.format("%02d m", i * stepMin);
+
+        // Pre-poblar según duracion estimada de la tarea
+        int preHoras = 0, preMinIdx = 0;
+        if (t.getDuracion() != null && t.getDuracion() > 0) {
+            preHoras  = Math.min(t.getDuracion() / 60, maxHoras);
+            int resto = t.getDuracion() % 60;
+            // Redondear al step más cercano
+            preMinIdx = Math.min(Math.round((float) resto / stepMin), cantidadMin - 1);
+        }
+
+        NumberPicker npHoras = new NumberPicker(requireContext());
+        npHoras.setMinValue(0);
+        npHoras.setMaxValue(maxHoras);
+        npHoras.setDisplayedValues(horasValores);
+        npHoras.setValue(preHoras);
+
+        NumberPicker npMinutos = new NumberPicker(requireContext());
+        npMinutos.setMinValue(0);
+        npMinutos.setMaxValue(cantidadMin - 1);
+        npMinutos.setDisplayedValues(minutosValores);
+        npMinutos.setValue(preMinIdx);
+
+        LinearLayout filaPickets = new LinearLayout(requireContext());
+        filaPickets.setOrientation(LinearLayout.HORIZONTAL);
+        filaPickets.setGravity(android.view.Gravity.CENTER);
+        LinearLayout.LayoutParams lpFila = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lpDur.bottomMargin = dp(14);
-        etDuracion.setLayoutParams(lpDur);
-        layout.addView(etDuracion);
+        lpFila.bottomMargin = dp(14);
+        filaPickets.setLayoutParams(lpFila);
+        filaPickets.addView(npHoras);
+        filaPickets.addView(npMinutos);
+        layout.addView(filaPickets);
 
         TextView tvLabelObs = new TextView(requireContext());
         tvLabelObs.setText("Observaciones (opcional)");
@@ -710,10 +747,10 @@ public class Fragmento3_tareas extends Fragment {
                 .setTitle("¿Confirmas realizar la tarea?")
                 .setView(layout)
                 .setPositiveButton("Confirmar", (dialog, which) -> {
-                    String durStr = etDuracion.getText().toString().trim();
+                    int totalMinutos = npHoras.getValue() * 60 + npMinutos.getValue() * stepMin;
+                    String durStr = totalMinutos > 0 ? String.valueOf(totalMinutos) : null;
                     String obs    = etObservaciones.getText().toString().trim();
-                    marcarTareaRealizada(t, durStr.isEmpty() ? null : durStr, obs,
-                            row, tvFrec, tvCheck, tvTag);
+                    marcarTareaRealizada(t, durStr, obs, row, tvFrec, tvCheck, tvTag);
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
@@ -791,8 +828,7 @@ public class Fragmento3_tareas extends Fragment {
                                       View row, TextView tvFrec,
                                       TextView tvCheck, TextView tvTag) {
         loadingDialog.show();
-        String fechaAhora = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                .format(new Date());
+        String fechaAhora = Utilidades.FMT_ENTRADA_DATETIME.format(new Date());
 
         JSONObject body = new JSONObject();
         try {
@@ -990,7 +1026,7 @@ public class Fragmento3_tareas extends Fragment {
         // Tomamos solo los primeros 10 chars (yyyy-MM-dd) para comparar
         String fechaUlt = ultima.getFecha_realizacion().length() >= 10
                 ? ultima.getFecha_realizacion().substring(0, 10) : ultima.getFecha_realizacion();
-        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date());
+        String hoy = Utilidades.fechaHoyEntrada();
 
         if (t.getFrecuencia() == null) return true;
         switch (t.getFrecuencia()) {
@@ -1010,7 +1046,7 @@ public class Fragmento3_tareas extends Fragment {
     /** Compara si dos fechas ISO (yyyy-MM-dd) pertenecen a la misma semana ISO. */
     private boolean esMismaSemana(String isoDate1, String isoDate2) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
+            SimpleDateFormat sdf = Utilidades.FMT_ENTRADA;
             java.util.Calendar c1 = java.util.Calendar.getInstance();
             java.util.Calendar c2 = java.util.Calendar.getInstance();
             c1.setTime(sdf.parse(isoDate1));
@@ -1041,13 +1077,7 @@ public class Fragmento3_tareas extends Fragment {
 
     private String formatFecha(String fechaStr) {
         if (fechaStr == null) return "";
-        try {
-            Date d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                    .parse(fechaStr);
-            return d != null
-                    ? new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(d)
-                    : fechaStr;
-        } catch (Exception e) { return fechaStr; }
+        return Utilidades.formatearFechaMuro(fechaStr);
     }
 
     private void agregarDivider(LinearLayout parent) {

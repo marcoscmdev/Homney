@@ -42,6 +42,7 @@ public class fragmento_mihogar extends Fragment {
 
     /* ── Vistas del layout ──────────────────────────────── */
     private TextView     tvHogarTitulo;
+    private ImageView    ivEditarNombreHogar;
     private TextView     tvClaveHogar;
     private TextView     tvSinUsuarios;
     private TextView     tvSinHabitaciones;
@@ -68,6 +69,7 @@ public class fragmento_mihogar extends Fragment {
 
         // Enlazar vistas
         tvHogarTitulo        = root.findViewById(R.id.tv_hogar_titulo);
+        ivEditarNombreHogar  = root.findViewById(R.id.iv_editar_nombre_hogar);
         tvClaveHogar         = root.findViewById(R.id.tareas_pendientes);
         tvSinUsuarios        = root.findViewById(R.id.tv_sin_usuarios);
         tvSinHabitaciones    = root.findViewById(R.id.tv_sin_habitaciones);
@@ -77,8 +79,8 @@ public class fragmento_mihogar extends Fragment {
 
         loadingDialog = new LoadingDialog(requireContext());
 
-        // Título del hogar → toca para editar el nombre
-        tvHogarTitulo.setOnClickListener(v -> editarNombreHogar());
+        // Lápiz junto al título → abre el diálogo para renombrar el hogar
+        ivEditarNombreHogar.setOnClickListener(v -> editarNombreHogar());
 
         // Botón "+" → abre el BottomSheet para añadir habitación
         btnAnadirHabitacion.setOnClickListener(v -> {

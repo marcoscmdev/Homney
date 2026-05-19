@@ -51,8 +51,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -591,7 +589,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         loadingDialog.show();
         AtomicInteger pendiente = new AtomicInteger(totalPeticiones);
         AtomicInteger errores   = new AtomicInteger(0);
-        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String hoy = Utilidades.fechaHoyEntrada();
 
         if (tareas != null) {
             for (int i = 0; i < tareas.length(); i++) {

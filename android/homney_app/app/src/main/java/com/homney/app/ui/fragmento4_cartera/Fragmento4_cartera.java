@@ -961,8 +961,7 @@ public class Fragmento4_cartera extends Fragment {
         etFecha.setOnClickListener(btnF -> {
             Calendar cal = Calendar.getInstance();
             try {
-                Date d = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                        .parse(etFecha.getText().toString());
+                Date d = Utilidades.FMT_ENTRADA.parse(etFecha.getText().toString());
                 if (d != null) cal.setTime(d);
             } catch (Exception ignored) {}
             new DatePickerDialog(ctx,
@@ -1260,7 +1259,7 @@ public class Fragmento4_cartera extends Fragment {
         if (aCrear.isEmpty()) return;
 
         // Fecha de hoy para el nuevo gasto
-        String fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).format(new Date());
+        String fechaHoy = Utilidades.fechaHoyEntrada();
         final int[] creados = {0};
         final int total = aCrear.size();
 
@@ -1313,14 +1312,7 @@ public class Fragmento4_cartera extends Fragment {
 
     private String formatFecha(String fechaStr) {
         if (fechaStr == null) return "—";
-        try {
-            SimpleDateFormat p = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            Date d = p.parse(fechaStr);
-            return d != null ? f.format(d) : fechaStr;
-        } catch (Exception e) {
-            return fechaStr;
-        }
+        return Utilidades.fechaEntradaASalida(fechaStr);
     }
 
     private void agregarDivider(LinearLayout parent) {

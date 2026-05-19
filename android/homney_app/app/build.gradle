@@ -4,12 +4,13 @@ plugins {
 }
 
 android {
+    // compileSdk debe ser >= targetSdk
     compileSdk 35
 
     defaultConfig {
         applicationId "com.homney.app"
         minSdk 25
-        targetSdk 36
+        targetSdk 35        // Play Store 2025 exige >= 35; compileSdk 35 coincide
         versionCode 1
         versionName "1.0"
 
@@ -18,8 +19,14 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            // Reduce el APK ~40 % y ofusca el código fuente
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            minifyEnabled false
+            shrinkResources false
         }
     }
     buildFeatures {

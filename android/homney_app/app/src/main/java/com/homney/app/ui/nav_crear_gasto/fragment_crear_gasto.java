@@ -41,7 +41,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -111,8 +110,7 @@ public class fragment_crear_gasto extends Fragment {
         loadingDialog = new LoadingDialog(requireContext());
 
         // ── Fecha ────────────────────────────────────────────
-        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        etFecha.setText(hoy);
+        etFecha.setText(Utilidades.FMT_SALIDA.format(new Date()));
         etFecha.setFocusable(false);
         etFecha.setClickable(true);
         etFecha.setOnClickListener(btn -> mostrarDatePicker());
@@ -156,15 +154,14 @@ public class fragment_crear_gasto extends Fragment {
     private void mostrarDatePicker() {
         Calendar cal = Calendar.getInstance();
         try {
-            Date d = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    .parse(etFecha.getText().toString());
+            Date d = Utilidades.FMT_SALIDA.parse(etFecha.getText().toString());
             if (d != null) cal.setTime(d);
         } catch (Exception ignored) {}
 
         new DatePickerDialog(requireContext(),
                 (picker, year, month, day) ->
                         etFecha.setText(String.format(Locale.getDefault(),
-                                "%04d-%02d-%02d", year, month + 1, day)),
+                                "%02d/%02d/%04d", day, month + 1, year)),
                 cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)
         ).show();
     }
@@ -364,7 +361,7 @@ public class fragment_crear_gasto extends Fragment {
     private void validarYCrearGasto(View v) {
         String concepto   = etConcepto.getText().toString().trim();
         String importeStr = etImporte.getText().toString().trim();
-        String fecha      = etFecha.getText().toString().trim();
+        String fecha      = Utilidades.fechaSalidaAEntrada(etFecha.getText().toString().trim());
         if (concepto.isEmpty() || importeStr.isEmpty() || fecha.isEmpty()) {
             Toast.makeText(requireContext(),
                     "Rellena todos los campos obligatorios", Toast.LENGTH_SHORT).show();

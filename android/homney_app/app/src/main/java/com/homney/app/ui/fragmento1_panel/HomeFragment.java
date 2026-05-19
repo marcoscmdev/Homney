@@ -649,8 +649,7 @@ public class HomeFragment extends Fragment {
     private void marcarTareaRealizada(Tarea t, String durReal, String obs,
                                       View row, TextView tvFrec, TextView tvCheck) {
 
-        String fechaAhora = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                .format(new Date());
+        String fechaAhora = Utilidades.FMT_ENTRADA_DATETIME.format(new Date());
 
         JSONObject body = new JSONObject();
         try {
@@ -844,12 +843,7 @@ public class HomeFragment extends Fragment {
 
     private String formatFecha(String fechaStr) {
         if (fechaStr == null || fechaStr.isEmpty()) return "—";
-        try {
-            Date d = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(fechaStr);
-            return d != null
-                    ? new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(d)
-                    : fechaStr;
-        } catch (Exception e) { return fechaStr; }
+        return Utilidades.fechaEntradaASalida(fechaStr);
     }
 
     private void agregarDivider(LinearLayout parent) {

@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Configuración de seguridad de red.
-    Permite que Android confíe en la cadena de certificados Let's Encrypt
-    que usa AwardSpace, que en algunos dispositivos/APIs no se incluye
-    completa en el almacén de confianza del sistema.
+    - HTTP permitido SOLO para el dominio del backend (AwardSpace plan gratuito
+      no garantiza HTTPS estable). El resto del tráfico exige HTTPS.
+    - No se confía en certificados de usuario (evita MITM en producción).
 -->
 <network-security-config>
+    <!-- Política global: solo HTTPS -->
     <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
-            <!-- Certificados del sistema (CA raíces de Android) -->
             <certificates src="system" />
-            <!-- Certificados instalados por el usuario (útil en desarrollo) -->
-            <certificates src="user" />
         </trust-anchors>
     </base-config>
 
-    <domain-config cleartextTrafficPermitted="false">
+    <!-- Excepción explícita para el backend: permite HTTP en este dominio -->
+    <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">homneyapp.atwebpages.com</domain>
-        <trust-anchors>
-            <certificates src="system" />
-            <certificates src="user" />
-        </trust-anchors>
     </domain-config>
 </network-security-config>

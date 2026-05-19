@@ -64,7 +64,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -268,7 +267,7 @@ public class fragment_mi_perfil extends Fragment {
     private void poblarCampos(Usuario u) {
         etNombre.setText(u.getNombre() != null ? u.getNombre() : "");
         etTelefono.setText(u.getTelefono_movil() != null ? u.getTelefono_movil() : "");
-        etFechaNac.setText(u.getFecha_nacimiento() != null ? u.getFecha_nacimiento() : "");
+        etFechaNac.setText(Utilidades.fechaEntradaASalida(u.getFecha_nacimiento()));
         tvEmail.setText(u.getEmail() != null ? u.getEmail() : "");
 
         /* Spinner sexo: buscar índice que coincida */
@@ -435,14 +434,16 @@ public class fragment_mi_perfil extends Fragment {
         String fechaActual = etFechaNac.getText().toString().trim();
         if (!fechaActual.isEmpty()) {
             try {
-                Date d = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(fechaActual);
+                Date d = Utilidades.FMT_SALIDA.parse(fechaActual);
                 if (d != null) cal.setTime(d);
             } catch (Exception ignored) {}
         }
         new DatePickerDialog(requireContext(),
-                (picker, year, month, day) ->
-                        etFechaNac.setText(String.format(Locale.getDefault(),
-                                "%04d-%02d-%02d", year, month + 1, day)),
+                (picker, year, month, day) -> {
+                    String fechaSeleccionada = String.format(Locale.getDefault(),
+                            "%02d/%02d/%04d", day, month + 1, year);
+                    etFechaNac.setText(fechaSeleccionada);
+                },
                 cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)
@@ -524,7 +525,7 @@ public class fragment_mi_perfil extends Fragment {
             body.put("telefono_movil", etTelefono.getText().toString().trim());
             body.put("sexo",           spinnerSexo.getSelectedItem() != null
                     ? spinnerSexo.getSelectedItem().toString() : "");
-            String fnac = etFechaNac.getText().toString().trim();
+            String fnac = Utilidades.fechaSalidaAEntrada(etFechaNac.getText().toString().trim());
             if (!fnac.isEmpty()) body.put("fecha_nacimiento", fnac);
             if (nuevaRutaAvatar != null) body.put("avatar", nuevaRutaAvatar);
         } catch (JSONException e) {

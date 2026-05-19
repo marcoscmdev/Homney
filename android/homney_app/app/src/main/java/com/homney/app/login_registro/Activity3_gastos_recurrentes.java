@@ -64,13 +64,13 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
     }
 
     private static final GastoSugest[] SUGERENCIAS = {
-        new GastoSugest("Alquiler",  700, "transferencia", "Alquiler / Hipoteca"),
+        new GastoSugest("Alquiler",  1200, "transferencia", "Alquiler / Hipoteca"),
         new GastoSugest("Luz",        80, "transferencia", "Suministros"),
         new GastoSugest("Agua",       35, "transferencia", "Suministros"),
         new GastoSugest("Gas",        55, "transferencia", "Suministros"),
         new GastoSugest("Internet",   45, "transferencia", "Suministros"),
-        new GastoSugest("Netflix",    13, "tarjeta",       "Ocio / Entretenimiento"),
-        new GastoSugest("Spotify",    11, "tarjeta",       "Ocio / Entretenimiento"),
+        new GastoSugest("Suscripciones",    13, "tarjeta",       "Ocio / Entretenimiento"),
+        new GastoSugest("Gimnasio",    60, "tarjeta",       "Ocio / Entretenimiento"),
         new GastoSugest("Comunidad",  60, "transferencia", "Alquiler / Hipoteca"),
     };
 

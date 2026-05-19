@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.homney.app.R;
+import com.homney.app.Utilidades;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 
@@ -38,9 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -301,7 +300,7 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
         JSONArray gastosArr    = data.optJSONArray("gastos");
         JSONArray categoriasArr = data.optJSONArray("categorias");
 
-        String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String hoy = Utilidades.fechaHoyEntrada();
 
         // Nombre del hogar: usar el campo del contexto o el valor ya cargado
         String nomHogar = data.optString("nombre_hogar", "");
@@ -676,7 +675,7 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
     private void ejecutarCrearGasto(JSONObject datos) {
         try {
             JSONObject body = new JSONObject();
-            String hoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+            String hoy = Utilidades.fechaHoyEntrada();
             body.put("fecha",              datos.optString("fecha",     hoy));
             body.put("categoria",          datos.optString("categoria", "Otros"));
             body.put("concepto",           datos.optString("concepto",  "Gasto"));

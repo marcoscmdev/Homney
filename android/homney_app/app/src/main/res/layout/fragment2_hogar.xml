@@ -54,12 +54,33 @@
                     android:layout_weight="1"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_hogar_titulo"
-                        style="@style/Homney.Text.Title"
+                    <!-- Título del hogar + lápiz editar -->
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        tools:text="Hogar #12" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/tv_hogar_titulo"
+                            style="@style/Homney.Text.Title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="Hogar #12" />
+
+                        <ImageView
+                            android:id="@+id/iv_editar_nombre_hogar"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="8dp"
+                            android:src="@drawable/outline_border_color_24"
+                            android:contentDescription="Editar nombre del hogar"
+                            android:tint="@color/muted"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless" />
+
+                    </LinearLayout>
 
                     <!-- Fila clave de invitación -->
                     <LinearLayout

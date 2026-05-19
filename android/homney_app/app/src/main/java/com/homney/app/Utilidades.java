@@ -29,8 +29,11 @@ import java.io.InputStream;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -81,6 +84,54 @@ public class Utilidades {
    }
 
 
+    public static final SimpleDateFormat FMT_ENTRADA =
+            new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    public static final SimpleDateFormat FMT_SALIDA  =
+            new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    public static final SimpleDateFormat FMT_ENTRADA_DATETIME =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    public static final SimpleDateFormat FMT_SALIDA_DATETIME  =
+            new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+
+    /** Convierte fecha de formato BD (yyyy-MM-dd) a formato visual (dd/MM/yyyy). */
+    public static String fechaEntradaASalida(String fechaEntrada) {
+        if (fechaEntrada == null || fechaEntrada.isEmpty()) return "";
+        try {
+            // Admite también ISO 8601 (yyyy-MM-dd'T'HH:mm:ss'Z') que devuelve el servidor
+            String limpia = fechaEntrada.contains("T") ? fechaEntrada.substring(0, 10) : fechaEntrada;
+            Date d = FMT_ENTRADA.parse(limpia);
+            return d != null ? FMT_SALIDA.format(d) : fechaEntrada;
+        } catch (Exception e) {
+            return fechaEntrada;
+        }
+    }
+
+    /** Convierte fecha de formato visual (dd/MM/yyyy) a formato BD (yyyy-MM-dd). */
+    public static String fechaSalidaAEntrada(String fechaSalida) {
+        if (fechaSalida == null || fechaSalida.isEmpty()) return "";
+        try {
+            Date d = FMT_SALIDA.parse(fechaSalida);
+            return d != null ? FMT_ENTRADA.format(d) : fechaSalida;
+        } catch (Exception e) {
+            return fechaSalida;
+        }
+    }
+
+    /** Devuelve la fecha de hoy en formato BD (yyyy-MM-dd). */
+    public static String fechaHoyEntrada() {
+        return FMT_ENTRADA.format(new Date());
+    }
+
+    /** Convierte "yyyy-MM-dd HH:mm:ss" → "dd/MM/yyyy · HH:mm" (para el muro y tareas). */
+    public static String formatearFechaMuro(String raw) {
+        if (raw == null || raw.isEmpty()) return "";
+        try {
+            Date d = FMT_ENTRADA_DATETIME.parse(raw);
+            return d != null ? FMT_SALIDA_DATETIME.format(d) : raw;
+        } catch (Exception e) {
+            return raw;
+        }
+    }
 
     /* Convierte un array de bytes en su representación Hexadecimal String */
     public static String bytesAHexString(byte[] bytes){

@@ -11,14 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.homney.app.R;
+import com.homney.app.Utilidades;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.Muro;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class RvMuroAdapter extends RecyclerView.Adapter<RvMuroAdapter.MuroViewHolder> {
@@ -34,11 +31,6 @@ public class RvMuroAdapter extends RecyclerView.Adapter<RvMuroAdapter.MuroViewHo
     /** id del usuario en sesión — para mostrar la papelera solo en sus publicaciones */
     private final int                  idUsuarioActual;
     private final OnDeleteListener     deleteListener;
-
-    private static final SimpleDateFormat FMT_ENTRADA =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-    private static final SimpleDateFormat FMT_SALIDA  =
-            new SimpleDateFormat("dd/MM/yyyy · HH:mm", Locale.getDefault());
 
     public RvMuroAdapter(List<Muro> publicacionesList,
                          Map<Integer, String> nombresPorUsuario,
@@ -72,7 +64,7 @@ public class RvMuroAdapter extends RecyclerView.Adapter<RvMuroAdapter.MuroViewHo
 
         // Fecha formateada
         String fechaTexto = pub.getFecha_pub() != null
-                ? formatearFecha(pub.getFecha_pub())
+                ? Utilidades.formatearFechaMuro(pub.getFecha_pub())
                 : "";
 
         holder.fecha_nombre.setText(fechaTexto + "  ·  " + autor);
@@ -109,16 +101,6 @@ public class RvMuroAdapter extends RecyclerView.Adapter<RvMuroAdapter.MuroViewHo
     @Override
     public int getItemCount() {
         return publicacionesList != null ? publicacionesList.size() : 0;
-    }
-
-    /** Convierte "yyyy-MM-dd HH:mm:ss" → "dd/MM/yyyy · HH:mm" */
-    private String formatearFecha(String raw) {
-        try {
-            Date d = FMT_ENTRADA.parse(raw);
-            return d != null ? FMT_SALIDA.format(d) : raw;
-        } catch (ParseException e) {
-            return raw; // si no puede parsear, muestra el texto tal cual
-        }
     }
 
     /* ── ViewHolder ─────────────────────────────────────── */
