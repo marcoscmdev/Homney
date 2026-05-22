@@ -38,11 +38,167 @@
                 style="@style/Homney.Tag.Yellow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="3 TAREAS" />
+                tools:text="3 pendientes" />
         </LinearLayout>
 
-        <!-- Lista de tareas de la habitación -->
+        <!-- ═══════════════════════════════════════
+             SECCIÓN 1 — MIS TAREAS
+        ════════════════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/ll_header_mis_tareas_hab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                style="@style/Homney.Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Mis tareas" />
+
+            <TextView
+                android:id="@+id/chevron_mis_tareas_hab"
+                style="@style/Homney.Text.Muted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▲"
+                android:textSize="10sp" />
+        </LinearLayout>
+
         <androidx.cardview.widget.CardView
+            android:id="@+id/card_mis_tareas_hab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:id="@+id/container_mis_tareas_hab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_sin_mis_tareas_hab"
+                    style="@style/Homney.Text.Muted"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:text="Cargando…" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ═══════════════════════════════════════
+             SECCIÓN 2 — OTRAS TAREAS DE LA HABITACIÓN
+        ════════════════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/ll_header_otras_tareas_hab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                style="@style/Homney.Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Otras tareas" />
+
+            <TextView
+                android:id="@+id/chevron_otras_tareas_hab"
+                style="@style/Homney.Text.Muted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▲"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_otras_tareas_hab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/surface"
+            app:strokeColor="@color/border"
+            app:strokeWidth="1dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:id="@+id/container_otras_tareas_hab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_sin_otras_tareas_hab"
+                    style="@style/Homney.Text.Muted"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:text="No hay más tareas en esta habitación." />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- ═══════════════════════════════════════
+             SECCIÓN 3 — COMPLETADAS ESTE MES
+        ════════════════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/ll_header_completadas_hab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                style="@style/Homney.Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Completadas este mes" />
+
+            <TextView
+                android:id="@+id/chevron_completadas_hab"
+                style="@style/Homney.Text.Muted"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="▲"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_completadas_hab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/surface"
@@ -55,19 +211,19 @@
             android:layout_marginBottom="4dp">
 
             <LinearLayout
-                android:id="@+id/container_tareas_hab"
+                android:id="@+id/container_completadas_hab"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/tv_sin_tareas_hab"
+                    android:id="@+id/tv_sin_completadas_hab"
                     style="@style/Homney.Text.Muted"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="24dp"
-                    android:text="Cargando…" />
+                    android:text="Sin tareas completadas este mes." />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

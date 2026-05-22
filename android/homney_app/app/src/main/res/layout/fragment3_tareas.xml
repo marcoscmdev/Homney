@@ -53,13 +53,22 @@
                         style="@style/Homney.Text.Title"
                         android:text="@string/mis_tareas" />
 
+
                     <TextView
                         android:id="@+id/tareas_pendientes"
                         style="@style/Homney.Tag.Yellow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         tools:text="3 PENDIENTES" />
+
                 </LinearLayout>
+                <TextView
+                    style="@style/Homney.Text.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="4dp"
+                    android:text="Desliza a la izquierda para eliminar" />
 
                 <!-- Divider -->
                 <View
@@ -108,6 +117,7 @@
                 android:layout_weight="1"
                 android:text="Otras tareas del hogar" />
 
+
             <TextView
                 android:id="@+id/chevron_otras_tareas"
                 android:layout_width="wrap_content"
@@ -117,7 +127,17 @@
                 android:textColor="@color/accent_dark"
                 android:paddingStart="8dp"
                 android:paddingEnd="4dp" />
+
         </LinearLayout>
+
+        <TextView
+            style="@style/Homney.Text.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="4dp"
+            android:text="Pulsa para asignar la tarea" />
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_otras_tareas"
@@ -180,6 +200,14 @@
                 android:paddingStart="8dp"
                 android:paddingEnd="4dp" />
         </LinearLayout>
+
+        <TextView
+            style="@style/Homney.Text.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="4dp"
+            android:text="Tareas finalizadas este mes" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_completadas"
@@ -257,6 +285,14 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="4dp" />
             </LinearLayout>
+
+            <TextView
+                style="@style/Homney.Text.Label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="20dp"
+                android:paddingEnd="4dp"
+                android:text="Tareas completadas el mes pasado" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_historial_mes"

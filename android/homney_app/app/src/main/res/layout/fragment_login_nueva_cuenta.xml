@@ -101,6 +101,8 @@
                 android:paddingBottom="11dp"
                 android:singleLine="true"
                 android:autofillHints="phoneNumber"
+                android:maxLength="9"
+
                 />
         </LinearLayout>
 

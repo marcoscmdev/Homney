@@ -183,6 +183,14 @@
                 android:paddingEnd="4dp" />
         </LinearLayout>
 
+        <TextView
+            style="@style/Homney.Text.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="4dp"
+            android:text="Pulsa para confirmar el pago" />
+
         <!-- Contenedor dinámico de bloques de deudores -->
         <LinearLayout
             android:id="@+id/container_me_deben"
@@ -241,6 +249,13 @@
                 android:paddingEnd="4dp" />
         </LinearLayout>
 
+        <TextView
+            style="@style/Homney.Text.Label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="4dp"
+            android:text="Pulsa para confirmar pago"/>
 
         <!-- Contenedor dinámico de bloques de acreedores -->
         <LinearLayout
@@ -318,6 +333,15 @@
                         android:paddingStart="8dp"
                         android:paddingEnd="4dp" />
                 </LinearLayout>
+
+                <TextView
+                    style="@style/Homney.Text.Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="8dp"
+                    android:text="Desliza a la izquierda para eliminar" />
 
                 <View
                     android:id="@+id/divider_historial"
@@ -397,6 +421,15 @@
                             android:layout_height="wrap_content"
                             tools:text="HISTORIAL" />
                     </LinearLayout>
+
+                    <TextView
+                        style="@style/Homney.Text.Label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="4dp"
+                        android:paddingBottom="8dp"
+                        android:text="Historial de gastos del mes pasado" />
 
                     <View
                         android:layout_width="match_parent"

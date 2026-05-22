@@ -7,34 +7,26 @@
     android:background="@color/background"
     android:padding="@dimen/activity_vertical_margin">
 
-    <!-- ── Barra de arrastre ── -->
-    <View
-        android:layout_width="40dp"
-        android:layout_height="4dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="6dp"
-        android:background="@color/border" />
-
     <!-- ── Cabecera ── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="12dp">
+        android:paddingStart="14dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
 
         <ImageView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:src="@drawable/homney_mate"
-            android:layout_marginEnd="12dp" />
+            android:layout_marginEnd="10dp"
+            />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="226dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -44,25 +36,45 @@
                 android:layout_height="wrap_content"
                 android:text="Homney Mate"
                 android:textColor="@color/text"
-                android:textSize="16sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
+                style="@style/Homney.Text.Muted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tu abeja obrera con IA"
-                style="@style/Homney.Text.Muted"
                 android:textSize="11sp" />
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btn_limpiar_historial"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_limpiar_chat"
-            android:contentDescription="Limpiar historial"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="6dp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <!-- Botón limpiar historial (pequeño, discreto) -->
+            <ImageButton
+                android:id="@+id/btn_limpiar_historial"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_limpiar_chat"
+                android:contentDescription="Limpiar historial"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"
+                android:layout_marginEnd="4dp" />
+
+            <!-- Botón amarillo Cerrar -->
+            <Button
+                android:id="@+id/btn_cerrar_ia"
+                style="@style/Homney.Button.Primary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cerrar"
+                android:layout_marginEnd="4dp" />
+
+            <!-- Botón Aceptar -->
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
@@ -106,19 +118,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/border" />
-
-    <!-- ── Botón Aceptar (solo en modo bienvenida) ── -->
-    <Button
-        android:id="@+id/btn_aceptar_bienvenida"
-        style="@style/Homney.Button.Primary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="12dp"
-        android:text="¡Entendido! Ir a la colmena 🍯"
-        android:visibility="gone" />
 
     <!-- ── Barra de entrada ── -->
     <LinearLayout

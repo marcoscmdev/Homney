@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Foreground del launcher icon — mismos paths que ic_logo_homney
+    pero con colores opacos pensados para el fondo amarillo del icono.
+    Viewport 40x40 escalado a 108dp por el sistema adaptive icon.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="40"
+    android:viewportHeight="40">
+
+    <!-- Hexágono exterior — blanco sólido con borde ámbar oscuro -->
+    <path
+        android:pathData="M20,4L34,12V28L20,36L6,28V12L20,4Z"
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#C49A00"
+        android:strokeWidth="1.4" />
+
+    <!-- Hexágono interior — crema cálida con borde marrón -->
+    <path
+        android:pathData="M20,9L30,15V25L20,31L10,25V15L20,9Z"
+        android:fillColor="#FFF3C0"
+        android:strokeColor="#5C4A2A"
+        android:strokeWidth="0.9" />
+
+    <!-- Círculo central — marrón oscuro sólido -->
+    <path
+        android:pathData="M20,20m-4.5,0a4.5,4.5,0,1,1,9,0a4.5,4.5,0,1,1,-9,0"
+        android:fillColor="#2D2416" />
+
+</vector>

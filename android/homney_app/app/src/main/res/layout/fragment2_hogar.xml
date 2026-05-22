@@ -82,39 +82,47 @@
 
                     </LinearLayout>
 
-                    <!-- Fila clave de invitación -->
+                    <!-- Botón invitar + código oculto -->
+                    <!-- El código se guarda en Java (claveInvActual), no se muestra -->
+                    <TextView
+                        android:id="@+id/tareas_pendientes"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:visibility="gone"
+                        tools:text="AB12XY" />
+
+                    <Button
+                        android:id="@+id/btn_invitar_hogar"
+                        style="@style/Homney.Button.Primary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Invita a la colmena" />
+
+                    <!-- Código de invitación visible bajo el botón -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginTop="4dp">
+                        android:layout_marginTop="6dp">
 
                         <TextView
                             style="@style/Homney.Text.Muted"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Clave: " />
+                            android:text="Código: "
+                            android:textSize="12sp" />
 
                         <TextView
-                            android:id="@+id/tareas_pendientes"
-                            style="@style/Homney.Text.Body"
+                            android:id="@+id/tv_codigo_invi"
+                            style="@style/Homney.Tag.Yellow"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@color/accent_background"
-                            android:paddingStart="8dp"
-                            android:paddingEnd="8dp"
-                            android:paddingTop="2dp"
-                            android:paddingBottom="2dp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.08"
                             tools:text="AB12XY" />
                     </LinearLayout>
-
-                    <TextView
-                        style="@style/Homney.Text.Muted"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Compártela para que otros se unan" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

@@ -363,7 +363,7 @@ public class activity_fragment_nueva_cuenta extends Fragment {
         requireActivity().runOnUiThread(() -> {
             btn_registro.setEnabled(true);
             btn_registro.setText(getString(R.string.btn_crear_cuenta));
-            Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
+
         });
     }
 

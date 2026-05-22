@@ -1,12 +1,15 @@
 package com.homney.app.ui.fragmento2_mihogar;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,7 +46,8 @@ public class fragmento_mihogar extends Fragment {
     /* ── Vistas del layout ──────────────────────────────── */
     private TextView     tvHogarTitulo;
     private ImageView    ivEditarNombreHogar;
-    private TextView     tvClaveHogar;
+    private TextView     tvClaveHogar, tv_codigo_invi;
+    private Button       btnInvitar;
     private TextView     tvSinUsuarios;
     private TextView     tvSinHabitaciones;
     private LinearLayout containerUsuarios;
@@ -61,6 +65,7 @@ public class fragmento_mihogar extends Fragment {
     private static final String TAG = "WS_HOGAR";
 
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -71,16 +76,21 @@ public class fragmento_mihogar extends Fragment {
         tvHogarTitulo        = root.findViewById(R.id.tv_hogar_titulo);
         ivEditarNombreHogar  = root.findViewById(R.id.iv_editar_nombre_hogar);
         tvClaveHogar         = root.findViewById(R.id.tareas_pendientes);
+        btnInvitar           = root.findViewById(R.id.btn_invitar_hogar);
         tvSinUsuarios        = root.findViewById(R.id.tv_sin_usuarios);
         tvSinHabitaciones    = root.findViewById(R.id.tv_sin_habitaciones);
         containerUsuarios    = root.findViewById(R.id.container_usuarios);
         gridHabitaciones     = root.findViewById(R.id.grid_habitaciones);
         btnAnadirHabitacion  = root.findViewById(R.id.btn_anadir_habitacion);
+        tv_codigo_invi      =   root.findViewById(R.id.tv_codigo_invi);
 
         loadingDialog = new LoadingDialog(requireContext());
 
         // Lápiz junto al título → abre el diálogo para renombrar el hogar
         ivEditarNombreHogar.setOnClickListener(v -> editarNombreHogar());
+
+        // Botón Invitar → comparte el código por cualquier app (WhatsApp, email, etc.)
+        btnInvitar.setOnClickListener(v -> compartirCodigoHogar());
 
         // Botón "+" → abre el BottomSheet para añadir habitación
         btnAnadirHabitacion.setOnClickListener(v -> {
@@ -144,6 +154,8 @@ public class fragmento_mihogar extends Fragment {
                                 }
                                 claveInvActual = h.getClave_inv() != null ? h.getClave_inv() : "";
                                 tvClaveHogar.setText(claveInvActual);
+                                if (tv_codigo_invi != null)
+                                    tv_codigo_invi.setText(claveInvActual);
                             }
                         }
                     } catch (JSONException e) {
@@ -469,6 +481,34 @@ public class fragmento_mihogar extends Fragment {
                             Request.Method.PUT, WebService.URL_Hogar, error);
                 }
         ));
+    }
+
+
+
+    /* ════════════════════════════════════════════════════════
+       COMPARTIR CÓDIGO DE INVITACIÓN
+    ════════════════════════════════════════════════════════ */
+
+    private void compartirCodigoHogar() {
+        if (claveInvActual == null || claveInvActual.isEmpty()) {
+            Toast.makeText(requireContext(),
+                    "El código aún no está disponible, espera un momento",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String nombreHogar = tvHogarTitulo.getText().toString().trim();
+        String mensaje = "🏠 ¡Te invito a unirte a mi colmena en Homney!\n\n"
+                + "Hogar: " + nombreHogar + "\n"
+                + "Código de invitación: " + claveInvActual + "\n\n"
+                + "Descarga Homney, crea tu cuenta y usa este código para unirte.";
+
+        tv_codigo_invi.setText(claveInvActual);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, mensaje);
+
+        startActivity(Intent.createChooser(intent, "Invitar al hogar"));
     }
 
     /* ════════════════════════════════════════════════════════

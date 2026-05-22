@@ -26,10 +26,11 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 
+import android.app.Dialog;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import androidx.fragment.app.DialogFragment;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
 import com.homney.app.webservice.PeticionesRed;
@@ -46,7 +47,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * BottomSheet con Homney Mate, el asistente IA del hogar.
+ * Diálogo full-screen con Homney Mate, el asistente IA del hogar.
  *
  * Capacidades:
  * - Análisis de tareas, gastos y miembros del hogar.
@@ -55,7 +56,7 @@ import java.util.Map;
  * - Historial persistente por hogar (SharedPreferences), auto-borrado a los 30 días.
  * - Modo bienvenida: presentación inicial para usuarios recién registrados.
  */
-public class HogarAIBottomSheet extends BottomSheetDialogFragment {
+public class HogarAIBottomSheet extends DialogFragment {
 
     /** Callback para el modo bienvenida: notifica cuando el usuario pulsa Aceptar. */
     public interface OnAceptarBienvenidaListener {
@@ -112,6 +113,27 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
        CICLO DE VIDA
     ════════════════════════════════════════════ */
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Estilo sin título y pantalla completa
+        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Black_NoTitleBar);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Forzar ventana completa
+        Dialog dialog = getDialog();
+        if (dialog != null && dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+            dialog.getWindow().setBackgroundDrawableResource(
+                    android.R.color.transparent);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -136,37 +158,20 @@ public class HogarAIBottomSheet extends BottomSheetDialogFragment {
         btnEnviar.setOnClickListener(v -> enviarPregunta());
         btnLimpiar.setOnClickListener(v -> confirmarLimpiarHistorial());
 
-        // ── Modo bienvenida: ocultar entrada, mostrar botón Aceptar ──────
+        // Botones Cerrar  → ambos cierran el diálogo
+        Button btnCerrar  = view.findViewById(R.id.btn_cerrar_ia);
+        if (btnCerrar  != null) btnCerrar.setOnClickListener(v  -> dismiss());
+        // ── Modo bienvenida: ocultar barra de entrada ──────────────────
         boolean esBienvenida = getArguments() != null
                 && getArguments().getBoolean(ARG_BIENVENIDA, false);
         if (esBienvenida) {
             View barraEntrada = view.findViewById(R.id.ll_barra_entrada);
             if (barraEntrada != null) barraEntrada.setVisibility(View.GONE);
             if (btnLimpiar   != null) btnLimpiar.setVisibility(View.GONE);
-
-            Button btnAceptar = view.findViewById(R.id.btn_aceptar_bienvenida);
-            if (btnAceptar != null) {
-                btnAceptar.setVisibility(View.VISIBLE);
-                btnAceptar.setOnClickListener(v -> {
-                    dismiss();
-                    if (onAceptarListener != null) onAceptarListener.onAceptar();
-                });
-            }
         }
 
         iniciarChat();
         return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        View parent = (View) view.getParent();
-        if (parent != null) {
-            BottomSheetBehavior<?> behavior = BottomSheetBehavior.from(parent);
-            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-            behavior.setSkipCollapsed(true);
-        }
     }
 
     /* ════════════════════════════════════════════

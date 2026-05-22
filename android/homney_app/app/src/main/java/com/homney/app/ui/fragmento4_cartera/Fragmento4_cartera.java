@@ -955,19 +955,19 @@ public class Fragmento4_cartera extends Fragment {
         // ── Fecha ──
         layout.addView(crearLabel(ctx, "FECHA"));
         EditText etFecha = new EditText(ctx);
-        etFecha.setText(g.getFecha() != null ? g.getFecha() : "");
+        etFecha.setText(Utilidades.fechaEntradaASalida(g.getFecha()));
         etFecha.setFocusable(false);
         etFecha.setClickable(true);
         etFecha.setOnClickListener(btnF -> {
             Calendar cal = Calendar.getInstance();
             try {
-                Date d = Utilidades.FMT_ENTRADA.parse(etFecha.getText().toString());
+                Date d = Utilidades.FMT_SALIDA.parse(etFecha.getText().toString());
                 if (d != null) cal.setTime(d);
             } catch (Exception ignored) {}
             new DatePickerDialog(ctx,
                     (picker, year, month, day) ->
                             etFecha.setText(String.format(Locale.getDefault(),
-                                    "%04d-%02d-%02d", year, month + 1, day)),
+                                    "%02d/%02d/%04d", day, month + 1, year)),
                     cal.get(Calendar.YEAR),
                     cal.get(Calendar.MONTH),
                     cal.get(Calendar.DAY_OF_MONTH)
@@ -1031,10 +1031,10 @@ public class Fragmento4_cartera extends Fragment {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             String concepto   = etConcepto.getText().toString().trim();
             String importeStr = etImporte.getText().toString().trim().replace(",", ".");
-            String fecha      = etFecha.getText().toString().trim();
+            String fechaVisual = etFecha.getText().toString().trim();
             String categoria  = etCategoria.getText().toString().trim();
 
-            if (concepto.isEmpty() || importeStr.isEmpty() || fecha.isEmpty()) {
+            if (concepto.isEmpty() || importeStr.isEmpty() || fechaVisual.isEmpty()) {
                 Toast.makeText(ctx, "Rellena todos los campos obligatorios",
                         Toast.LENGTH_SHORT).show();
                 return;
@@ -1051,13 +1051,14 @@ public class Fragmento4_cartera extends Fragment {
 
             String modo = modos[spinnerModo.getSelectedItemPosition()];
             String tipo = tipos[spinnerTipo.getSelectedItemPosition()];
+            String fechaBD = Utilidades.fechaSalidaAEntrada(fechaVisual);
 
             JSONObject body = new JSONObject();
             try {
                 body.put("id_gasto",           g.getId_gasto());
                 body.put("concepto",           concepto);
                 body.put("importe",            importe);
-                body.put("fecha",              fecha);
+                body.put("fecha",              fechaBD);
                 body.put("categoria",          categoria);
                 body.put("modo",               modo);
                 body.put("tipo",               tipo);

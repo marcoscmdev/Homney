@@ -16,35 +16,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
+        android:gravity="center"
+        android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:background="@color/surface">
 
-        <Button
-            android:id="@+id/btn_atras_tareas"
-            style="@style/Homney.Button.Ghost"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="← Atrás"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Paso 2 de 3"
             android:gravity="center"
             style="@style/Homney.Text.Muted"
             android:textSize="12sp" />
-
-        <!-- Espacio simétrico al botón -->
-        <View
-            android:layout_width="70dp"
-            android:layout_height="1dp" />
 
     </LinearLayout>
 

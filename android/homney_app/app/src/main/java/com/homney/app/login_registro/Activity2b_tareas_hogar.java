@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
@@ -227,9 +228,6 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
                     .edit().remove("registro_tareas").apply();
             irAGastos();
         });
-        findViewById(R.id.btn_atras_tareas).setOnClickListener(v ->
-                Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show());
-
         cargarHabitaciones();
     }
 
@@ -419,7 +417,7 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
         item.checkBox = cb;
         fila.addView(cb);
 
-        // Badge de frecuencia
+        // Badge de frecuencia — pulsable para cambiarla
         TextView tvFreq = new TextView(this);
         tvFreq.setText(frecuenciaLabel(item.frecuencia));
         tvFreq.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
@@ -429,9 +427,33 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
         badgeBg.setColor(getResources().getColor(R.color.accent_background, null));
         tvFreq.setBackground(badgeBg);
         tvFreq.setPadding(dp(8), dp(3), dp(8), dp(3));
+        tvFreq.setClickable(true);
+        tvFreq.setFocusable(true);
+        tvFreq.setOnClickListener(v -> mostrarSelectorFrecuencia(item, tvFreq));
         fila.addView(tvFreq);
 
         return fila;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       DIÁLOGO CAMBIO DE FRECUENCIA (tareas sugeridas)
+    ══════════════════════════════════════════════════════════════ */
+
+    private void mostrarSelectorFrecuencia(TareaItem item, TextView tvBadge) {
+        String[] labels = {"Diario", "Semanal", "Mensual"};
+        String[] values = {"dia", "semana", "mes"};
+        int cur = 1;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].equals(item.frecuencia)) { cur = i; break; }
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Cambiar frecuencia")
+                .setSingleChoiceItems(labels, cur, (d, which) -> {
+                    item.frecuencia = values[which];
+                    tvBadge.setText(labels[which]);
+                    d.dismiss();
+                })
+                .show();
     }
 
     /* ══════════════════════════════════════════════════════════════
@@ -439,14 +461,23 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
     ══════════════════════════════════════════════════════════════ */
 
     private View crearZonaCustom(SeccionHabitacion sec, LinearLayout llTareas) {
+        final String[] freqSel = {"semana"}; // frecuencia seleccionada por el usuario
+
         LinearLayout zona = new LinearLayout(this);
-        zona.setOrientation(LinearLayout.HORIZONTAL);
-        zona.setGravity(Gravity.CENTER_VERTICAL);
+        zona.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams zonaLp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
         zonaLp.topMargin = dp(10);
         zona.setLayoutParams(zonaLp);
+
+        // ── Fila 1: input + botón ＋ ──────────────────────────
+        LinearLayout filaInput = new LinearLayout(this);
+        filaInput.setOrientation(LinearLayout.HORIZONTAL);
+        filaInput.setGravity(Gravity.CENTER_VERTICAL);
+        filaInput.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
 
         EditText etNombre = new EditText(this);
         etNombre.setHint("Añadir tarea personalizada…");
@@ -459,9 +490,8 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
                 0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
         etLp.rightMargin = dp(8);
         etNombre.setLayoutParams(etLp);
-        zona.addView(etNombre);
+        filaInput.addView(etNombre);
 
-        // Botón ＋
         GradientDrawable btnBg = new GradientDrawable();
         btnBg.setCornerRadius(dp(8));
         btnBg.setColor(getResources().getColor(R.color.accent, null));
@@ -474,21 +504,86 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
         btnAdd.setPadding(dp(14), 0, dp(14), 0);
         btnAdd.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, dp(42)));
-        zona.addView(btnAdd);
+        filaInput.addView(btnAdd);
+        zona.addView(filaInput);
 
+        // ── Fila 2: chips de periodicidad ─────────────────────
+        LinearLayout llChips = new LinearLayout(this);
+        llChips.setOrientation(LinearLayout.HORIZONTAL);
+        llChips.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams chipsLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        chipsLp.topMargin = dp(6);
+        llChips.setLayoutParams(chipsLp);
+
+        TextView tvLabel = new TextView(this);
+        tvLabel.setText("Periodicidad: ");
+        tvLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+        tvLabel.setTextColor(getResources().getColor(R.color.muted, null));
+        LinearLayout.LayoutParams lblLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        lblLp.rightMargin = dp(4);
+        tvLabel.setLayoutParams(lblLp);
+        llChips.addView(tvLabel);
+
+        String[] freqLabels = {"Diario", "Semanal", "Mensual"};
+        String[] freqValues = {"dia",    "semana",  "mes"};
+        TextView[] chips    = new TextView[3];
+
+        for (int i = 0; i < 3; i++) {
+            final int fi = i;
+            chips[i] = new TextView(this);
+            chips[i].setText(freqLabels[i]);
+            chips[i].setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
+            chips[i].setPadding(dp(10), dp(5), dp(10), dp(5));
+            chips[i].setClickable(true);
+            chips[i].setFocusable(true);
+            LinearLayout.LayoutParams chipLp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            chipLp.rightMargin = dp(4);
+            chips[i].setLayoutParams(chipLp);
+            actualizarEstiloChip(chips[i], i == 1); // Semanal por defecto
+            chips[i].setOnClickListener(v -> {
+                freqSel[0] = freqValues[fi];
+                for (int j = 0; j < 3; j++) actualizarEstiloChip(chips[j], j == fi);
+            });
+            llChips.addView(chips[i]);
+        }
+        zona.addView(llChips);
+
+        // ── Listener del botón ────────────────────────────────
         btnAdd.setOnClickListener(v -> {
             String nombre = etNombre.getText().toString().trim();
             if (nombre.isEmpty()) {
                 Toast.makeText(this, "Escribe el nombre de la tarea", Toast.LENGTH_SHORT).show();
                 return;
             }
-            TareaItem custom = new TareaItem(nombre, "semana", 1, true);
+            TareaItem custom = new TareaItem(nombre, freqSel[0], 1, true);
             sec.tareas.add(custom);
             llTareas.addView(crearTagCustom(custom, sec, llTareas));
             etNombre.setText("");
         });
 
         return zona;
+    }
+
+    /** Aplica el estilo seleccionado/no-seleccionado al chip de frecuencia. */
+    private void actualizarEstiloChip(TextView chip, boolean seleccionado) {
+        GradientDrawable bg = new GradientDrawable();
+        bg.setCornerRadius(dp(10));
+        if (seleccionado) {
+            bg.setColor(getResources().getColor(R.color.accent, null));
+            chip.setTextColor(getResources().getColor(R.color.text, null));
+            chip.setTypeface(null, Typeface.BOLD);
+        } else {
+            bg.setColor(getResources().getColor(R.color.surface_two, null));
+            chip.setTextColor(getResources().getColor(R.color.muted, null));
+            chip.setTypeface(null, Typeface.NORMAL);
+        }
+        chip.setBackground(bg);
     }
 
     /** Tag visual amarillo para tareas custom, con botón de eliminar. */
@@ -514,7 +609,7 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
         fila.addView(tvNom);
 
         TextView tvSemanal = new TextView(this);
-        tvSemanal.setText("Semanal");
+        tvSemanal.setText(frecuenciaLabel(item.frecuencia));
         tvSemanal.setTextSize(TypedValue.COMPLEX_UNIT_SP, 11);
         tvSemanal.setTextColor(getResources().getColor(R.color.accent_dark, null));
         tvSemanal.setPadding(0, 0, dp(8), 0);

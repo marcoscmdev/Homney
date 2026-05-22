@@ -53,3 +53,4 @@ header('Cache-Control: public, max-age=3600');
 header('Content-Length: ' . filesize($rutaAbsoluta));
 header('X-Content-Type-Options: nosniff');
 readfile($rutaAbsoluta);
+

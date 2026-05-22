@@ -25,7 +25,7 @@ Button btn_contactar;
         btn_contactar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri  envioMail = Uri.parse("mailto:marcoscmdev@info.com");
+                Uri  envioMail = Uri.parse("mailto:info@marcoscm.dev");
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, envioMail);
                 startActivity(emailIntent);
             }
