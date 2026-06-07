@@ -299,11 +299,14 @@ public class HogarAIBottomSheet extends DialogFragment {
 
     /** Construye el system prompt a partir del contexto recibido. */
     private String construirSystemPrompt(JSONObject data) throws JSONException {
-        JSONArray miembros     = data.optJSONArray("miembros");
-        JSONArray habitaciones = data.optJSONArray("habitaciones");
-        JSONArray tareas       = data.optJSONArray("tareas");
-        JSONArray gastosArr    = data.optJSONArray("gastos");
-        JSONArray categoriasArr = data.optJSONArray("categorias");
+        JSONArray miembros            = data.optJSONArray("miembros");
+        JSONArray habitaciones        = data.optJSONArray("habitaciones");
+        JSONArray tareas              = data.optJSONArray("tareas");
+        JSONArray asignaciones        = data.optJSONArray("asignaciones");
+        JSONArray realizadasMes       = data.optJSONArray("realizadas_mes");
+        JSONArray gastosArr           = data.optJSONArray("gastos");
+        JSONArray gastosPorCategoria  = data.optJSONArray("gastos_por_categoria");
+        JSONArray categoriasArr       = data.optJSONArray("categorias");
 
         String hoy = Utilidades.fechaHoyEntrada();
 
@@ -313,14 +316,39 @@ public class HogarAIBottomSheet extends DialogFragment {
         String hogarLabel = nomHogar.isEmpty() ? "la colmena" : "«" + nomHogar + "»";
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Eres «Homney Mate» 🐝, la abeja obrera del hogar compartido ").append(hogarLabel).append(". ");
-        sb.append("Eres muy simpática, cariñosa y trabajadora. ");
-        sb.append("Adoras a los miembros del hogar como si fueran tu abeja reina y los llamas por su nombre cuando puedes. ");
+        sb.append("Eres «Homney Mate» 🐝, la abeja obrera con IA del hogar compartido ").append(hogarLabel).append(". ");
+        sb.append("Eres muy simpática, cariñosa, práctica y trabajadora. ");
+        sb.append("Adoras a los miembros del hogar como si fueran tu abeja reina y los llamas por su nombre siempre que puedes. ");
         sb.append("Siempre que menciones el hogar, llámalo por su nombre: ").append(hogarLabel).append(". ");
         sb.append("Eres pacificadora: cuando hay desequilibrios en tareas o gastos los presentas con diplomacia y propones soluciones amables y pragmáticas. ");
-        sb.append("Usas emojis 🐝🍯 con moderación. Responde siempre en español. Sé concisa y práctica.\n\n");
-        sb.append("RESTRICCIÓN: Solo respondes preguntas sobre el hogar (tareas, gastos, miembros, organización, convivencia). ");
-        sb.append("Si te preguntan otra cosa di: «🐝 ¡Ese tema se escapa de mi colmena! Solo puedo ayudarte con asuntos de la colmena 🍯».\n\n");
+        sb.append("Usas emojis 🐝🍯🧹🍳 con moderación. Sé concisa y práctica.\n");
+        // Idioma del dispositivo como fallback
+        String idiomaDispositivo = java.util.Locale.getDefault().getDisplayLanguage(java.util.Locale.getDefault());
+        sb.append("IDIOMA: Detecta el idioma en que te escribe el usuario y responde SIEMPRE en ese mismo idioma. ");
+        sb.append("Si el usuario escribe en inglés, responde en inglés. ");
+        sb.append("Si escribe en gallego, responde en gallego. ");
+        sb.append("Si escribe en español, responde en español. ");
+        sb.append("Si no reconoces el idioma, responde en ").append(idiomaDispositivo).append(" (idioma del dispositivo). ");
+        sb.append("Nunca cambies de idioma a mitad de una conversación salvo que el usuario lo haga primero.\n\n");
+
+        sb.append("⚠️ IMPORTANTE — ERES UNA IA Y PUEDES COMETER ERRORES:\n");
+        sb.append("Siempre que des consejos prácticos (reparaciones, recetas, salud, electricidad, fontanería…) ");
+        sb.append("añade una nota breve recordando que eres una abeja con IA, que tus respuestas son orientativas ");
+        sb.append("y que para problemas graves o de seguridad es mejor consultar a un profesional. ");
+        sb.append("Ejemplo: «🐝 Recuerda que soy una abeja con IA — mis consejos son orientativos. Para problemas graves, consulta a un profesional.»\n\n");
+
+        sb.append("ÁMBITO DE RESPUESTAS — puedes hablar de TODO lo relacionado con el hogar y la vida doméstica:\n");
+        sb.append("✅ Gestión del hogar: tareas asignadas, gastos, miembros, organización, convivencia.\n");
+        sb.append("✅ Recetas de cocina: ingredientes, pasos, variantes, tiempos de cocción.\n");
+        sb.append("✅ Consejos de limpieza: técnicas, productos, trucos para cada estancia.\n");
+        sb.append("✅ Mantenimiento y reparaciones: cómo desatascar un lavavajillas, cambiar una bombilla, arreglar una gotera leve, etc.\n");
+        sb.append("✅ Organización del hogar: sistemas de orden, distribución de tareas, planificación de compras.\n");
+        sb.append("✅ Jardinería doméstica, cuidado de plantas, mascotas en el hogar.\n");
+        sb.append("✅ Ahorro energético, consejos de eficiencia en el hogar.\n");
+        sb.append("✅ Decoración básica, bricolaje sencillo.\n");
+        sb.append("❌ Solo rechazas preguntas completamente ajenas al hogar y la vida doméstica (política, deportes, noticias, etc.). ");
+        sb.append("En ese caso di con simpatía: «🐝 ¡Ese tema se escapa de mi colmena! Soy especialista en todo lo que pasa en ").append(hogarLabel).append(" 🍯».\n\n");
+
         sb.append("Nombre del hogar: ").append(hogarLabel).append("\n");
         sb.append("Fecha actual: ").append(hoy).append("\n\n");
 
@@ -384,6 +412,63 @@ public class HogarAIBottomSheet extends DialogFragment {
         sb.append("\n🏷️ CATEGORÍAS DISPONIBLES: ")
           .append(android.text.TextUtils.join(", ", cats)).append("\n");
 
+        // ── Asignaciones: quién tiene cada tarea ────────────────────────────
+        sb.append("\n👤 ASIGNACIONES DE TAREAS:\n");
+        if (asignaciones != null && asignaciones.length() > 0) {
+            for (int i = 0; i < asignaciones.length(); i++) {
+                JSONObject a = asignaciones.getJSONObject(i);
+                sb.append("• ").append(a.optString("usuario"))
+                  .append(" → ").append(a.optString("tarea"))
+                  .append(" (").append(a.optString("habitacion")).append(")\n");
+            }
+        } else {
+            sb.append("• (ninguna tarea asignada aún)\n");
+        }
+
+        // ── Tareas realizadas este mes ───────────────────────────────────────
+        sb.append("\n✅ TAREAS REALIZADAS (últimos 30 días):\n");
+        if (realizadasMes != null && realizadasMes.length() > 0) {
+            // Contar por usuario para el análisis de desequilibrio
+            java.util.Map<String, Integer> contadorPorUsuario = new java.util.LinkedHashMap<>();
+            for (int i = 0; i < realizadasMes.length(); i++) {
+                JSONObject r = realizadasMes.getJSONObject(i);
+                String usr = r.optString("usuario");
+                contadorPorUsuario.put(usr, contadorPorUsuario.getOrDefault(usr, 0) + 1);
+            }
+            // Resumen por usuario
+            for (java.util.Map.Entry<String, Integer> e : contadorPorUsuario.entrySet()) {
+                sb.append("• ").append(e.getKey())
+                  .append(": ").append(e.getValue()).append(" tarea(s) completada(s)\n");
+            }
+            // Detalle de las últimas 20
+            sb.append("Detalle (últimas 20):\n");
+            for (int i = 0; i < Math.min(20, realizadasMes.length()); i++) {
+                JSONObject r = realizadasMes.getJSONObject(i);
+                sb.append("  • ").append(r.optString("fecha"))
+                  .append(" | ").append(r.optString("usuario"))
+                  .append(" | ").append(r.optString("tarea")).append("\n");
+            }
+        } else {
+            sb.append("• (ninguna tarea completada en los últimos 30 días)\n");
+        }
+
+        // ── Gastos del mes actual por categoría ──────────────────────────────
+        double totalMes = 0;
+        sb.append("\n📊 GASTOS ESTE MES POR CATEGORÍA:\n");
+        if (gastosPorCategoria != null && gastosPorCategoria.length() > 0) {
+            for (int i = 0; i < gastosPorCategoria.length(); i++) {
+                JSONObject gc = gastosPorCategoria.getJSONObject(i);
+                double t = gc.optDouble("total", 0);
+                totalMes += t;
+                sb.append("• ").append(gc.optString("categoria"))
+                  .append(": ").append(String.format(Locale.getDefault(), "%.2f", t))
+                  .append(" € (").append(gc.optInt("num_gastos")).append(" gasto(s))\n");
+            }
+            sb.append("TOTAL MES: ").append(String.format(Locale.getDefault(), "%.2f", totalMes)).append(" €\n");
+        } else {
+            sb.append("• (sin gastos registrados este mes)\n");
+        }
+
         sb.append("\n═══════════════════════════════════\n");
         sb.append("ACCIONES QUE PUEDES REALIZAR:\n");
         sb.append("Cuando el usuario te pida EXPLÍCITAMENTE publicar, crear una tarea o registrar un gasto,\n");
@@ -422,20 +507,19 @@ public class HogarAIBottomSheet extends DialogFragment {
             } else if (esBienvenida) {
                 String hogarBienvenida = nombreDelHogar.isEmpty()
                         ? "la colmena" : "«" + nombreDelHogar + "»";
-                userMsg = "Acabo de configurar mi hogar en Homney. Soy completamente nuevo aquí y quiero saber qué puedes hacer por mí.\n\n"
-                        + "Por favor:\n"
-                        + "1. 🐝 Preséntate con tu personalidad de abeja trabajadora y cariñosa, y da la bienvenida al hogar " + hogarBienvenida + ".\n"
-                        + "2. 📋 Explícame QUÉ PUEDES HACER por mí (tareas, gastos, muro, consejos, análisis de reparto…).\n"
-                        + "3. 🏠 Menciona que el hogar " + hogarBienvenida + " tiene " + numHabs + " habitacion(es)"
-                        + (numHabs > 0 ? " (" + listaHabs + ")" : "") + " y que ya las conoces.\n"
-                        + "4. Termina con una frase motivadora y cálida de bienvenida usando el nombre del hogar.\n\n"
-                        + "Sé cercana, entusiasta y breve (máx. 5-6 párrafos cortos).";
+                userMsg = "Acabo de abrir Homney Mate por primera vez. Por favor:\n"
+                        + "1. 🐝 Preséntate brevemente como Homney Mate, la abeja IA del hogar " + hogarBienvenida + ".\n"
+                        + "2. 📋 Lista en 1-2 líneas las cosas que sabes hacer: analizar gastos y tareas, detectar desequilibrios, dar recetas, consejos de limpieza y mantenimiento, crear tareas/gastos/publicaciones, planificar menús y listas de la compra.\n"
+                        + "3. Termina con una frase invitando a preguntar.\n\n"
+                        + "Sé muy breve y cercana (máx. 4 párrafos cortos).";
             } else {
-                userMsg = "Saluda al hogar con tu personalidad de abeja y haz un resumen inicial:\n"
-                        + "1. ¿El reparto de tareas es equilibrado? ¿Alguna habitación sin tareas?\n"
-                        + "2. ¿Cuáles son las mayores partidas de gasto? ¿Algo llamativo?\n"
-                        + "3. Dame 2-3 consejos concretos para mejorar el día a día.\n"
-                        + "Sé breve y cariñosa.";
+                userMsg = "Haz un resumen del estado actual del hogar " + (nombreDelHogar.isEmpty() ? "" : "«" + nombreDelHogar + "»") + " basándote SOLO en los datos que tienes:\n\n"
+                        + "1. 📊 GASTOS ESTE MES: ¿cuánto se ha gastado en total? ¿Cuál es la categoría con más gasto?\n"
+                        + "2. ✅ TAREAS: ¿quién ha completado más tareas este mes? ¿Hay algún desequilibrio notable en el reparto?\n"
+                        + "3. ⚠️ PENDIENTES: ¿hay tareas asignadas que no se han completado esta semana?\n"
+                        + "4. 💡 Da 1-2 sugerencias concretas basadas en lo que ves.\n\n"
+                        + "Si no hay datos suficientes en alguna sección, dilo brevemente y sigue con la siguiente. "
+                        + "Sé concisa, usa emojis con moderación y termina preguntando en qué puedes ayudar.";
             }
             mensajes.put(new JSONObject().put("role", "user").put("content", userMsg));
 

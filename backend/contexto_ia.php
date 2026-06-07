@@ -5,7 +5,10 @@
  *                     Android porque AwardSpace bloquea el puerto 443 saliente).
  *
  * GET ?id_hogar=X
- * Responde: { status:"success", data: { miembros, habitaciones, tareas, gastos, categorias } }
+ * Responde: { status:"success", data: {
+ *   nombre_hogar, miembros, habitaciones, tareas, asignaciones,
+ *   realizadas_mes, gastos, gastos_por_categoria, categorias
+ * }}
  */
 require("conexion.php");
 
@@ -47,33 +50,82 @@ $categorias = [];
 $res = mysqli_query($conexion, "SELECT nombre FROM CATEGORIA ORDER BY nombre");
 while ($fila = mysqli_fetch_assoc($res)) $categorias[] = $fila['nombre'];
 
-// ── Tareas (máx. 50, con nombre de habitación) ────────────────────────────
+// ── Tareas del hogar (máx. 50, con habitación) ────────────────────────────
 $tareas = [];
 $res = mysqli_query($conexion,
-    "SELECT t.nombre, t.frecuencia, t.num_veces, h.nombre AS habitacion
+    "SELECT t.id_tarea, t.nombre, t.frecuencia, t.num_veces,
+            COALESCE(h.nombre, 'General') AS habitacion
      FROM TAREA t
-     JOIN HABITACION h ON t.id_habitacion = h.id_habitacion
-     WHERE h.id_hogar = $id_hogar
-     ORDER BY h.nombre, t.nombre LIMIT 50");
+     LEFT JOIN HABITACION h ON t.id_habitacion = h.id_habitacion
+     WHERE h.id_hogar = $id_hogar OR t.id_habitacion IS NULL
+     ORDER BY habitacion, t.nombre LIMIT 50");
 while ($fila = mysqli_fetch_assoc($res)) $tareas[] = $fila;
+
+// ── Asignaciones: quién tiene asignada cada tarea ─────────────────────────
+$asignaciones = [];
+$res = mysqli_query($conexion,
+    "SELECT u.nombre AS usuario, t.nombre AS tarea,
+            COALESCE(h.nombre, 'General') AS habitacion
+     FROM ASIGNACION_TAREA a
+     JOIN TAREA t    ON a.id_tarea   = t.id_tarea
+     JOIN USUARIO u  ON a.id_usuario = u.id_usuario
+     LEFT JOIN HABITACION h ON t.id_habitacion = h.id_habitacion
+     WHERE u.id_hogar = $id_hogar
+     ORDER BY u.nombre, t.nombre
+     LIMIT 80");
+while ($fila = mysqli_fetch_assoc($res)) $asignaciones[] = $fila;
+
+// ── Tareas realizadas en los últimos 30 días ──────────────────────────────
+$realizadas_mes = [];
+$res = mysqli_query($conexion,
+    "SELECT u.nombre AS usuario, t.nombre AS tarea,
+            DATE(tr.fecha_realizacion) AS fecha,
+            tr.duracion_real
+     FROM TAREAS_REALIZADAS tr
+     JOIN TAREA t   ON tr.id_tarea   = t.id_tarea
+     JOIN USUARIO u ON tr.id_usuario = u.id_usuario
+     LEFT JOIN HABITACION h ON t.id_habitacion = h.id_habitacion
+     WHERE (h.id_hogar = $id_hogar OR t.id_habitacion IS NULL)
+       AND u.id_hogar = $id_hogar
+       AND tr.fecha_realizacion >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+     ORDER BY tr.fecha_realizacion DESC
+     LIMIT 100");
+while ($fila = mysqli_fetch_assoc($res)) $realizadas_mes[] = $fila;
 
 // ── Últimos 30 gastos ─────────────────────────────────────────────────────
 $gastos = [];
 $res = mysqli_query($conexion,
-    "SELECT fecha, concepto, importe, categoria
-     FROM GASTO WHERE id_hogar = $id_hogar ORDER BY fecha DESC LIMIT 30");
+    "SELECT DATE_FORMAT(fecha,'%Y-%m-%d') AS fecha, concepto, importe, categoria
+     FROM GASTO
+     WHERE id_hogar = $id_hogar
+     ORDER BY fecha DESC
+     LIMIT 30");
 while ($fila = mysqli_fetch_assoc($res)) $gastos[] = $fila;
+
+// ── Gastos del mes actual agrupados por categoría ─────────────────────────
+$gastos_por_categoria = [];
+$res = mysqli_query($conexion,
+    "SELECT categoria, SUM(importe) AS total, COUNT(*) AS num_gastos
+     FROM GASTO
+     WHERE id_hogar = $id_hogar
+       AND DATE_FORMAT(fecha,'%Y-%m') = DATE_FORMAT(NOW(),'%Y-%m')
+     GROUP BY categoria
+     ORDER BY total DESC");
+while ($fila = mysqli_fetch_assoc($res)) $gastos_por_categoria[] = $fila;
 
 // ── Respuesta ─────────────────────────────────────────────────────────────
 header("Content-type: application/json; charset=utf-8");
 echo json_encode([
     STATUS => SUCCESS,
     DATA   => [
-        'nombre_hogar' => $nombre_hogar,
-        'miembros'     => $miembros,
-        'habitaciones' => $habitaciones,
-        'categorias'   => $categorias,
-        'tareas'       => $tareas,
-        'gastos'       => $gastos,
+        'nombre_hogar'         => $nombre_hogar,
+        'miembros'             => $miembros,
+        'habitaciones'         => $habitaciones,
+        'categorias'           => $categorias,
+        'tareas'               => $tareas,
+        'asignaciones'         => $asignaciones,
+        'realizadas_mes'       => $realizadas_mes,
+        'gastos'               => $gastos,
+        'gastos_por_categoria' => $gastos_por_categoria,
     ]
 ]);
