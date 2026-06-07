@@ -52,7 +52,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🧹 Tareas del hogar"
+            android:text="@string/tareas_del_hogar"
             android:textColor="@color/text"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -61,7 +61,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Marca las tareas habituales de cada habitación. Puedes modificarlas en cualquier momento."
+            android:text="@string/marca_las_tareas_habituales_de_cada_habitaci_n_puedes_modificarlas_en_cualquier_momento"
             style="@style/Homney.Text.Muted"
             android:textSize="13sp" />
 
@@ -107,7 +107,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Omitir"
+            android:text="@string/omitir"
             android:layout_marginEnd="10dp" />
 
         <Button
@@ -116,7 +116,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:text="Siguiente →" />
+            android:text="@string/siguiente" />
 
     </LinearLayout>
 

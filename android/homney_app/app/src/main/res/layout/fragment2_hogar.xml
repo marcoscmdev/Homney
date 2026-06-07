@@ -178,7 +178,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="@style/Homney.Text.Title"
-                android:text="Habitaciones" />
+                android:text="@string/habitaciones" />
 
             <ImageView
                 android:id="@+id/btn_anadir_habitacion"

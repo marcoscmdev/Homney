@@ -28,7 +28,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="¡Tu colmena está lista! 🍯"
+                android:text="@string/tu_colmena_est_lista"
                 android:textColor="@color/text"
                 android:textSize="22sp"
                 android:textStyle="bold"
@@ -39,7 +39,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Aquí tienes un resumen de lo que has configurado"
+                android:text="@string/aqu_tienes_un_resumen_de_lo_que_has_configurado"
                 style="@style/Homney.Text.Muted"
                 android:gravity="center"
                 android:layout_marginBottom="20dp" />
@@ -59,7 +59,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="🏡  Tu hogar"
+                    android:text="@string/tu_hogar"
                     android:textColor="@color/text"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -81,7 +81,7 @@
                     style="@style/Homney.Button.Primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nombrar"
+                    android:text="@string/nombrar"
                     android:textSize="13sp"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp" />
@@ -99,7 +99,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="👤  Tu perfil"
+                    android:text="@string/tu_perfil"
                     android:textColor="@color/text"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -195,7 +195,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="🏠  Tus habitaciones"
+                        android:text="@string/tus_habitaciones"
                         android:textColor="@color/text"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -246,7 +246,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="💰  Gastos recurrentes"
+                        android:text="@string/gastos_recurrentes_nuevo"
                         android:textColor="@color/text"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -282,7 +282,7 @@
                 style="@style/Homney.Button.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Entrar a la colmena →"
+                android:text="@string/entrar_a_la_colmena"
                 android:layout_marginBottom="8dp" />
 
         </LinearLayout>

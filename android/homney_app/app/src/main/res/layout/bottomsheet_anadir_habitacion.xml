@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/Homney.Text.Title"
-        android:text="Añadir habitación"
+        android:text="@string/a_adir_habitaci_n"
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp" />
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/Homney.Text.Muted"
-        android:text="Elige un tipo y ponle nombre"
+        android:text="@string/elige_un_tipo_y_ponle_nombre"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="16dp" />
 
@@ -90,7 +90,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginTop="14dp"
-        android:text="Añadir habitación"
+        android:text="@string/a_adir_habitaci_n"
         android:enabled="false"
         android:textAllCaps="false"
         style="@style/Widget.MaterialComponents.Button" />

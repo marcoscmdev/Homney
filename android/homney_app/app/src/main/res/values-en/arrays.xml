@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sexo_options">
+        <item>Woman</item>
+        <item>Man</item>
+        <item>Non-binary</item>
+        <item>Gender fluid</item>
+        <item>Transgender</item>
+        <item>Agender</item>
+        <item>Prefer not to say</item>
+        <item>Other</item>
+    </string-array>
+
+    <!-- Spinner: Home mode (registration) -->
+    <string-array name="modo_options">
+        <item>Create a new home</item>
+        <item>Join an existing home</item>
+    </string-array>
+
+    <!-- Spinner: Task frequency -->
+    <string-array name="frecuencia_options">
+        <item>Day</item>
+        <item>Week</item>
+        <item>Month</item>
+        <item>Variable</item>
+    </string-array>
+
+    <!-- Task suggestions for AutoCompleteTextView -->
+    <string-array name="tareas_options">
+        <!-- GENERAL CLEANING -->
+        <item>Clean the house</item>
+        <item>Clean </item>
+        <item>Clean bedroom</item>
+        <item>Clean kitchen</item>
+        <item>Clean bathroom</item>
+        <item>Clean living room</item>
+        <item>Clean dining room</item>
+        <item>Clean hallway</item>
+        <item>Clean windows</item>
+        <item>Clean mirrors</item>
+        <item>Clean ceiling</item>
+        <item>Dust</item>
+        <item>Clean surfaces</item>
+        <item>Clean appliances</item>
+        <item>Clean refrigerator</item>
+        <item>Clean oven</item>
+        <item>Clean microwave</item>
+        <item>Clean dishwasher</item>
+        <item>Clean washing machine</item>
+        <item>Clean air filter</item>
+        <item>Clean carpets</item>
+        <item>Clean curtains</item>
+        <item>Clean blinds</item>
+        <item>Clean bookshelves</item>
+        <item>Clean wardrobes</item>
+        <item>Clean garage</item>
+        <item>Clean basement</item>
+        <item>Clean attic</item>
+        <item>Clean cellar</item>
+        <!-- SWEEPING AND MOPPING -->
+        <item>Sweep</item>
+        <item>Sweep kitchen</item>
+        <item>Sweep bathroom</item>
+        <item>Sweep entrance</item>
+        <item>Sweep terrace</item>
+        <item>Sweep balcony</item>
+        <item>Mop floor</item>
+        <item>Mop kitchen</item>
+        <item>Mop bathroom</item>
+        <item>Mop tiles</item>
+        <item>Mop</item>
+        <item>Use mop</item>
+        <item>Vacuum</item>
+        <item>Vacuum sofa</item>
+        <item>Vacuum mattress</item>
+        <item>Vacuum car</item>
+        <!-- LAUNDRY -->
+        <item>Do laundry</item>
+        <item>Wash delicate clothes</item>
+        <item>Wash bed sheets</item>
+        <item>Wash towels</item>
+        <item>Wash curtains</item>
+        <item>Wash rugs</item>
+        <item>Dry clothes</item>
+        <item>Hang clothes</item>
+        <item>Collect laundry</item>
+        <item>Iron clothes</item>
+        <item>Iron shirts</item>
+        <item>Iron trousers</item>
+        <item>Fold clothes</item>
+        <item>Organise wardrobe</item>
+        <item>Sort clothes by season</item>
+        <item>Wash shoes</item>
+        <item>Clean footwear</item>
+        <!-- KITCHEN -->
+        <item>Cook </item>
+        <item>Prepare breakfast</item>
+        <item>Prepare lunch</item>
+        <item>Prepare dinner</item>
+        <item>Make a meal</item>
+        <item>Prepare packed lunch</item>
+        <item>Wash dishes</item>
+        <item>Wash pots</item>
+        <item>Wash cutlery</item>
+        <item>Dry dishes</item>
+        <item>Put away dishes</item>
+        <item>Tidy kitchen</item>
+        <item>Disinfect surfaces</item>
+        <item>Clean hob</item>
+        <item>Clean extractor hood</item>
+        <item>Empty bin</item>
+        <item>Take out rubbish</item>
+        <item>Recycling</item>
+        <item>Organise pantry</item>
+        <item>Check food expiry dates</item>
+        <item>Write shopping list</item>
+        <item>Go to the supermarket</item>
+        <!-- HOME MAINTENANCE -->
+        <item>Fix tap</item>
+        <item>Fix pipe</item>
+        <item>Fix door</item>
+        <item>Fix window</item>
+        <item>Fix lock</item>
+        <item>Paint wall</item>
+        <item>Paint ceiling</item>
+        <item>Change light bulb</item>
+        <item>Change fuse</item>
+        <item>Check electrical installation</item>
+        <item>Check gas</item>
+        <item>Check water heater</item>
+        <item>Check air conditioning</item>
+        <item>Clean air conditioning</item>
+        <item>Check fire extinguisher</item>
+        <item>Check smoke detectors</item>
+        <item>Change water filter</item>
+        <item>Unblock drain</item>
+        <item>Unblock toilet</item>
+        <item>Install shelf</item>
+        <item>Hang picture</item>
+        <item>Fix furniture</item>
+        <item>Change curtains</item>
+        <item>Apply waterproofing</item>
+        <item>Check roof</item>
+        <item>Clean gutters</item>
+        <item>Check for termites</item>
+        <item>Pest control</item>
+        <!-- PET CARE -->
+        <item>Feed pet</item>
+        <item>Feed dog</item>
+        <item>Feed cat</item>
+        <item>Feed fish</item>
+        <item>Feed bird</item>
+        <item>Feed hamster</item>
+        <item>Give water to pet</item>
+        <item>Walk the dog</item>
+        <item>Play with the cat</item>
+        <item>Sweep pet area</item>
+        <item>Clean litter box</item>
+        <item>Clean bird cage</item>
+        <item>Clean fish tank</item>
+        <item>Clean pet bed</item>
+        <item>Bathe dog</item>
+        <item>Bathe cat</item>
+        <item>Brush coat</item>
+        <item>Trim nails </item>
+        <item>Clean ears </item>
+        <item>Check pet health</item>
+        <item>Give pet medication</item>
+        <item>Go to vet</item>
+        <item>Buy pet food</item>
+        <item>Buy pet toys</item>
+        <item>Train pet</item>
+        <item>Train puppy</item>
+        <item>Cut pet hair</item>
+        <item>Apply antiparasitic</item>
+        <item>Vaccinate pet</item>
+        <item>Brush pet teeth</item>
+        <!-- BABY CARE -->
+        <item>Feed baby</item>
+        <item>Prepare bottle</item>
+        <item>Breastfeed</item>
+        <item>Change nappy</item>
+        <item>Bathe baby</item>
+        <item>Wake baby</item>
+        <item>Put baby to sleep</item>
+        <item>Rock baby</item>
+        <item>Change baby clothes</item>
+        <item>Wash baby clothes</item>
+        <item>Iron baby clothes</item>
+        <item>Organise baby room</item>
+        <item>Disinfect baby toys</item>
+        <item>Sterilise bottles</item>
+        <item>Prepare baby food</item>
+        <item>Monitor nap</item>
+        <item>Give warm bath</item>
+        <item>Massage baby</item>
+        <item>Apply moisturiser</item>
+        <item>Cut baby nails</item>
+        <item>Check teething</item>
+        <item>Go to paediatrician</item>
+        <!-- CHILD CARE -->
+        <item>Help with homework</item>
+        <item>Review homework</item>
+        <item>Prepare school packed lunch</item>
+        <item>Prepare uniform</item>
+        <item>Take to school</item>
+        <item>Pick up from school</item>
+        <item>Help with reading</item>
+        <item>Help with maths</item>
+        <item>Practice sport</item>
+        <item>Take to after-school activity</item>
+        <item>Prepare snack</item>
+        <item>Bathe child</item>
+        <item>Help get dressed</item>
+        <item>Brush child\'s hair</item>
+        <item>Cut child\'s hair</item>
+        <item>Take to the park</item>
+        <item>Play with child</item>
+        <item>Check school bag</item>
+        <item>Organise children\'s room</item>
+        <item>Wash child\'s clothes</item>
+        <item>Plan birthday party</item>
+        <item>Organise activities</item>
+        <item>Go to paediatric check-up</item>
+        <item>Buy school supplies</item>
+        <item>Buy school uniform</item>
+        <item>Buy school shoes</item>
+        <item>Enrol in activities</item>
+        <!-- ELDERLY CARE -->
+        <item>Help with bathing</item>
+        <item>Help with dressing</item>
+        <item>Prepare meal for elderly person</item>
+        <item>Help with eating</item>
+        <item>Give medication</item>
+        <item>Monitor vital signs</item>
+        <item>Help with walking</item>
+        <item>Help with physiotherapy</item>
+        <item>Accompany to doctor</item>
+        <item>Go to medical appointment</item>
+        <item>Buy medication</item>
+        <item>Organise medication</item>
+        <item>Help with personal hygiene</item>
+        <item>Brush elderly person\'s hair</item>
+        <item>Cut elderly person\'s hair</item>
+        <item>Cut elderly person\'s nails</item>
+        <item>Change bed linen</item>
+        <item>Accompany on a walk</item>
+        <item>Keep company</item>
+        <item>Help with paperwork</item>
+        <item>Organise appointments</item>
+        <item>Make the bed</item>
+        <item>Air the room</item>
+        <!-- GARDEN AND EXTERIOR -->
+        <item>Mow the lawn</item>
+        <item>Water plants</item>
+        <item>Water garden</item>
+        <item>Plant flowers</item>
+        <item>Plant vegetables</item>
+        <item>Prune shrubs</item>
+        <item>Prune trees</item>
+        <item>Weed</item>
+        <item>Fertilise plants</item>
+        <item>Repot plants</item>
+        <item>Clean garden</item>
+        <item>Collect leaves</item>
+        <item>Sweep terrace</item>
+        <item>Sweep patio</item>
+        <item>Wash exterior of house</item>
+        <item>Paint fence</item>
+        <item>Check fence</item>
+        <item>Clean swimming pool</item>
+        <item>Check irrigation system</item>
+        <item>Buy plants</item>
+        <item>Buy tools</item>
+        <!-- ORGANISATION AND ADMINISTRATION -->
+        <item>Organise documents</item>
+        <item>Pay bills</item>
+        <item>Pay utilities</item>
+        <item>Pay internet bill</item>
+        <item>Check mail</item>
+        <item>File documents</item>
+        <item>Update budget</item>
+        <item>Review insurance</item>
+        <item>Renew subscription</item>
+        <item>Organise drawers</item>
+        <item>Organise</item>
+        <item>Sort by categories</item>
+        <item>General clean-up</item>
+        <item>Donate items</item>
+        <item>Get rid of old things</item>
+        <item>Check expiry dates</item>
+        <!-- MISCELLANEOUS -->
+        <item>Plan weekly menu</item>
+        <item>Take inventory</item>
+        <item>Buy cleaning products</item>
+        <item>Buy stationery</item>
+        <item>Check fire extinguisher</item>
+        <item>Check first-aid kit</item>
+        <item>Restock first-aid kit</item>
+        <item>Clean car</item>
+        <item>Check car oil</item>
+        <item>Check tyre pressure</item>
+        <item>Car wash</item>
+        <item>Plan holiday</item>
+        <item>Organise party</item>
+        <item>Prepare decorations</item>
+        <item>Write wedding list</item>
+        <item>Prepare for return from holiday</item>
+        <item>Change bed sheets</item>
+        <item>Change towels</item>
+        <item>Prepare guest bed</item>
+    </string-array>
+
+    <!-- Spinner: Payment method (expense) -->
+    <string-array name="modo_pago_options">
+        <item>cash</item>
+        <item>transfer</item>
+        <item>card</item>
+        <item>bizum</item>
+    </string-array>
+
+    <!-- Spinner: Expense type -->
+    <string-array name="tipo_gasto_options">
+        <item>occasional</item>
+        <item>fixed</item>
+    </string-array>
+
+</resources>

@@ -18,7 +18,7 @@
     <string name="field_password">Contraseña</string>
     <string name="field_nombre">Nombre completo *</string>
     <string name="field_telefono">Teléfono *</string>
-    <string name="field_sexo">Sexo *</string>
+    <string name="field_sexo">Género *</string>
     <string name="field_modo">¿Qué quieres hacer?</string>
     <string name="field_clave_inv">Clave de invitación del hogar</string>
     <string name="hint_email">tu@email.com</string>
@@ -80,5 +80,226 @@
     <string name="btn_publicar">Publicar</string>
     <string name="texto_sugerencia_soporte">Si tienes alguna duda, sugerencia o necesitas soporte personalizado, escríbenos. Estaremos encantados de ayudarte.</string>
     <string name="texto_titulo_soporte">¿Necesitas más ayuda?</string>
+    <string name="sugerencias_pulsa_para_a_adir">Sugerencias — pulsa para añadir</string>
+    <string name="estancias_a_adidas">Estancias añadidas</string>
+    <string name="pulsa_una_sugerencia_o_escribe_abajo">Pulsa una sugerencia o escribe abajo</string>
+    <string name="o_a_ade_una_estancia_personalizada">O añade una estancia personalizada</string>
+    <string name="otra_estancia">Otra estancia...</string>
+    <string name="a_adir">Añadir</string>
+    <string name="tareas_del_hogar">🧹 Tareas del hogar</string>
+    <string name="marca_las_tareas_habituales_de_cada_habitaci_n_puedes_modificarlas_en_cualquier_momento">Marca las tareas habituales de cada habitación. Puedes modificarlas en cualquier momento.</string>
+    <string name="omitir">Omitir</string>
+    <string name="siguiente">Siguiente →</string>
+    <string name="gastos_recurrentes">Gastos recurrentes</string>
+    <string name="registra_los_gastos_fijos_del_hogar_se_calcular_la_parte_de_cada_conviviente_autom_ticamente">Registra los gastos fijos del hogar. Se calculará la parte de cada conviviente automáticamente.</string>
+    <string name="concepto_title">Concepto</string>
+    <string name="o_a_ade_un_gasto_personalizado">O añade un gasto personalizado</string>
+    <string name="concepto_hint">Concepto...</string>
+    <string name="_0_gastos_seleccionados">gastos seleccionados</string>
+    <string name="atras">Atrás</string>
+    <string name="comenzar">Comenzar</string>
+    <string name="tu_colmena_est_lista">¡Tu colmena está lista! 🍯</string>
+    <string name="aqu_tienes_un_resumen_de_lo_que_has_configurado">Aquí tienes un resumen de lo que has configurado</string>
+    <string name="tu_hogar">🏡 Tu hogar</string>
+    <string name="nombrar">Nombrar</string>
+    <string name="tu_perfil">👤 Tu perfil</string>
+    <string name="tus_habitaciones">🏠 Tus habitaciones</string>
+    <string name="gastos_recurrentes_nuevo">💰 Gastos recurrentes</string>
+    <string name="entrar_a_la_colmena">Entrar a la colmena →</string>
+    <string name="a_adir_habitaci_n">Añadir habitación</string>
+    <string name="elige_un_tipo_y_ponle_nombre">Elige un tipo y ponle nombre</string>
+    <string name="gasto_total">Gasto total</string>
+    <string name="mis_tareas_title">Mis tareas</string>
+    <string name="publicaciones">Publicaciones</string>
+    <string name="ltimos_gastos">Últimos gastos</string>
+    <string name="ver_todos_buton">Ver todos</string>
+    <string name="ver_muro">Ver muro</string>
+    <string name="mis_tareas_pendientes">Mis tareas pendientes</string>
+    <string name="ltimas_publicaciones">Últimas publicaciones</string>
+    <string name="actividad_del_hogar">Actividad del hogar</string>
+    <string name="tareas_completadas_ltimo_mes">Tareas completadas — último mes</string>
+    <string name="historial_de_gastos">Historial de gastos</string>
+    <string name="habitaciones">Habitaciones</string>
+    <string name="desliza_a_la_izquierda_para_eliminar">Desliza a la izquierda para eliminar</string>
+    <string name="otras_tareas_del_hogar">Otras tareas del hogar</string>
+    <string name="pulsa_para_asignar_la_tarea">Pulsa para asignar la tarea</string>
+    <string name="completadas_este_mes">Completadas este mes</string>
+    <string name="tareas_finalizadas_este_mes">Tareas finalizadas este mes</string>
+    <string name="te_deben_a_ti">Te deben a ti</string>
+    <string name="debes_t">Debes tú</string>
+    <string name="total_de_gastos">Total de gastos</string>
+    <string name="lo_que_te_deben_title">Lo que te deben</string>
+    <string name="pulsa_para_confirmar_el_pago">Pulsa para confirmar el pago</string>
+    <string name="lo_que_debes_t">Lo que debes tú</string>
+    <string name="historial_de_gastos_title">Historial de gastos</string>
+    <string name="cargando_publicaciones">Cargando publicaciones…</string>
+    <string name="otras_tareas_title">Otras tareas</string>
+    <string name="completadas_este_mes_title">Completadas este mes</string>
+    <string name="cargando">Cargando…</string>
+    <string name="no_hay_m_s_tareas_en_esta_habitaci_n">No hay más tareas en esta habitación.</string>
+    <string name="sin_tareas_completadas_este_mes">Sin tareas completadas este mes.</string>
+
+    <!-- ════════════════════════════════════════════════
+         MENSAJES DE ERROR Y ESTADOS — usados desde Java
+         ════════════════════════════════════════════════ -->
+
+    <!-- Conexión / red -->
+    <string name="sin_conexion_internet">Sin conexión a Internet</string>
+
+    <!-- Errores genéricos -->
+    <string name="error_preparar_datos">Error al preparar los datos</string>
+    <string name="error_preparar_registro">Error al preparar el registro</string>
+    <string name="error_preparar_peticion">Error al preparar la petición</string>
+    <string name="error_completa_registro">Por favor completa el registro</string>
+
+    <!-- Acciones en curso -->
+    <string name="guardando">Guardando…</string>
+    <string name="creando_cuenta">Creando cuenta…</string>
+    <string name="anhadiendo">Añadiendo…</string>
+
+    <!-- Botones de acción comunes -->
+    <string name="confirmar">Confirmar</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="guardar">Guardar</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="entendido">Entendido</string>
+
+    <!-- ── Estados vacíos ── -->
+    <string name="sin_mis_tareas">Sin tareas pendientes.</string>
+    <string name="sin_tareas_hogar">No hay más tareas en el hogar.</string>
+    <string name="muro_vacio">El muro está vacío</string>
+    <string name="sin_gastos">Sin gastos registrados</string>
+    <string name="nadie_te_debe">¡Nadie te debe dinero!</string>
+    <string name="no_debes_nada">¡No debes nada a nadie!</string>
+    <string name="sin_companeros">Sin compañeros registrados</string>
+    <string name="sin_habitaciones">Sin habitaciones registradas</string>
+    <string name="sin_tareas_pendientes_yo">Sin tareas pendientes asignadas a ti.</string>
+    <string name="sin_gastos_mes_anterior">Sin movimientos el mes anterior.</string>
+    <string name="sin_registros_mes_anterior">Sin registros el mes anterior.</string>
+    <string name="habitacion_no_valida">Habitación no válida.</string>
+    <string name="cargando_habitaciones">Cargando habitaciones…</string>
+    <string name="cargando_companeros">Cargando compañeros…</string>
+
+    <!-- ── Diálogos: completar tarea ── -->
+    <string name="dialog_confirmar_tarea_titulo">¿Confirmas realizar la tarea?</string>
+    <string name="tiempo_empleado">Tiempo empleado</string>
+    <string name="tiempo_empleado_min">Tiempo empleado (min)</string>
+    <string name="observaciones_opcional">Observaciones (opcional)</string>
+    <string name="hint_como_fue_tarea">¿Cómo fue la tarea?</string>
+    <string name="hint_duracion_minutos">ej. 30</string>
+
+    <!-- ── Diálogos: eliminar ── -->
+    <string name="dialog_eliminar_tarea_titulo">¿Eliminar tarea?</string>
+    <string name="dialog_eliminar_tarea_msg">¿Seguro que quieres eliminar «%s»? No se puede deshacer.</string>
+    <string name="dialog_eliminar_gasto_titulo">¿Eliminar gasto?</string>
+    <string name="dialog_eliminar_gasto_msg">¿Seguro que quieres eliminar «%s»? No se puede deshacer.</string>
+    <string name="dialog_eliminar_pub_titulo">Eliminar publicación</string>
+    <string name="dialog_eliminar_pub_msg">¿Seguro que quieres eliminar esta publicación? No se puede deshacer.</string>
+
+    <!-- ── Diálogos: asignar tarea ── -->
+    <string name="dialog_asignar_tarea_btn">Asignarme</string>
+
+    <!-- ── Diálogos: gasto no editable ── -->
+    <string name="dialog_gasto_no_editable_titulo">No se puede editar</string>
+    <string name="dialog_gasto_no_editable_msg">No es posible editar el gasto, ya ha sido compensado por %s</string>
+
+    <!-- ── Diálogos: confirmar pago ── -->
+    <string name="dialog_confirmar_pago_btn">Sí, confirmar</string>
+    <string name="pulsa_para_confirmar">Pulsa para confirmar</string>
+    <string name="no_btn">No</string>
+
+    <!-- ── Wizard de registro: hogar ── -->
+    <string name="dialog_nombre_hogar_titulo">¿Cómo se llama tu hogar?</string>
+    <string name="hint_nombre_hogar">Ej: Casa de la playa, Piso compartido…</string>
+    <string name="error_nombre_hogar">Escribe un nombre para tu hogar</string>
+    <string name="error_min_una_estancia">Añade al menos una estancia</string>
+    <string name="error_alias_vacio">El alias de cada estancia no puede estar vacío</string>
+    <string name="error_hogar_no_identificado">Error: hogar no identificado</string>
+    <string name="hint_alias_estancia">Alias de la estancia</string>
+    <string name="dialog_tipo_estancia_titulo">¿Qué tipo es %s?</string>
+    <string name="dialog_tipo_estancia_msg">Elige el tipo que mejor describe esta estancia:</string>
+
+    <!-- ── Wizard de registro: tareas ── -->
+    <string name="hint_tarea_personalizada">Añadir tarea personalizada…</string>
+    <string name="periodicidad_label">Periodicidad: </string>
+    <string name="no_habitaciones_wizard">No se encontraron habitaciones. Vuelve atrás y añádelas primero.</string>
+    <string name="error_escribe_nombre_tarea">Escribe el nombre de la tarea</string>
+    <string name="dialog_cambiar_frecuencia_titulo">Cambiar frecuencia</string>
+
+    <!-- ── Wizard de registro: gastos ── -->
+    <string name="error_nombre_importe">Completa nombre e importe</string>
+    <string name="error_importe_invalido">Importe no válido</string>
+
+    <!-- ── Wizard de registro: resumen ── -->
+    <string name="cambiar_foto">Cambiar foto</string>
+    <string name="error_camara">Error al acceder a la cámara</string>
+    <string name="error_permiso_camara">Se necesita permiso de cámara</string>
+    <string name="foto_guardada">Foto de perfil guardada ✓</string>
+    <string name="dialog_foto_perfil_titulo">Foto de perfil</string>
+    <string name="error_cargar_habitaciones">No se pudieron cargar las habitaciones</string>
+    <string name="error_leer_habitaciones">Error al leer habitaciones</string>
+    <string name="sin_conexion_habitaciones">Sin conexión — revisa más tarde</string>
+    <string name="sin_gastos_configurados">Sin gastos recurrentes configurados</string>
+
+    <!-- ── Mi perfil ── -->
+    <string name="dialog_cambios_sin_guardar_titulo">Cambios sin guardar</string>
+    <string name="dialog_cambios_sin_guardar_msg">Tienes cambios sin confirmar. ¿Quieres salir sin guardar?</string>
+    <string name="salir_sin_guardar">Salir sin guardar</string>
+    <string name="seguir_editando">Seguir editando</string>
+    <string name="dialog_confirmar_cambios_titulo">Confirmar cambios</string>
+    <string name="dialog_confirmar_cambios_msg">¿Estás seguro de que quieres guardar los cambios en tu perfil?</string>
+    <string name="sin_cambios_que_guardar">No hay cambios que guardar</string>
+    <string name="dialog_cambiar_foto_titulo">Cambiar foto de perfil</string>
+    <string name="dialog_cambiar_pass_titulo">Cambiar contraseña</string>
+    <string name="hint_nueva_pass">Nueva contraseña</string>
+    <string name="hint_confirma_pass">Confirmar contraseña</string>
+    <string name="cambiar_btn">Cambiar</string>
+    <string name="dialog_eliminar_cuenta_titulo">⚠️ ATENCIÓN</string>
+
+    <!-- ── Login / recuperar contraseña ── -->
+    <string name="dialog_recuperar_pass_titulo">Restablecer contraseña</string>
+    <string name="dialog_recuperar_pass_msg">Te enviaremos un email para que puedas crear una nueva contraseña.</string>
+    <string name="enviar">Enviar</string>
+    <string name="rellena_todos_los_campos">Rellena todos los campos</string>
+    <string name="hint_correo_recuperar">Tu correo electrónico</string>
+
+    <!-- ── Mi Hogar ── -->
+    <string name="hint_nombre_del_hogar">Nombre del hogar</string>
+    <string name="dialog_editar_hogar_titulo">Editar nombre del hogar</string>
+    <string name="hogar_default">Hogar</string>
+
+    <!-- ── Fragmento cartera: editar gasto ── -->
+    <string name="dialog_editar_gasto_titulo">✏️ Editar gasto</string>
+    <string name="rellena_campos_obligatorios">Rellena todos los campos obligatorios</string>
+    <string name="importe_invalido">Importe inválido</string>
+
+    <!-- ── Crear gasto / tarea ── -->
+    <string name="error_nombre_obligatorio">El nombre es obligatorio</string>
+    <string name="error_leer_habitacion">Error al leer la habitación</string>
+    <string name="error_num_veces_invalido">Nº veces inválido</string>
+    <string name="tarea_creada_sin_asignar">Tarea creada (sin asignar)</string>
+    <string name="publicado">Publicado</string>
+
+    <!-- ── Homney Mate (IA) ── -->
+    <string name="dialog_confirmar_accion_titulo">¿Confirmar acción?</string>
+    <string name="dialog_confirmar_accion_btn_si">✅ Sí, hacerlo</string>
+    <string name="dialog_confirmar_accion_btn_no">❌ No</string>
+    <string name="dialog_limpiar_historial_titulo">Limpiar historial</string>
+    <string name="dialog_limpiar_historial_msg">¿Borrar toda la conversación con Homney Mate?</string>
+    <string name="borrar">Borrar</string>
+
+    <!-- ── MainActivity ── -->
+    <string name="dialog_que_crear_titulo">¿Qué quieres crear?</string>
+
+    <!-- ── Añadir habitación (BottomSheet) ── -->
+    <string name="error_introduce_nombre">Introduce un nombre</string>
+    <string name="anhadiendo_habitacion">Añadiendo…</string>
+
+    <!-- ── Strings de formato (con placeholder %s) ── -->
+    <string name="tag_completada">COMPLETADA</string>
+    <string name="tag_anterior">ANTERIOR</string>
+    <string name="tag_hecha_hoy">HECHA HOY</string>
+    <string name="tag_historial">HISTORIAL</string>
+    <string name="sin_asignar">Sin asignar</string>
 
 </resources>

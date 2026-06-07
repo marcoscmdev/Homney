@@ -67,7 +67,7 @@
             style="@style/Homney.Text.Muted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sugerencias — pulsa para añadir"
+            android:text="@string/sugerencias_pulsa_para_a_adir"
             android:layout_marginBottom="10dp" />
 
         <!-- Chips en 2 columnas gestionadas desde Java -->
@@ -104,7 +104,7 @@
             style="@style/Homney.Text.Muted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Estancias añadidas"
+            android:text="@string/estancias_a_adidas"
             android:layout_marginBottom="8dp" />
 
         <!-- Contenedor dinámico de tags seleccionados -->
@@ -123,7 +123,7 @@
                 style="@style/Homney.Text.Muted"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pulsa una sugerencia o escribe abajo"
+                android:text="@string/pulsa_una_sugerencia_o_escribe_abajo"
                 android:visibility="visible" />
         </LinearLayout>
 
@@ -132,7 +132,7 @@
             style="@style/Homney.Text.Muted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="O añade una estancia personalizada"
+            android:text="@string/o_a_ade_una_estancia_personalizada"
             android:layout_marginBottom="8dp" />
 
         <LinearLayout
@@ -147,7 +147,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Otra estancia..."
+                android:hint="@string/otra_estancia"
                 android:background="@drawable/bg_input"
                 android:padding="12dp"
                 android:inputType="textCapSentences"
@@ -159,7 +159,7 @@
                 style="@style/Homney.Button.Ghost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Añadir" />
+                android:text="@string/a_adir" />
         </LinearLayout>
 
         <!-- ══ Botón Siguiente ════════════════════════════════ -->

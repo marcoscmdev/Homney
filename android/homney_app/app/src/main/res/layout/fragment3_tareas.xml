@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="20dp"
                     android:paddingEnd="4dp"
-                    android:text="Desliza a la izquierda para eliminar" />
+                    android:text="@string/desliza_a_la_izquierda_para_eliminar" />
 
                 <!-- Divider -->
                 <View
@@ -115,7 +115,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Otras tareas del hogar" />
+                android:text="@string/otras_tareas_del_hogar" />
 
 
             <TextView
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
             android:paddingEnd="4dp"
-            android:text="Pulsa para asignar la tarea" />
+            android:text="@string/pulsa_para_asignar_la_tarea" />
 
 
         <androidx.cardview.widget.CardView
@@ -188,7 +188,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Completadas este mes" />
+                android:text="@string/completadas_este_mes" />
 
             <TextView
                 android:id="@+id/chevron_completadas"
@@ -207,7 +207,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
             android:paddingEnd="4dp"
-            android:text="Tareas finalizadas este mes" />
+            android:text="@string/tareas_finalizadas_este_mes" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_completadas"

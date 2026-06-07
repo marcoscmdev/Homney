@@ -59,7 +59,7 @@
                         android:gravity="center"
                         android:textSize="10sp"
                         android:layout_marginTop="2dp"
-                        android:text="Te deben a ti" />
+                        android:text="@string/te_deben_a_ti" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -97,7 +97,7 @@
                         android:gravity="center"
                         android:textSize="10sp"
                         android:layout_marginTop="2dp"
-                        android:text="Debes tú" />
+                        android:text="@string/debes_t" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -137,7 +137,7 @@
                         android:gravity="center"
                         android:textSize="10sp"
                         android:layout_marginTop="2dp"
-                        android:text="Total de gastos" />
+                        android:text="@string/total_de_gastos" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
@@ -163,7 +163,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Lo que te deben" />
+                android:text="@string/lo_que_te_deben_title" />
 
             <TextView
                 android:id="@+id/tag_me_deben"
@@ -189,7 +189,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
             android:paddingEnd="4dp"
-            android:text="Pulsa para confirmar el pago" />
+            android:text="@string/pulsa_para_confirmar_el_pago" />
 
         <!-- Contenedor dinámico de bloques de deudores -->
         <LinearLayout
@@ -229,7 +229,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Lo que debes tú" />
+                android:text="@string/lo_que_debes_t" />
 
             <TextView
                 android:id="@+id/tag_debo"
@@ -255,7 +255,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
             android:paddingEnd="4dp"
-            android:text="Pulsa para confirmar pago"/>
+            android:text="@string/pulsa_para_confirmar_el_pago"/>
 
         <!-- Contenedor dinámico de bloques de acreedores -->
         <LinearLayout
@@ -314,7 +314,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Historial de gastos" />
+                        android:text="@string/historial_de_gastos_title" />
 
                     <TextView
                         android:id="@+id/tag_historial"
@@ -341,7 +341,7 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="4dp"
                     android:paddingBottom="8dp"
-                    android:text="Desliza a la izquierda para eliminar" />
+                    android:text="@string/desliza_a_la_izquierda_para_eliminar" />
 
                 <View
                     android:id="@+id/divider_historial"

@@ -29,7 +29,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:padding="32dp"
-        android:text="Cargando publicaciones…"
+        android:text="@string/cargando_publicaciones"
         android:visibility="visible" />
 
 </FrameLayout>

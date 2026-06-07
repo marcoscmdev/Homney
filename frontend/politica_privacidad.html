@@ -1,476 +1,810 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Política de Privacidad y Términos de Servicio · Homney</title>
-    <style>
-        :root {
-            --accent:  #F5C518;
-            --surface: #ffffff;
-            --bg:      #f4f4f4;
-            --text:    #1a1a1a;
-            --muted:   #666;
-            --border:  #e0e0e0;
-            --radius:  10px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Política de Privacidad y Términos de Servicio de Homney.">
+<meta name="author" content="Marcos Castro Miranda">
+<title>Política de Privacidad · Homney</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap" rel="stylesheet">
+<style>
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ═══════════════════════════════════════════════════════
+   VARIABLES — idénticas a index.html
+═══════════════════════════════════════════════════════ */
+:root {
+  --bg:          #FDFCF5;
+  --surface:     #FFFFFF;
+  --surface2:    #FFF8E7;
+  --border:      #E8DFC0;
+  --border2:     #D6C99A;
+  --accent:      #F5C518;
+  --accent-dark: #D4A80E;
+  --accent-bg:   #FFF3C0;
+  --green:       #7CC87A;
+  --green-dark:  #58A856;
+  --green-bg:    #E8F5E8;
+  --danger:      #E05C5C;
+  --danger-bg:   #FDEAEA;
+  --text:        #2D2416;
+  --text-mid:    #5C4A2A;
+  --muted:       #9A8A6A;
+}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-            font-size: 16px;
-        }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 
-        header {
-            background: var(--surface);
-            border-bottom: 3px solid var(--accent);
-            padding: 24px 32px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+/* ═══════════════════════════════════════════════════════
+   HEADER — mismo estilo que index.html
+═══════════════════════════════════════════════════════ */
+#app-banner {
+  background:
+    radial-gradient(ellipse 55% 80% at 15% 50%, rgba(245,197,24,.20) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 70% at 88% 60%, rgba(124,200,122,.16) 0%, transparent 55%),
+    linear-gradient(160deg, #FFFAEC 0%, #F3FCF0 100%);
+  border-bottom: 1.5px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 300;
+}
+.banner-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 36px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.banner-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+.banner-logo-mark {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent) 0%, #FFE060 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 18px rgba(245,197,24,.42);
+  flex-shrink: 0;
+}
+.banner-name    { font-size: 1.4rem; font-weight: 800; color: var(--text); letter-spacing: -.04em; }
+.banner-tagline { font-size: .72rem; color: var(--muted); margin-top: 1px; }
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--surface);
+  border: 1.5px solid var(--border2);
+  color: var(--text-mid);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: .86rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .18s;
+  white-space: nowrap;
+}
+.btn-back:hover {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+  background: var(--accent-bg);
+}
 
-        header .logo-circle {
-            width: 48px; height: 48px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: 800; color: #fff;
-            flex-shrink: 0;
-        }
+/* ═══════════════════════════════════════════════════════
+   HERO de la página
+═══════════════════════════════════════════════════════ */
+#page-hero {
+  background:
+    radial-gradient(ellipse 65% 55% at 70% 20%, rgba(245,197,24,.12) 0%, transparent 58%),
+    radial-gradient(ellipse 55% 65% at 12% 88%, rgba(124,200,122,.10) 0%, transparent 55%),
+    var(--bg);
+  padding: 64px 24px 72px;
+  border-bottom: 1.5px solid var(--border);
+}
+.page-hero-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.page-hero-icon {
+  width: 72px; height: 72px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--accent) 0%, #FFE060 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 28px rgba(245,197,24,.42);
+  flex-shrink: 0;
+}
+.page-hero-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -.04em;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.page-hero-sub {
+  font-size: .92rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+.page-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 5px 14px;
+  background: var(--accent-bg);
+  border: 1.5px solid rgba(245,197,24,.45);
+  border-radius: 99px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  letter-spacing: .05em;
+}
 
-        header h1 { font-size: 1.5rem; font-weight: 700; }
-        header p  { font-size: 0.85rem; color: var(--muted); margin-top: 2px; }
+/* ═══════════════════════════════════════════════════════
+   CONTENIDO PRINCIPAL
+═══════════════════════════════════════════════════════ */
+main {
+  max-width: 860px;
+  margin: 40px auto;
+  padding: 0 24px 80px;
+}
 
-        main {
-            max-width: 860px;
-            margin: 32px auto;
-            padding: 0 16px 64px;
-        }
+/* Índice */
+.toc {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(100,80,20,.07);
+}
+.toc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.toc-header-icon {
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  background: var(--accent-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .95rem;
+}
+.toc h2 {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted);
+}
+.toc ol {
+  padding-left: 22px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 24px;
+}
+.toc li { font-size: .88rem; }
+.toc a  { color: var(--accent-dark); text-decoration: none; font-weight: 500; }
+.toc a:hover { text-decoration: underline; }
 
-        .toc {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 20px 24px;
-            margin-bottom: 32px;
-        }
+/* Tarjetas de secciones */
+.card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 30px 32px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(100,80,20,.06);
+  transition: border-color .22s;
+}
+.card:hover { border-color: var(--border2); }
 
-        .toc h2 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 12px; }
-        .toc ol  { padding-left: 20px; }
-        .toc li  { margin-bottom: 6px; }
-        .toc a   { color: #1a73e8; text-decoration: none; }
-        .toc a:hover { text-decoration: underline; }
+.card h2 {
+  font-size: 1.18rem;
+  font-weight: 800;
+  margin-bottom: 18px;
+  color: var(--text);
+  letter-spacing: -.02em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.card h2 .icon {
+  width: 36px; height: 36px;
+  background: var(--accent-bg);
+  border: 1.5px solid rgba(245,197,24,.4);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: var(--text-mid);
+}
+.card p {
+  font-size: .94rem;
+  color: var(--text-mid);
+  line-height: 1.72;
+}
+.card p + p { margin-top: 10px; }
+.card ul, .card ol {
+  padding-left: 22px;
+  margin-top: 10px;
+}
+.card li {
+  font-size: .93rem;
+  color: var(--text-mid);
+  margin-bottom: 8px;
+  line-height: 1.65;
+}
 
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 28px 32px;
-            margin-bottom: 20px;
-        }
+/* Etiqueta de aviso */
+.tag-warn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FEF3E2;
+  border: 1.5px solid #E89A30;
+  color: #9A5C10;
+  font-size: .76rem;
+  font-weight: 700;
+  border-radius: 7px;
+  padding: 4px 12px;
+  margin-bottom: 14px;
+}
 
-        .card h2 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+/* Caja de destacado */
+.highlight-box {
+  background: var(--accent-bg);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 18px;
+  margin-top: 14px;
+  font-size: .91rem;
+  color: var(--text-mid);
+  line-height: 1.65;
+}
+.highlight-box a { color: var(--accent-dark); text-decoration: none; font-weight: 600; }
+.highlight-box a:hover { text-decoration: underline; }
+.highlight-box strong { color: var(--text); }
 
-        .card h2 .icon {
-            width: 32px; height: 32px;
-            background: var(--accent);
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 15px;
-            flex-shrink: 0;
-        }
+/* Tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin-top: 14px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid var(--border);
+}
+th {
+  background: var(--surface2);
+  text-align: left;
+  padding: 11px 14px;
+  border-bottom: 1.5px solid var(--border);
+  font-weight: 700;
+  color: var(--text);
+  font-size: .84rem;
+  letter-spacing: .02em;
+}
+td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: var(--text-mid);
+  font-size: .88rem;
+  line-height: 1.6;
+}
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: var(--bg); }
+td strong { color: var(--text); font-weight: 700; }
 
-        .card h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-top: 16px;
-            margin-bottom: 8px;
-            color: #333;
-        }
+/* Enlace genérico dentro de cards */
+.card a { color: var(--accent-dark); font-weight: 600; text-decoration: none; }
+.card a:hover { text-decoration: underline; }
 
-        .card p, .card li { font-size: 0.95rem; color: #333; }
-        .card ul, .card ol { padding-left: 20px; margin-top: 8px; }
-        .card li { margin-bottom: 6px; }
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════ */
+#site-footer {
+  background: var(--text);
+  color: rgba(255,255,255,.6);
+  padding: 48px 24px 36px;
+}
+.footer-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+.footer-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  margin-bottom: 20px;
+}
+.footer-brand { display: flex; align-items: center; gap: 13px; }
+.footer-logo-mini {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #FFE060);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.footer-brand-name { font-size: 1.1rem; font-weight: 800; color: #fff; }
+.footer-brand-tag  { font-size: .72rem; color: rgba(255,255,255,.38); margin-top: 2px; }
+.footer-links { display: flex; gap: 10px; flex-wrap: wrap; }
+.footer-link {
+  color: rgba(255,255,255,.52);
+  text-decoration: none;
+  font-size: .83rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.1);
+  transition: all .18s;
+}
+.footer-link:hover { color: var(--accent); border-color: rgba(245,197,24,.35); background: rgba(245,197,24,.07); }
+.footer-link.active { color: var(--accent); border-color: rgba(245,197,24,.3); }
+.footer-copy { font-size: .74rem; color: rgba(255,255,255,.3); }
+.footer-updated { font-size: .74rem; color: rgba(255,255,255,.35); margin-top: 6px; }
 
-        .tag {
-            display: inline-block;
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            color: #856404;
-            font-size: 0.78rem;
-            font-weight: 600;
-            border-radius: 4px;
-            padding: 2px 8px;
-            margin-bottom: 12px;
-        }
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .banner-inner { padding: 0 18px; height: 64px; }
+  .banner-tagline { display: none; }
+  #page-hero { padding: 44px 20px 52px; }
+  .page-hero-inner { flex-direction: column; gap: 18px; }
+  .page-hero-title { font-size: 1.55rem; }
+  .toc ol { grid-template-columns: 1fr; }
+  .card { padding: 22px 20px; }
+  table { font-size: .82rem; }
+  th, td { padding: 9px 11px; }
+  .footer-top { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 480px) {
+  .banner-logo-mark { width: 40px; height: 40px; border-radius: 11px; }
+  main { padding: 0 16px 64px; }
+}
 
-        .highlight-box {
-            background: #fffbe6;
-            border-left: 4px solid var(--accent);
-            padding: 14px 16px;
-            border-radius: 0 var(--radius) var(--radius) 0;
-            margin-top: 12px;
-            font-size: 0.92rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            margin-top: 12px;
-        }
-        th {
-            background: #f8f8f8;
-            text-align: left;
-            padding: 10px 12px;
-            border-bottom: 2px solid var(--border);
-            font-weight: 600;
-        }
-        td {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border);
-            vertical-align: top;
-        }
-        tr:last-child td { border-bottom: none; }
-
-        footer {
-            text-align: center;
-            padding: 24px;
-            color: var(--muted);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border);
-            background: var(--surface);
-        }
-    </style>
+</style>
 </head>
 <body>
 
-<header>
-    <div class="logo-circle">H</div>
-    <div>
-        <h1>Homney</h1>
-        <p>Política de Privacidad y Términos de Servicio</p>
-    </div>
+<!-- ═══════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════ -->
+<header id="app-banner">
+  <div class="banner-inner">
+    <a href="index.html" class="banner-brand">
+      <div class="banner-logo-mark">
+        <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+          <path d="M20 4L34 12V28L20 36L6 28V12L20 4Z"
+                fill="rgba(45,36,22,.14)" stroke="rgba(45,36,22,.42)" stroke-width="1.9"/>
+          <path d="M20 9L30 15V25L20 31L10 25V15L20 9Z"
+                fill="rgba(45,36,22,.07)" stroke="rgba(45,36,22,.22)" stroke-width="1.2"/>
+          <circle cx="20" cy="20" r="4.5" fill="rgba(45,36,22,.56)"/>
+        </svg>
+      </div>
+      <div>
+        <div class="banner-name">Homney</div>
+        <div class="banner-tagline">Hogar organizado</div>
+      </div>
+    </a>
+    <a href="index.html" class="btn-back">
+      ← Volver al inicio
+    </a>
+  </div>
 </header>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HERO DE PÁGINA
+═══════════════════════════════════════════════════ -->
+<section id="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-icon">
+      <svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+        <path d="M20 4L34 12V28L20 36L6 28V12L20 4Z"
+              fill="rgba(45,36,22,.14)" stroke="rgba(45,36,22,.42)" stroke-width="1.9"/>
+        <path d="M20 9L30 15V25L20 31L10 25V15L20 9Z"
+              fill="rgba(45,36,22,.07)" stroke="rgba(45,36,22,.22)" stroke-width="1.2"/>
+        <circle cx="20" cy="20" r="4.5" fill="rgba(45,36,22,.56)"/>
+      </svg>
+    </div>
+    <div>
+      <h1 class="page-hero-title">Política de Privacidad<br>y Términos de Servicio</h1>
+      <p class="page-hero-sub">Homney · Aplicación de gestión del hogar compartido</p>
+      <div class="page-hero-badge">
+        🔒 Última actualización: mayo 2026
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     CONTENIDO
+═══════════════════════════════════════════════════ -->
 <main>
 
-    <div class="toc">
-        <h2>Índice</h2>
-        <ol>
-            <li><a href="#identificacion">Identificación del responsable</a></li>
-            <li><a href="#datos">Datos personales que recogemos</a></li>
-            <li><a href="#finalidad">Finalidad del tratamiento</a></li>
-            <li><a href="#legitimacion">Legitimación</a></li>
-            <li><a href="#conservacion">Conservación de los datos</a></li>
-            <li><a href="#destinatarios">Destinatarios y transferencias</a></li>
-            <li><a href="#derechos">Derechos del usuario</a></li>
-            <li><a href="#seguridad">Seguridad</a></li>
-            <li><a href="#menores">Menores de edad</a></li>
-            <li><a href="#terminos">Términos de servicio</a></li>
-            <li><a href="#cambios">Cambios en esta política</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-        </ol>
+  <!-- Índice -->
+  <div class="toc">
+    <div class="toc-header">
+      <div class="toc-header-icon">📋</div>
+      <h2>Índice de contenidos</h2>
     </div>
+    <ol>
+      <li><a href="#identificacion">Identificación del responsable</a></li>
+      <li><a href="#datos">Datos personales que recogemos</a></li>
+      <li><a href="#finalidad">Finalidad del tratamiento</a></li>
+      <li><a href="#legitimacion">Legitimación</a></li>
+      <li><a href="#conservacion">Conservación de los datos</a></li>
+      <li><a href="#destinatarios">Destinatarios y transferencias</a></li>
+      <li><a href="#derechos">Derechos del usuario</a></li>
+      <li><a href="#seguridad">Seguridad</a></li>
+      <li><a href="#menores">Menores de edad</a></li>
+      <li><a href="#terminos">Términos de Servicio</a></li>
+      <li><a href="#cambios">Cambios en esta política</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ol>
+  </div>
 
-    <!-- 1 -->
-    <div class="card" id="identificacion">
-        <h2><span class="icon">🏠</span> 1. Identificación del responsable</h2>
-        <p>
-            El responsable del tratamiento de los datos personales recogidos a través de la
-            aplicación <strong>Homney</strong> es:
-        </p>
-        <div class="highlight-box">
-            <strong>Nombre:</strong> Marcos Castro Miranda<br>
-            <strong>Correo electrónico:</strong> castromirandamarcos@gmail.com<br>
-            <strong>Ámbito:</strong> Proyecto Fin de Ciclo (TFC) — Desarrollo de Aplicaciones Multiplataforma
-        </div>
-        <p style="margin-top:12px;">
-            Homney es una aplicación desarrollada como Trabajo de Fin de Ciclo (TFC) con fines
-            académicos y demostrativos. Si en el futuro se comercializa, estos datos serán
-            actualizados con los de la entidad jurídica responsable.
-        </p>
+
+  <!-- 1. Identificación -->
+  <div class="card" id="identificacion">
+    <h2><span class="icon">🏠</span> 1. Identificación del responsable</h2>
+    <p>
+      El responsable del tratamiento de los datos personales recogidos a través de la
+      aplicación <strong>Homney</strong> es:
+    </p>
+    <div class="highlight-box">
+      <strong>Nombre:</strong> Marcos Castro Miranda<br>
+      <strong>Correo electrónico:</strong> <a href="mailto:info@marcoscm.dev">info@marcoscm.dev</a><br>
+      <strong>Ámbito:</strong> Proyecto Fin de Ciclo (TFC) — Desarrollo de Aplicaciones Multiplataforma
     </div>
+    <p style="margin-top:14px;">
+      Homney es una aplicación desarrollada como Trabajo de Fin de Ciclo (TFC) con fines
+      académicos y demostrativos. Si en el futuro se comercializa, estos datos serán
+      actualizados con los de la entidad jurídica responsable.
+    </p>
+  </div>
 
-    <!-- 2 -->
-    <div class="card" id="datos">
-        <h2><span class="icon">📋</span> 2. Datos personales que recogemos</h2>
-        <span class="tag">⚠ Datos personales tratados</span>
-        <p>
-            Al registrarte y usar Homney tratamos las siguientes categorías de datos:
-        </p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Categoría</th>
-                    <th>Datos concretos</th>
-                    <th>Cuándo se recogen</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>Identidad</strong></td>
-                    <td>Nombre completo</td>
-                    <td>Registro</td>
-                </tr>
-                <tr>
-                    <td><strong>Contacto</strong></td>
-                    <td>Correo electrónico, teléfono móvil</td>
-                    <td>Registro</td>
-                </tr>
-                <tr>
-                    <td><strong>Datos demográficos</strong></td>
-                    <td>Sexo</td>
-                    <td>Registro (opcional)</td>
-                </tr>
-                <tr>
-                    <td><strong>Credenciales</strong></td>
-                    <td>Contraseña (almacenada con hash)</td>
-                    <td>Registro</td>
-                </tr>
-                <tr>
-                    <td><strong>Imagen</strong></td>
-                    <td>Foto de perfil</td>
-                    <td>Edición de perfil (opcional)</td>
-                </tr>
-                <tr>
-                    <td><strong>Hogar</strong></td>
-                    <td>Nombre del hogar, habitaciones registradas, clave de invitación</td>
-                    <td>Creación / unión al hogar</td>
-                </tr>
-                <tr>
-                    <td><strong>Financieros del hogar</strong></td>
-                    <td>Gastos compartidos (concepto, importe, categoría, fecha, pagador, deudores)</td>
-                    <td>Uso de la función Cartera</td>
-                </tr>
-                <tr>
-                    <td><strong>Tareas</strong></td>
-                    <td>Tareas domésticas (título, descripción, fecha, asignado, estado)</td>
-                    <td>Uso de la función Tareas</td>
-                </tr>
-                <tr>
-                    <td><strong>Publicaciones</strong></td>
-                    <td>Mensajes y fotos publicados en el Muro del hogar</td>
-                    <td>Uso del Muro</td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="highlight-box" style="margin-top:14px;">
-            <strong>Importante:</strong> los datos de la sección «Cartera» incluyen información
-            financiera personal (importes y deudas entre convivientes). Estos datos son visibles
-            para todos los miembros del mismo hogar.
-        </div>
+
+  <!-- 2. Datos -->
+  <div class="card" id="datos">
+    <h2><span class="icon">📋</span> 2. Datos personales que recogemos</h2>
+    <div class="tag-warn">⚠ Datos personales tratados</div>
+    <p>Al registrarte y usar Homney tratamos las siguientes categorías de datos:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Categoría</th>
+          <th>Datos concretos</th>
+          <th>Cuándo se recogen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Identidad</strong></td>
+          <td>Nombre completo</td>
+          <td>Registro</td>
+        </tr>
+        <tr>
+          <td><strong>Contacto</strong></td>
+          <td>Correo electrónico, teléfono móvil</td>
+          <td>Registro</td>
+        </tr>
+        <tr>
+          <td><strong>Datos demográficos</strong></td>
+          <td>Sexo</td>
+          <td>Registro (opcional)</td>
+        </tr>
+        <tr>
+          <td><strong>Credenciales</strong></td>
+          <td>Contraseña (almacenada con hash)</td>
+          <td>Registro</td>
+        </tr>
+        <tr>
+          <td><strong>Imagen</strong></td>
+          <td>Foto de perfil</td>
+          <td>Edición de perfil (opcional)</td>
+        </tr>
+        <tr>
+          <td><strong>Hogar</strong></td>
+          <td>Nombre del hogar, habitaciones registradas, clave de invitación</td>
+          <td>Creación / unión al hogar</td>
+        </tr>
+        <tr>
+          <td><strong>Financieros del hogar</strong></td>
+          <td>Gastos compartidos (concepto, importe, categoría, fecha, pagador, deudores)</td>
+          <td>Uso de la función Cartera</td>
+        </tr>
+        <tr>
+          <td><strong>Tareas</strong></td>
+          <td>Tareas domésticas (título, descripción, fecha, asignado, estado)</td>
+          <td>Uso de la función Tareas</td>
+        </tr>
+        <tr>
+          <td><strong>Publicaciones</strong></td>
+          <td>Mensajes y fotos publicados en el Muro del hogar</td>
+          <td>Uso del Muro</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="highlight-box" style="margin-top:16px;">
+      <strong>Importante:</strong> los datos de la sección «Cartera» incluyen información
+      financiera personal (importes y deudas entre convivientes). Estos datos son visibles
+      para todos los miembros del mismo hogar.
     </div>
+  </div>
 
-    <!-- 3 -->
-    <div class="card" id="finalidad">
-        <h2><span class="icon">🎯</span> 3. Finalidad del tratamiento</h2>
-        <p>Tratamos tus datos para las siguientes finalidades:</p>
-        <ul>
-            <li><strong>Gestión de la cuenta:</strong> crear, identificar y mantener tu perfil de usuario.</li>
-            <li><strong>Gestión del hogar compartido:</strong> asociar a los miembros del mismo hogar y mostrarles información común (habitaciones, miembros, gastos, tareas y publicaciones).</li>
-            <li><strong>Gestión económica:</strong> registrar y repartir los gastos del hogar entre los convivientes.</li>
-            <li><strong>Comunicación interna:</strong> publicar avisos y mensajes en el muro del hogar.</li>
-            <li><strong>Personalización:</strong> mostrar el nombre y avatar del usuario en las distintas pantallas de la aplicación.</li>
-        </ul>
-        <p style="margin-top:12px;">No utilizamos tus datos para publicidad, perfilado comercial ni los cedemos a terceros con fines de marketing.</p>
+
+  <!-- 3. Finalidad -->
+  <div class="card" id="finalidad">
+    <h2><span class="icon">🎯</span> 3. Finalidad del tratamiento</h2>
+    <p>Tratamos tus datos para las siguientes finalidades:</p>
+    <ul>
+      <li><strong>Gestión de la cuenta:</strong> crear, identificar y mantener tu perfil de usuario.</li>
+      <li><strong>Gestión del hogar compartido:</strong> asociar a los miembros del mismo hogar y mostrarles información común (habitaciones, miembros, gastos, tareas y publicaciones).</li>
+      <li><strong>Gestión económica:</strong> registrar y repartir los gastos del hogar entre los convivientes.</li>
+      <li><strong>Comunicación interna:</strong> publicar avisos y mensajes en el muro del hogar.</li>
+      <li><strong>Personalización:</strong> mostrar el nombre y avatar del usuario en las distintas pantallas de la aplicación.</li>
+    </ul>
+    <p style="margin-top:12px;">No utilizamos tus datos para publicidad, perfilado comercial ni los cedemos a terceros con fines de marketing.</p>
+  </div>
+
+
+  <!-- 4. Legitimación -->
+  <div class="card" id="legitimacion">
+    <h2><span class="icon">⚖️</span> 4. Legitimación</h2>
+    <p>
+      La base jurídica del tratamiento es el <strong>consentimiento expreso</strong> del
+      usuario, prestado en el momento del registro mediante la aceptación de esta política.
+      Sin aceptar esta política no es posible crear una cuenta ni usar la aplicación.
+    </p>
+    <p style="margin-top:10px;">
+      Para los datos financieros del hogar, la legitimación adicional es la
+      <strong>ejecución del contrato</strong> (prestación del servicio de gestión de
+      gastos compartidos).
+    </p>
+  </div>
+
+
+  <!-- 5. Conservación -->
+  <div class="card" id="conservacion">
+    <h2><span class="icon">🗄️</span> 5. Conservación de los datos</h2>
+    <p>
+      Los datos se conservan mientras la cuenta del usuario esté activa.
+      El usuario puede solicitar la eliminación de su cuenta desde la pantalla
+      <em>Mi Perfil → Eliminar cuenta</em>, lo que suprime permanentemente todos
+      sus datos personales y su participación en el hogar.
+    </p>
+    <p style="margin-top:10px;">
+      Los registros de acceso (logs técnicos del servidor) se conservan durante
+      un máximo de 30 días por razones de seguridad y mantenimiento.
+    </p>
+  </div>
+
+
+  <!-- 6. Destinatarios -->
+  <div class="card" id="destinatarios">
+    <h2><span class="icon">🔗</span> 6. Destinatarios y transferencias internacionales</h2>
+    <p>
+      Los datos <strong>no se ceden a terceros</strong> salvo obligación legal.
+      Los datos se almacenan en un servidor propio con ubicación en la Unión Europea;
+      no se realizan transferencias internacionales de datos fuera del Espacio Económico Europeo.
+    </p>
+    <h3>Acceso por otros miembros del hogar</h3>
+    <p>
+      Al unirte a un hogar, ciertos datos tuyos (nombre, email, foto de perfil, rol,
+      tareas asignadas, gastos registrados y publicaciones del muro) son visibles para
+      los demás miembros de ese mismo hogar. Esto es inherente al funcionamiento del
+      servicio y constituye una cesión limitada y consentida a personas que tú has
+      autorizado a compartir tu espacio de hogar.
+    </p>
+  </div>
+
+
+  <!-- 7. Derechos -->
+  <div class="card" id="derechos">
+    <h2><span class="icon">✅</span> 7. Derechos del usuario</h2>
+    <p>De acuerdo con el RGPD (Reglamento UE 2016/679) tienes derecho a:</p>
+    <ul>
+      <li><strong>Acceso:</strong> obtener confirmación sobre si tratamos tus datos y acceder a ellos.</li>
+      <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos (disponible desde Mi Perfil).</li>
+      <li><strong>Supresión («derecho al olvido»):</strong> eliminar tu cuenta y todos tus datos (disponible desde Mi Perfil → Eliminar cuenta).</li>
+      <li><strong>Oposición:</strong> oponerte al tratamiento en los casos en que proceda.</li>
+      <li><strong>Portabilidad:</strong> recibir tus datos en formato estructurado y legible por máquina.</li>
+      <li><strong>Limitación:</strong> solicitar que suspendamos temporalmente el tratamiento.</li>
+    </ul>
+    <p style="margin-top:12px;">
+      Para ejercer cualquier derecho puedes contactar con nosotros en
+      <a href="mailto:info@marcoscm.dev">info@marcoscm.dev</a>.
+      También puedes presentar una reclamación ante la
+      <a href="https://www.aepd.es" target="_blank" rel="noopener">Agencia Española de Protección de Datos (AEPD)</a>.
+    </p>
+  </div>
+
+
+  <!-- 8. Seguridad -->
+  <div class="card" id="seguridad">
+    <h2><span class="icon">🔒</span> 8. Seguridad</h2>
+    <p>Aplicamos medidas técnicas y organizativas razonables para proteger tus datos:</p>
+    <ul>
+      <li>Las contraseñas se almacenan transformadas mediante función hash (no en texto plano).</li>
+      <li>El acceso a los datos requiere autenticación previa.</li>
+      <li>Los datos se separan por hogar; un usuario no puede acceder a datos de otro hogar.</li>
+    </ul>
+    <p style="margin-top:10px;">
+      A pesar de estas medidas, ningún sistema es completamente seguro. En caso de que
+      detectes alguna vulnerabilidad, te pedimos que nos lo comuniques a
+      <a href="mailto:info@marcoscm.dev">info@marcoscm.dev</a>.
+    </p>
+  </div>
+
+
+  <!-- 9. Menores -->
+  <div class="card" id="menores">
+    <h2><span class="icon">👶</span> 9. Menores de edad</h2>
+    <p>
+      Homney no está dirigida a menores de 16 años. No recogemos conscientemente datos
+      de menores de esa edad. Si eres padre, madre o tutor y crees que tu hijo/a ha
+      proporcionado datos personales, contáctanos para suprimirlos.
+    </p>
+  </div>
+
+
+  <!-- 10. Términos -->
+  <div class="card" id="terminos">
+    <h2><span class="icon">📄</span> 10. Términos de Servicio</h2>
+
+    <h3>10.1 Descripción del servicio</h3>
+    <p>
+      Homney es una aplicación de gestión del hogar compartido que permite a sus usuarios
+      administrar gastos, tareas, habitaciones y comunicaciones dentro de un hogar con
+      varios convivientes.
+    </p>
+
+    <h3>10.2 Uso aceptable</h3>
+    <p>Al usar Homney te comprometes a:</p>
+    <ul>
+      <li>Proporcionar información veraz durante el registro.</li>
+      <li>No utilizar la aplicación para fines ilegales o que causen daño a terceros.</li>
+      <li>Respetar la privacidad de los demás miembros de tu hogar.</li>
+      <li>No intentar acceder a datos de otros hogares ni manipular la API del servicio.</li>
+      <li>No publicar contenido ofensivo, discriminatorio o ilegal en el Muro del hogar.</li>
+    </ul>
+
+    <h3>10.3 Cuenta y responsabilidad</h3>
+    <p>
+      Eres responsable de mantener la confidencialidad de tus credenciales de acceso.
+      Cualquier actividad realizada desde tu cuenta se considera realizada por ti.
+      Notifícanos de inmediato si sospechas que tu cuenta ha sido comprometida.
+    </p>
+
+    <h3>10.4 Disponibilidad del servicio</h3>
+    <p>
+      Homney se ofrece «tal cual» (as-is). Dado su carácter académico, no garantizamos
+      disponibilidad ininterrumpida ni ausencia de errores. Nos reservamos el derecho
+      a modificar, suspender o interrumpir el servicio en cualquier momento.
+    </p>
+
+    <h3>10.5 Propiedad intelectual</h3>
+    <p>
+      El código fuente, diseño y nombre de la aplicación pertenecen a su autor.
+      El contenido que publican los usuarios (fotos, textos) sigue siendo propiedad
+      de éstos; al publicarlo en Homney conceden una licencia limitada para mostrarlo
+      a los demás miembros del hogar.
+    </p>
+
+    <h3>10.6 Limitación de responsabilidad</h3>
+    <p>
+      El desarrollador no se hace responsable de pérdidas de datos, perjuicios económicos
+      ni disputas entre convivientes derivados del uso de la aplicación.
+    </p>
+
+    <h3>10.7 Ley aplicable</h3>
+    <p>
+      Estos términos se rigen por la legislación española y, en particular, por el
+      Reglamento General de Protección de Datos (RGPD) y la Ley Orgánica 3/2018
+      (LOPDGDD). Para cualquier litigio, las partes se someten a los juzgados y
+      tribunales competentes de España.
+    </p>
+  </div>
+
+
+  <!-- 11. Cambios -->
+  <div class="card" id="cambios">
+    <h2><span class="icon">🔄</span> 11. Cambios en esta política</h2>
+    <p>
+      Podemos actualizar esta Política de Privacidad y Términos de Servicio en cualquier
+      momento. Cuando lo hagamos, revisaremos la fecha de «Última actualización» al pie
+      de esta página. Si los cambios son sustanciales, lo notificaremos mediante la
+      aplicación o por correo electrónico. El uso continuado de Homney tras la notificación
+      implica la aceptación de la nueva versión.
+    </p>
+  </div>
+
+
+  <!-- 12. Contacto -->
+  <div class="card" id="contacto">
+    <h2><span class="icon">✉️</span> 12. Contacto</h2>
+    <p>Para cualquier consulta sobre esta política o sobre el tratamiento de tus datos:</p>
+    <div class="highlight-box">
+      📧 <a href="mailto:info@marcoscm.dev">info@marcoscm.dev</a><br>
+      Responderemos en un plazo máximo de <strong>30 días hábiles</strong>.
     </div>
-
-    <!-- 4 -->
-    <div class="card" id="legitimacion">
-        <h2><span class="icon">⚖️</span> 4. Legitimación</h2>
-        <p>
-            La base jurídica del tratamiento es el <strong>consentimiento expreso</strong> del
-            usuario, prestado en el momento del registro mediante la aceptación de esta política.
-            Sin aceptar esta política no es posible crear una cuenta ni usar la aplicación.
-        </p>
-        <p style="margin-top:10px;">
-            Para los datos financieros del hogar, la legitimación adicional es la
-            <strong>ejecución del contrato</strong> (prestación del servicio de gestión de
-            gastos compartidos).
-        </p>
-    </div>
-
-    <!-- 5 -->
-    <div class="card" id="conservacion">
-        <h2><span class="icon">🗄️</span> 5. Conservación de los datos</h2>
-        <p>
-            Los datos se conservan mientras la cuenta del usuario esté activa.
-            El usuario puede solicitar la eliminación de su cuenta desde la pantalla
-            <em>Mi Perfil → Eliminar cuenta</em>, lo que suprime permanentemente todos
-            sus datos personales y su participación en el hogar.
-        </p>
-        <p style="margin-top:10px;">
-            Los registros de acceso (logs técnicos del servidor) se conservan durante
-            un máximo de 30 días por razones de seguridad y mantenimiento.
-        </p>
-    </div>
-
-    <!-- 6 -->
-    <div class="card" id="destinatarios">
-        <h2><span class="icon">🔗</span> 6. Destinatarios y transferencias internacionales</h2>
-        <p>
-            Los datos <strong>no se ceden a terceros</strong> salvo obligación legal.
-            Los datos se almacenan en un servidor propio con ubicación en la Unión Europea;
-            no se realizan transferencias internacionales de datos fuera del Espacio Económico Europeo.
-        </p>
-        <h3>Acceso por otros miembros del hogar</h3>
-        <p>
-            Al unirte a un hogar, ciertos datos tuyos (nombre, email, foto de perfil, rol,
-            tareas asignadas, gastos registrados y publicaciones del muro) son visibles para
-            los demás miembros de ese mismo hogar. Esto es inherente al funcionamiento del
-            servicio y constituye una cesión limitada y consentida a personas que tú has
-            autorizado a compartir tu espacio de hogar.
-        </p>
-    </div>
-
-    <!-- 7 -->
-    <div class="card" id="derechos">
-        <h2><span class="icon">✅</span> 7. Derechos del usuario</h2>
-        <p>De acuerdo con el RGPD (Reglamento UE 2016/679) tienes derecho a:</p>
-        <ul>
-            <li><strong>Acceso:</strong> obtener confirmación sobre si tratamos tus datos y acceder a ellos.</li>
-            <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos (disponible desde Mi Perfil).</li>
-            <li><strong>Supresión («derecho al olvido»):</strong> eliminar tu cuenta y todos tus datos (disponible desde Mi Perfil → Eliminar cuenta).</li>
-            <li><strong>Oposición:</strong> oponerte al tratamiento en los casos en que proceda.</li>
-            <li><strong>Portabilidad:</strong> recibir tus datos en formato estructurado y legible por máquina.</li>
-            <li><strong>Limitación:</strong> solicitar que suspendamos temporalmente el tratamiento.</li>
-        </ul>
-        <p style="margin-top:12px;">
-            Para ejercer cualquier derecho puedes contactar con nosotros en
-            <a href="mailto:info@marcoscm.dev">info@marcoscm.dev</a>.
-            También puedes presentar una reclamación ante la
-            <a href="https://www.aepd.es" target="_blank" rel="noopener">
-                Agencia Española de Protección de Datos (AEPD)
-            </a>.
-        </p>
-    </div>
-
-    <!-- 8 -->
-    <div class="card" id="seguridad">
-        <h2><span class="icon">🔒</span> 8. Seguridad</h2>
-        <p>
-            Aplicamos medidas técnicas y organizativas razonables para proteger tus datos:
-        </p>
-        <ul>
-            <li>Las contraseñas se almacenan transformadas mediante función hash (no en texto plano).</li>
-            <li>El acceso a los datos requiere autenticación previa.</li>
-            <li>Los datos se separan por hogar; un usuario no puede acceder a datos de otro hogar.</li>
-        </ul>
-        <p style="margin-top:10px;">
-            A pesar de estas medidas, ningún sistema es completamente seguro. En caso de que
-            detectes alguna vulnerabilidad, te pedimos que nos lo comuniques a
-            <a href="mailto:info@marcoscm.dev">info@marcoscm.dev</a>.
-        </p>
-    </div>
-
-    <!-- 9 -->
-    <div class="card" id="menores">
-        <h2><span class="icon">👶</span> 9. Menores de edad</h2>
-        <p>
-            Homney no está dirigida a menores de 16 años. No recogemos conscientemente datos
-            de menores de esa edad. Si eres padre, madre o tutor y crees que tu hijo/a ha
-            proporcionado datos personales, contáctanos para suprimirlos.
-        </p>
-    </div>
-
-    <!-- 10 -->
-    <div class="card" id="terminos">
-        <h2><span class="icon">📄</span> 10. Términos de Servicio</h2>
-
-        <h3>10.1 Descripción del servicio</h3>
-        <p>
-            Homney es una aplicación de gestión del hogar compartido que permite a sus usuarios
-            administrar gastos, tareas, habitaciones y comunicaciones dentro de un hogar con
-            varios convivientes.
-        </p>
-
-        <h3>10.2 Uso aceptable</h3>
-        <p>Al usar Homney te comprometes a:</p>
-        <ul>
-            <li>Proporcionar información veraz durante el registro.</li>
-            <li>No utilizar la aplicación para fines ilegales o que causen daño a terceros.</li>
-            <li>Respetar la privacidad de los demás miembros de tu hogar.</li>
-            <li>No intentar acceder a datos de otros hogares ni manipular la API del servicio.</li>
-            <li>No publicar contenido ofensivo, discriminatorio o ilegal en el Muro del hogar.</li>
-        </ul>
-
-        <h3>10.3 Cuenta y responsabilidad</h3>
-        <p>
-            Eres responsable de mantener la confidencialidad de tus credenciales de acceso.
-            Cualquier actividad realizada desde tu cuenta se considera realizada por ti.
-            Notifícanos de inmediato si sospechas que tu cuenta ha sido comprometida.
-        </p>
-
-        <h3>10.4 Disponibilidad del servicio</h3>
-        <p>
-            Homney se ofrece «tal cual» (as-is). Dado su carácter académico, no garantizamos
-            disponibilidad ininterrumpida ni ausencia de errores. Nos reservamos el derecho
-            a modificar, suspender o interrumpir el servicio en cualquier momento.
-        </p>
-
-        <h3>10.5 Propiedad intelectual</h3>
-        <p>
-            El código fuente, diseño y nombre de la aplicación pertenecen a su autor.
-            El contenido que publican los usuarios (fotos, textos) sigue siendo propiedad
-            de éstos; al publicarlo en Homney conceden una licencia limitada para mostrarlo
-            a los demás miembros del hogar.
-        </p>
-
-        <h3>10.6 Limitación de responsabilidad</h3>
-        <p>
-            El desarrollador no se hace responsable de pérdidas de datos, perjuicios económicos
-            ni disputas entre convivientes derivados del uso de la aplicación.
-        </p>
-
-        <h3>10.7 Ley aplicable</h3>
-        <p>
-            Estos términos se rigen por la legislación española y, en particular, por el
-            Reglamento General de Protección de Datos (RGPD) y la Ley Orgánica 3/2018
-            (LOPDGDD). Para cualquier litigio, las partes se someten a los juzgados y
-            tribunales competentes de España.
-        </p>
-    </div>
-
-    <!-- 11 -->
-    <div class="card" id="cambios">
-        <h2><span class="icon">🔄</span> 11. Cambios en esta política</h2>
-        <p>
-            Podemos actualizar esta Política de Privacidad y Términos de Servicio en cualquier
-            momento. Cuando lo hagamos, revisaremos la fecha de «Última actualización» al pie
-            de esta página. Si los cambios son sustanciales, lo notificaremos mediante la
-            aplicación o por correo electrónico. El uso continuado de Homney tras la notificación
-            implica la aceptación de la nueva versión.
-        </p>
-    </div>
-
-    <!-- 12 -->
-    <div class="card" id="contacto">
-        <h2><span class="icon">✉️</span> 12. Contacto</h2>
-        <p>Para cualquier consulta sobre esta política o sobre el tratamiento de tus datos:</p>
-        <div class="highlight-box">
-            📧 <a href="mailto:info@marcoscm.dev">info@marcoscm.dev</a><br>
-            Responderemos en un plazo máximo de <strong>30 días hábiles</strong>.
-        </div>
-    </div>
+  </div>
 
 </main>
 
-<footer>
-    <p>Homney · Política de Privacidad y Términos de Servicio</p>
-    <p style="margin-top:4px;">Última actualización: <strong>mayo 2026</strong></p>
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════ -->
+<footer id="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo-mini">
+          <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+            <path d="M20 4L34 12V28L20 36L6 28V12L20 4Z"
+                  fill="rgba(45,36,22,.3)" stroke="rgba(45,36,22,.65)" stroke-width="2"/>
+            <circle cx="20" cy="20" r="5" fill="rgba(45,36,22,.75)"/>
+          </svg>
+        </div>
+        <div>
+          <div class="footer-brand-name">Homney</div>
+          <div class="footer-brand-tag">Tu colmena organizada</div>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="index.html" class="footer-link">← Inicio</a>
+        <a href="politica_privacidad.html" class="footer-link active">Política de Privacidad</a>
+        <a href="politica_privacidad.html#terminos" class="footer-link">Términos de Servicio</a>
+        <a href="mailto:info@marcoscm.dev" class="footer-link">Contacto</a>
+      </div>
+    </div>
+    <div class="footer-copy">
+      © 2026 Marcos Castro Miranda · Proyecto TFC · DAM · TESDAI Santiago 2024–2026
+    </div>
+    <div class="footer-updated">Última actualización: mayo 2026</div>
+  </div>
 </footer>
 
 </body>

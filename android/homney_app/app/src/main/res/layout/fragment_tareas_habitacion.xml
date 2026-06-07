@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Mis tareas" />
+                android:text="@string/mis_tareas_title" />
 
             <TextView
                 android:id="@+id/chevron_mis_tareas_hab"
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="24dp"
-                    android:text="Cargando…" />
+                    android:text="@string/cargando" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -124,7 +124,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Otras tareas" />
+                android:text="@string/otras_tareas_title" />
 
             <TextView
                 android:id="@+id/chevron_otras_tareas_hab"
@@ -161,7 +161,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="24dp"
-                    android:text="No hay más tareas en esta habitación." />
+                    android:text="@string/no_hay_m_s_tareas_en_esta_habitaci_n" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -186,7 +186,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Completadas este mes" />
+                android:text="@string/completadas_este_mes_title" />
 
             <TextView
                 android:id="@+id/chevron_completadas_hab"
@@ -223,7 +223,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="24dp"
-                    android:text="Sin tareas completadas este mes." />
+                    android:text="@string/sin_tareas_completadas_este_mes" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

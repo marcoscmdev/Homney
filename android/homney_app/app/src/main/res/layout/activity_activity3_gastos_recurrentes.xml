@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gastos recurrentes"
+            android:text="@string/gastos_recurrentes"
             android:textColor="@color/text"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -56,7 +56,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Registra los gastos fijos del hogar. Se calculará la parte de cada conviviente automáticamente."
+            android:text="@string/registra_los_gastos_fijos_del_hogar_se_calcular_la_parte_de_cada_conviviente_autom_ticamente"
             style="@style/Homney.Text.Muted"
             android:layout_marginBottom="20dp" />
 
@@ -73,7 +73,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:text="Concepto"
+                android:text="@string/concepto_title"
                 android:textStyle="bold"
                 android:textSize="12sp"
                 android:textColor="@color/muted" />
@@ -109,7 +109,7 @@
             style="@style/Homney.Text.Muted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="O añade un gasto personalizado"
+            android:text="@string/o_a_ade_un_gasto_personalizado"
             android:layout_marginBottom="8dp" />
 
         <LinearLayout
@@ -124,7 +124,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:hint="Concepto..."
+                android:hint="@string/concepto_hint"
                 android:background="@drawable/bg_input"
                 android:padding="10dp"
                 android:inputType="textCapSentences"
@@ -155,7 +155,7 @@
             style="@style/Homney.Text.Muted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0 gastos seleccionados"
+            android:text="@string/_0_gastos_seleccionados"
             android:layout_marginBottom="16dp" />
 
         <!-- ══ Botones de navegación ══════════════════════════ -->
@@ -170,7 +170,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Atrás"
+                android:text="@string/atras"
                 android:layout_marginEnd="8dp" />
 
             <Button
@@ -179,7 +179,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="Comenzar" />
+                android:text="@string/comenzar" />
         </LinearLayout>
 
     </LinearLayout>
