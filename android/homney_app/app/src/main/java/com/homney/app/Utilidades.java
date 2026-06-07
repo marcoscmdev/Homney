@@ -2,6 +2,7 @@ package com.homney.app;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import com.homney.app.R;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -93,12 +94,13 @@ public class Utilidades {
     public static final SimpleDateFormat FMT_SALIDA_DATETIME  =
             new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
-    /** Convierte fecha de formato BD (yyyy-MM-dd) a formato visual (dd/MM/yyyy). */
+    /** Convierte fecha de formato BD (yyyy-MM-dd o yyyy-MM-dd HH:mm:ss) a formato visual (dd/MM/yyyy). */
     public static String fechaEntradaASalida(String fechaEntrada) {
         if (fechaEntrada == null || fechaEntrada.isEmpty()) return "";
         try {
-            // Admite también ISO 8601 (yyyy-MM-dd'T'HH:mm:ss'Z') que devuelve el servidor
-            String limpia = fechaEntrada.contains("T") ? fechaEntrada.substring(0, 10) : fechaEntrada;
+            // Recortar a los primeros 10 caracteres (yyyy-MM-dd) tanto si viene
+            // con separador 'T' (ISO 8601) como con espacio (MySQL datetime)
+            String limpia = fechaEntrada.substring(0, Math.min(10, fechaEntrada.length()));
             Date d = FMT_ENTRADA.parse(limpia);
             return d != null ? FMT_SALIDA.format(d) : fechaEntrada;
         } catch (Exception e) {
@@ -122,12 +124,14 @@ public class Utilidades {
         return FMT_ENTRADA.format(new Date());
     }
 
-    /** Convierte "yyyy-MM-dd HH:mm:ss" → "dd/MM/yyyy · HH:mm" (para el muro y tareas). */
+    /** Convierte fecha de BD ("yyyy-MM-dd HH:mm:ss" o "yyyy-MM-dd") → "dd/MM/yyyy" sin hora. */
     public static String formatearFechaMuro(String raw) {
         if (raw == null || raw.isEmpty()) return "";
         try {
-            Date d = FMT_ENTRADA_DATETIME.parse(raw);
-            return d != null ? FMT_SALIDA_DATETIME.format(d) : raw;
+            // Recortar a yyyy-MM-dd e ignorar la hora
+            String limpia = raw.substring(0, Math.min(10, raw.length()));
+            Date d = FMT_ENTRADA.parse(limpia);
+            return d != null ? FMT_SALIDA.format(d) : raw;
         } catch (Exception e) {
             return raw;
         }
@@ -230,9 +234,9 @@ public class Utilidades {
         }
         if (ActivityCompat.shouldShowRequestPermissionRationale(a,permiso)) { // Es necesario dar una explicación (textoAclaratorio) acerca de por qué nuestra aplicacion necesita el permiso.
             AlertDialog.Builder datosDialog = new AlertDialog.Builder(a);
-            datosDialog.setTitle("Solicitud de permiso");
+            datosDialog.setTitle(a.getString(R.string.solicitud_permiso));
             datosDialog.setMessage(textoAclaratorio);
-            datosDialog.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+            datosDialog.setPositiveButton(a.getString(R.string.entendido), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String[] arrayPermisos = {permiso}; // Se usa un array porque es posible solicitar varios permisos al mismo tiempo

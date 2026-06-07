@@ -124,7 +124,7 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
         btnAddGasto.setOnClickListener(v -> añadirGastoPersonalizado());
         btnComenzar.setOnClickListener(v -> guardarYContinuar());
         btnAtras.setOnClickListener(v ->
-                Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show());
+                Toast.makeText(this, getString(R.string.error_completa_registro), Toast.LENGTH_SHORT).show());
     }
 
     /* ════════════════════════════════════════════════════════
@@ -195,14 +195,14 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
         String impStr  = etCustomImporte.getText().toString().trim();
 
         if (nombre.isEmpty() || impStr.isEmpty()) {
-            Toast.makeText(this, "Completa nombre e importe", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_nombre_importe), Toast.LENGTH_SHORT).show();
             return;
         }
 
         double importe;
         try { importe = Double.parseDouble(impStr); }
         catch (NumberFormatException e) {
-            Toast.makeText(this, "Importe no válido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_importe_invalido), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -269,7 +269,7 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.error_completa_registro), Toast.LENGTH_SHORT).show();
     }
 
     /* ════════════════════════════════════════════════════════

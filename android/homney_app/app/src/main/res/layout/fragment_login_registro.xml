@@ -64,7 +64,7 @@
         android:id="@+id/tv_olvidar_pass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¿Olvidaste tu contraseña?"
+        android:text="@string/olvidaste_contrasena"
         android:textColor="@color/accent_dark"
         android:textSize="12sp"
         android:layout_gravity="end"
@@ -76,7 +76,7 @@
         android:id="@+id/cb_recordar_sesion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Recordarme"
+        android:text="@string/recordarme"
         style="@style/Homney.Text.Label"
         android:layout_marginBottom="6dp"
         android:buttonTint="@color/accent" />
@@ -109,7 +109,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="  o continúa con  "
+            android:text="@string/o_contin_a_con"
             android:textColor="@color/muted"
             android:textSize="12sp" />
 
@@ -127,7 +127,7 @@
         android:layout_width="match_parent"
         android:layout_height="52dp"
         style="@style/Homney.Button.Green"
-        android:text="Continuar con Google"
+        android:text="@string/cuenta_google_boton"
         android:textSize="15sp"
         android:layout_marginBottom="20dp"
         />

@@ -221,7 +221,7 @@ public class fragment_crear_nueva_publicacion extends Fragment {
                     imageFile);
         } catch (Exception e) {
             Toast.makeText(requireContext(),
-                    "No se pudo preparar la cámara", Toast.LENGTH_SHORT).show();
+                    getString(R.string.no_se_pudo_preparar_camara), Toast.LENGTH_SHORT).show();
             return null;
         }
     }
@@ -385,7 +385,7 @@ public class fragment_crear_nueva_publicacion extends Fragment {
     /** Cierra el loading, muestra toast y navega atrás. */
     private void finalizarPublicacion() {
         loadingDialog.dismiss();
-        Toast.makeText(requireContext(), "Publicado ", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), getString(R.string.publicado), Toast.LENGTH_SHORT).show();
         navegarAtras();
     }
 

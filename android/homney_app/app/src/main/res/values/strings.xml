@@ -301,5 +301,199 @@
     <string name="tag_hecha_hoy">HECHA HOY</string>
     <string name="tag_historial">HISTORIAL</string>
     <string name="sin_asignar">Sin asignar</string>
+    <string name="centro_de_ayuda">Centro de ayuda</string>
+    <string name="aprende_a_sacar_el_m_ximo_partido_a_homney_aqu_encontrar_s_todo_lo_que_necesitas_saber_sobre_cada_secci_n_de_la_app">Aprende a sacar el máximo partido a Homney. Aquí encontrarás todo lo que necesitas saber sobre cada sección de la app.</string>
+    <string name="el_panel_es_la_pantalla_principal_de_homney_de_un_vistazo_ver_s_el_estado_completo_de_tu_hogar">El Panel es la pantalla principal de Homney. De un vistazo verás el estado completo de tu hogar:</string>
+    <string name="_3_tarjetas_de_resumen_gasto_total_del_hogar_tareas_pendientes_asignadas_a_ti_y_publicaciones_activas_en_el_muro">3 tarjetas de resumen: gasto total del hogar, tareas pendientes asignadas a ti y publicaciones activas en el muro.</string>
+    <string name="vista_previa_de_los_ltimos_gastos_tareas_pendientes_y_publicaciones_del_muro_pulsa_ver_todos_para_ir_a_cada_secci_n">Vista previa de los últimos gastos, tareas pendientes y publicaciones del muro. Pulsa «Ver todos →» para ir a cada sección.</string>
+    <string name="gr_fico_de_l_neas_con_las_tareas_completadas_por_cada_miembro_en_los_ltimos_7_d_as">Gráfico de líneas con las tareas completadas por cada miembro en los últimos 7 días.</string>
+    <string name="gr_fico_de_columnas_con_los_importes_pagados_por_cada_conviviente_este_mes">Gráfico de columnas con los importes pagados por cada conviviente este mes.</string>
+    <string name="acceso_r_pido">ACCESO RÁPIDO</string>
+    <string name="pulsa_el_bot_n_de_la_barra_superior_para_crear_una_nueva_tarea_gasto_o_publicaci_n_desde_cualquier_pantalla_sin_tener_que_abrir_el_men_lateral">Pulsa el botón «+» de la barra superior para crear una nueva tarea, gasto o publicación desde cualquier pantalla sin tener que abrir el menú lateral.</string>
+    <string name="mi_hogar">Mi Hogar</string>
+    <string name="secci_n_2">Sección 2</string>
+    <string name="toda_la_informaci_n_de_tu_hogar_compartido_en_un_solo_lugar">Toda la información de tu hogar compartido en un solo lugar:</string>
+    <string name="n_mero_y_clave_de_invitaci_n_de_tu_hogar_comparte_la_clave_con_quien_quieras_que_se_una_al_piso">Número y clave de invitación de tu hogar. Comparte la clave con quien quieras que se una al piso.</string>
+    <string name="lista_de_miembros_con_nombre_correo_y_rol_el_administrador_aparece_con_etiqueta_amarilla_y_el_resto_en_verde">Lista de miembros con nombre, correo y rol. El administrador aparece con etiqueta amarilla y el resto en verde.</string>
+    <string name="cuadr_cula_de_habitaciones_del_hogar_cocina_sal_n_ba_o_con_sus_iconos_identificativos">Cuadrícula de habitaciones del hogar (cocina, salón, baño…) con sus iconos identificativos.</string>
+    <string name="asistente_ia">ASISTENTE IA</string>
+    <string name="desde_mi_hogar_puedes_abrir_el_asistente_inteligente_de_homney_hazle_preguntas_sobre_tus_gastos_tareas_o_el_estado_del_hogar_y_te_responder_al_instante_tambi_n_puede_ejecutar_acciones_como_registrar_un_gasto_o_marcar_una_tarea_como_completada">Desde Mi Hogar puedes abrir el asistente inteligente de Homney. Hazle preguntas sobre tus gastos, tareas o el estado del hogar y te responderá al instante. También puede ejecutar acciones como registrar un gasto o marcar una tarea como completada.</string>
+    <string name="gestiona_todas_las_tareas_del_hogar_organizadas_en_cuatro_bloques">Gestiona todas las tareas del hogar organizadas en cuatro bloques:</string>
+    <string name="tareas_asignadas_a_ti_que_est_n_pendientes_la_cabecera_muestra_el_contador_de_tareas_por_hacer">Tareas asignadas a ti que están pendientes. La cabecera muestra el contador de tareas por hacer.</string>
+    <string name="pulsa_sobre_una_tarea_para_marcarla_como_completada_podr_s_indicar_el_tiempo_real_dedicado_y_a_adir_observaciones">Pulsa sobre una tarea para marcarla como completada: podrás indicar el tiempo real dedicado y añadir observaciones.</string>
+    <string name="desliza_una_tarea_hacia_la_izquierda_para_eliminarla">Desliza una tarea hacia la izquierda para eliminarla.</string>
+    <string name="tareas_asignadas_a_otros_miembros_solo_lectura_puedes_ver_a_qui_n_est_n_asignadas_pero_no_modificarlas">Tareas asignadas a otros miembros. Solo lectura: puedes ver a quién están asignadas pero no modificarlas.</string>
+    <string name="completadas_este_mes_ayuda">COMPLETADAS ESTE MES</string>
+    <string name="otras_tareas_ayuda">OTRAS TAREAS</string>
+    <string name="historial_de_tareas_finalizadas_en_el_mes_actual_con_marca_verde_y_las_observaciones_anotadas_al_completarlas">Historial de tareas finalizadas en el mes actual con marca verde y las observaciones anotadas al completarlas.</string>
+    <string name="historial_del_mes_anterior_ayuda">HISTORIAL DEL MES ANTERIOR</string>
+    <string name="secci_n_colapsable_con_las_tareas_completadas_el_mes_pasado_disponible_para_consulta">Sección colapsable con las tareas completadas el mes pasado, disponible para consulta.</string>
+    <string name="cada_tarea_puede_tener_frecuencia_diaria_semanal_mensual_o_variable_homney_calcula_autom_ticamente_si_una_tarea_sigue_pendiente_seg_n_su_frecuencia_y_la_fecha_de_ltima_realizaci_n">Cada tarea puede tener frecuencia Diaria, Semanal, Mensual o Variable. Homney calcula automáticamente si una tarea sigue pendiente según su frecuencia y la fecha de última realización.</string>
+    <string name="frecuencias_ayuda">FRECUENCIAS</string>
+    <string name="mi_cartera_ayuda">Mi Cartera</string>
+    <string name="secci_n_4_ayuda">Sección 4</string>
+    <string name="controla_todos_los_gastos_compartidos_y_las_deudas_pendientes_del_hogar">Controla todos los gastos compartidos y las deudas pendientes del hogar:</string>
+    <string name="resumen_econ_mico_ayuda">RESUMEN ECONÓMICO</string>
+    <string name="me_deben_importe_total_que_otros_convivientes_te_deben_a_ti_este_mes">«Me deben» — importe total que otros convivientes te deben a ti este mes.</string>
+    <string name="debo_importe_total_que_t_debes_al_resto_de_convivientes">«Debo» — importe total que tú debes al resto de convivientes.</string>
+    <string name="total_gastado_suma_de_todos_los_gastos_del_hogar_en_el_mes_en_curso">«Total gastado» — suma de todos los gastos del hogar en el mes en curso.</string>
+    <string name="cobros_y_pagos_ayuda">COBROS Y PAGOS</string>
+    <string name="pulsa_sobre_un_gasto_en_me_deben_para_confirmarlo_como_cobrado_se_marca_cobrado_en_verde">Pulsa sobre un gasto en «Me deben» para confirmarlo como cobrado (se marca COBRADO en verde).</string>
+    <string name="pulsa_sobre_un_gasto_en_debo_para_confirmarlo_como_pagado_se_marca_pagado_en_rojo">Pulsa sobre un gasto en «Debo» para confirmarlo como pagado (se marca PAGADO en rojo).</string>
+    <string name="historial_de_gastos_ayuda">HISTORIAL DE GASTOS</string>
+    <string name="listado_completo_de_todos_los_gastos_del_hogar_con_concepto_categor_a_fecha_y_modo_de_pago">Listado completo de todos los gastos del hogar con concepto, categoría, fecha y modo de pago.</string>
+    <string name="los_gastos_tuyos_aparecen_en_verde_y_los_de_otros_en_rojo_la_etiqueta_fijo_indica_un_gasto_recurrente">Los gastos tuyos aparecen en verde (+) y los de otros en rojo (−). La etiqueta FIJO indica un gasto recurrente.</string>
+    <string name="desliza_un_gasto_hacia_la_izquierda_para_eliminarlo">Desliza un gasto hacia la izquierda para eliminarlo.</string>
+    <string name="mes_anterior_ayuda">MES ANTERIOR</string>
+    <string name="secci_n_colapsable_con_el_resumen_del_mes_pasado_lo_que_pagaste_lo_que_te_deb_an_lo_que_deb_as_y_el_balance_final">Sección colapsable con el resumen del mes pasado: lo que pagaste, lo que te debían, lo que debías y el balance final.</string>
+    <string name="los_gastos_marcados_como_fijo_se_renuevan_autom_ticamente_al_inicio_de_cada_mes_homney_los_copia_al_nuevo_per_odo_para_que_no_tengas_que_volver_a_registrarlos">Los gastos marcados como «Fijo» se renuevan automáticamente al inicio de cada mes. Homney los copia al nuevo período para que no tengas que volver a registrarlos.</string>
+    <string name="gastos_fijos_ayuda">GASTOS FIJOS</string>
+    <string name="el_muro_es_el_tabl_n_de_anuncios_del_hogar_un_espacio_compartido_donde_todos_los_miembros_pueden_comunicarse">El Muro es el tablón de anuncios del hogar, un espacio compartido donde todos los miembros pueden comunicarse:</string>
+    <string name="cada_publicaci_n_muestra_el_avatar_del_autor_su_nombre_la_fecha_y_un_resumen_del_contenido">Cada publicación muestra el avatar del autor, su nombre, la fecha y un resumen del contenido.</string>
+    <string name="las_publicaciones_se_ordenan_cronol_gicamente_con_las_m_s_recientes_primero">Las publicaciones se ordenan cronológicamente, con las más recientes primero.</string>
+    <string name="puedes_adjuntar_una_imagen_a_cada_publicaci_n_para_ilustrar_tu_mensaje">Puedes adjuntar una imagen a cada publicación para ilustrar tu mensaje.</string>
+    <string name="nueva_tarea_ayuda">NUEVA TAREA</string>
+    <string name="escribe_el_nombre_de_la_tarea_el_campo_sugiere_tareas_habituales_autom_ticamente">Escribe el nombre de la tarea (el campo sugiere tareas habituales automáticamente).</string>
+    <string name="selecciona_la_habitaci_n_la_frecuencia_diaria_semanal_mensual_variable_y_la_duraci_n_estimada_en_horas_y_minutos">Selecciona la habitación, la frecuencia (Diaria / Semanal / Mensual / Variable) y la duración estimada en horas y minutos.</string>
+    <string name="asigna_la_tarea_al_miembro_que_corresponda_y_pulsa_crear_tarea">Asigna la tarea al miembro que corresponda y pulsa «Crear tarea».</string>
+    <string name="nuevo_gasto_ayuda">NUEVO GASTO</string>
+    <string name="introduce_el_concepto_importe_fecha_y_selecciona_la_categor_a_y_subcategor_a">Introduce el concepto, importe, fecha y selecciona la categoría y subcategoría.</string>
+    <string name="elige_el_modo_de_pago_efectivo_tarjeta_transferencia_u_otro_y_el_tipo_variable_o_fijo_se_renovar_autom_ticamente_cada_mes">Elige el modo de pago (Efectivo, Tarjeta, Transferencia u Otro) y el tipo: Variable o Fijo (se renovará automáticamente cada mes).</string>
+    <string name="activa_no_compartir_autom_ticamente_para_que_el_gasto_no_se_reparta_entre_todos_los_miembros_del_hogar_es_til_para_tener_un_registro_de_las_invitaciones_y_gastos_personales">Activa «NO Compartir automáticamente» para que el gasto no se reparta entre todos los miembros del hogar. Es útil para tener un registro de las invitaciones y gastos personales.</string>
+    <string name="nueva_publicaci_n_ayuda">NUEVA PUBLICACIÓN</string>
+    <string name="escribe_un_t_tulo_y_el_contenido_del_mensaje_que_quieres_compartir_con_el_hogar">Escribe un título y el contenido del mensaje que quieres compartir con el hogar.</string>
+    <string name="adjunta_opcionalmente_una_foto_desde_la_galer_a_o_tomada_en_el_momento_con_la_c_mara">Adjunta opcionalmente una foto desde la galería o tomada en el momento con la cámara.</string>
+    <string name="accede_a_tu_perfil_pulsando_el_avatar_en_la_esquina_superior_derecha_de_la_pantalla">Accede a tu perfil pulsando el avatar en la esquina superior derecha de la pantalla:</string>
+    <string name="edita_tu_nombre_tel_fono_fecha_de_nacimiento_y_g_nero_en_cualquier_momento">Edita tu nombre, teléfono, fecha de nacimiento y género en cualquier momento.</string>
+    <string name="cambia_tu_foto_de_perfil_seleccion_ndola_desde_la_galer_a_o_tomando_una_nueva_con_la_c_mara">Cambia tu foto de perfil seleccionándola desde la galería o tomando una nueva con la cámara.</string>
+    <string name="cambia_tu_contrase_a_mediante_el_bot_n_cambiar_contrase_a_disponible_en_la_pantalla_de_perfil">Cambia tu contraseña mediante el botón «Cambiar contraseña» disponible en la pantalla de perfil.</string>
+    <string name="para_cerrar_sesi_n_pulsa_el_avatar_de_la_barra_superior_y_selecciona_cerrar_sesi_n">Para cerrar sesión, pulsa el avatar de la barra superior y selecciona «Cerrar Sesión».</string>
+    <string name="contactar_por_correo">Contactar por correo</string>
+    <string name="homney_tu_colmena_organizada">Homney · Tu colmena organizada</string>
+    <string name="nueva_publicaci_n">💬 Nueva publicación</string>
+    <string name="cerrar">Cerrar</string>
+    <string name="o_contin_a_con">o continúa con</string>
+    <string name="cuenta_google_boton">Cuenta de Google</string>
+    <string name="cambiar_foto_menu">📷 Cambiar foto</string>
+    <string name="informaci_n_personal">Información personal</string>
+    <string name="email">EMAIL</string>
+    <string name="nombre">NOMBRE</string>
+    <string name="tu_nombre">Tu nombre</string>
+    <string name="tel_fono">TELÉFONO</string>
+    <string name="n_mero_de_m_vil">Número de móvil</string>
+    <string name="genero">Genero</string>
+    <string name="fecha_de_nacimiento">FECHA DE NACIMIENTO</string>
+    <string name="cambiar_contrase_a">🔐 Cambiar contraseña</string>
+    <string name="eliminar_cuenta">⛔️ Eliminar cuenta</string>
+
+
+    <!-- Sesión -->
+    <string name="sesion_no_valida">Sesión no válida — vuelve a iniciar sesión</string>
+    <string name="presione_atras_para_salir">Por favor, presiona ATRÁS otra vez para salir</string>
+
+    <!-- Estados vacíos adicionales -->
+    <string name="sin_nombre">Sin nombre</string>
+    <string name="sin_movimientos_mes_anterior">Sin movimientos el mes anterior.</string>
+    <string name="mes_anterior_titulo">Mes anterior</string>
+    <string name="tareas_completadas_mes_pasado">Tareas completadas el mes pasado</string>
+
+    <!-- Confirmaciones positivas -->
+    <string name="tarea_completada">¡Tarea completada!</string>
+    <string name="tarea_eliminada">Tarea eliminada</string>
+    <string name="tarea_asignada_msg">¡Tarea asignada! Ahora aparece en «Mis tareas»</string>
+    <string name="completada_ahora">Completada ahora</string>
+    <string name="nombre_actualizado">Nombre actualizado ✓</string>
+    <string name="perfil_actualizado">Perfil actualizado ✓</string>
+    <string name="contrasena_actualizada">Contraseña actualizada ✓</string>
+
+    <!-- Errores de operaciones -->
+    <string name="no_pudo_eliminar_tarea">No se pudo eliminar la tarea</string>
+    <string name="no_pudo_eliminar_pub">No se pudo eliminar la publicación</string>
+    <string name="no_pudo_actualizar_nombre">No se pudo actualizar el nombre</string>
+    <string name="error_procesar_respuesta">Error al procesar la respuesta</string>
+    <string name="error_procesar_usuarios">Error al procesar usuarios</string>
+    <string name="error_procesar_habitaciones">Error al procesar habitaciones</string>
+    <string name="nombre_vacio">El nombre no puede estar vacío</string>
+    <string name="rellena_ambos_campos">Rellena ambos campos</string>
+    <string name="minimo_6_caracteres">Mínimo 6 caracteres</string>
+    <string name="passwords_no_coinciden">Las contraseñas no coinciden</string>
+    <string name="no_se_pudo_preparar_camara">No se pudo preparar la cámara</string>
+    <string name="no_pudo_guardar_nombre">No se pudo guardar el nombre</string>
+    <string name="habitacion_anadida">Habitación añadida</string>
+    <string name="no_pudo_anadir_habitacion">No se pudo añadir la habitación</string>
+    <string name="error_procesar_red">Error de red</string>
+    <string name="error_interno">Error interno</string>
+    <string name="error_procesar_respuesta_short">Error al procesar la respuesta</string>
+
+    <!-- Wizard de registro: pasos -->
+    <string name="paso_2_de_3">Paso 2 de 3</string>
+    <string name="paso_3_de_3">Paso 3 de 3</string>
+    <string name="anadir_foto">Añadir foto</string>
+    <string name="quitar_foto">✕ Quitar foto</string>
+    <string name="anhadir_btn">Añadir</string>
+
+    <!-- Cartera -->
+    <string name="subcategoria_opcional">Subcategoría (opcional)</string>
+    <string name="no_compartir">No Compartir</string>
+    <string name="nuevo_gasto_toolbar"> 💳 Nuevo Gasto</string>
+    <string name="importe_euros">Importe €</string>
+    <string name="historial_mes_pasado">Historial de gastos del mes pasado</string>
+
+    <!-- Mi Hogar -->
+    <string name="invita_a_la_colmena">Invita a la colmena</string>
+    <string name="codigo_label">Código: </string>
+
+    <!-- Homney Mate IA -->
+    <string name="homney_mate_titulo">Homney Mate</string>
+    <string name="homney_mate_subtitulo">Tu abeja obrera con IA</string>
+
+    <!-- Login -->
+    <string name="olvidaste_contrasena">¿Olvidaste tu contraseña?</string>
+    <string name="recordarme">Recordarme</string>
+    <string name="dialog_recuperar_pass_btn">Enviar</string>
+
+    <!-- Mi Perfil -->
+    <string name="mi_perfil_toolbar">👤 Mi perfil</string>
+    <string name="dialog_eliminar_cuenta_msg">ATENCIÓN: Esta acción es irreversible. Perderás todos tus datos y no podrás recuperarlos.</string>
+
+    <!-- Nueva tarea -->
+    <string name="nueva_tarea_toolbar">Nueva Tarea</string>
+
+    <!-- Ayuda — etiquetas de sección -->
+    <string name="ayuda_seccion_mis_tareas">MIS TAREAS</string>
+    <string name="ayuda_crear_contenido">Crear contenido</string>
+    <string name="ayuda_menu_lateral">Menú lateral</string>
+    <string name="ayuda_mi_perfil">Mi Perfil</string>
+    <string name="ayuda_avatar">Avatar</string>
+    <string name="ayuda_seccion_inicio">Inicio</string>
+    <string name="ayuda_seccion_tareas">Tareas</string>
+    <string name="ayuda_seccion_muro">Muro</string>
+
+    <!-- MainActivity -->
+    <string name="fab_nueva_tarea">Nueva tarea</string>
+    <string name="fab_nuevo_gasto">Nuevo gasto</string>
+    <string name="fab_nueva_publicacion">Nueva publicación</string>
+    <string name="fab_crear">Crear...</string>
+    <string name="fab_asistente_ia">Tu asistente con IA</string>
+    <string name="fab_opcion_nueva_tarea">📋  Nueva tarea</string>
+    <string name="fab_opcion_nuevo_gasto">💰  Nuevo gasto</string>
+    <string name="fab_opcion_nueva_publicacion">📣  Nueva publicación</string>
+
+    <string name="solicitud_permiso">Solicitud de permiso</string>
+
+    <!-- Mensaje de invitación al hogar (compartir) -->
+    <string name="invitacion_linea1">🏠 ¡Te invito a unirte a mi colmena en Homney!</string>
+    <string name="invitacion_hogar_label">Hogar: </string>
+    <string name="invitacion_codigo_label">Código de invitación: </string>
+    <string name="invitacion_instrucciones">Descarga Homney, crea tu cuenta y usa este código para unirte.</string>
+    <string name="invitacion_codigo_no_disponible">El código aún no está disponible, espera un momento</string>
+
+
+    <!-- Crear tarea -->
+    <string name="habitacion_general">🏠 General (toda la casa)</string>
+    <string name="spinner_selecciona_habitacion">— Selecciona habitación —</string>
+    <string name="spinner_sin_asignar">— Sin asignar —</string>
+    <string name="error_selecciona_habitacion">Selecciona una habitación o elige General</string>
+    <string name="tarea_creada_asignada">¡Tarea creada y asignada! ✓</string>
 
 </resources>

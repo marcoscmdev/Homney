@@ -182,7 +182,7 @@ public class activity_fragment_registro extends Fragment {
             String mail = et_mail.getText().toString().trim();
             String pass = et_pass.getText().toString().trim();
             if (mail.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(getContext(), "Rellena todos los campos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.rellena_todos_los_campos), Toast.LENGTH_SHORT).show();
             } else {
                 iniciarSesion(mail, Utilidades.encriptaMD5(pass));
             }
@@ -248,7 +248,7 @@ public class activity_fragment_registro extends Fragment {
                     } catch (JSONException e) {
                         loadingDialog.dismiss();
                         Toast.makeText(requireContext(),
-                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -265,7 +265,7 @@ public class activity_fragment_registro extends Fragment {
 
     private void iniciarSesionGoogle() {
         if (!Utilidades.hayConexionInternet(requireContext())) {
-            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
             return;
         }
         loadingDialog.show();
@@ -383,7 +383,7 @@ public class activity_fragment_registro extends Fragment {
 
     private void mostrarDialogResetPassword() {
         EditText etEmail = new EditText(requireContext());
-        etEmail.setHint("Tu correo electrónico");
+        etEmail.setHint(getString(R.string.hint_correo_recuperar));
         etEmail.setInputType(android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         etEmail.setPadding(50, 30, 50, 30);
         // Pre-rellena con lo que haya escrito en el campo de login
@@ -391,10 +391,10 @@ public class activity_fragment_registro extends Fragment {
         if (!emailActual.isEmpty()) etEmail.setText(emailActual);
 
         new android.app.AlertDialog.Builder(requireContext())
-                .setTitle("Restablecer contraseña")
-                .setMessage("Te enviaremos un email para que puedas crear una nueva contraseña.")
+                .setTitle(getString(R.string.dialog_recuperar_pass_titulo))
+                .setMessage(getString(R.string.dialog_recuperar_pass_msg))
                 .setView(etEmail)
-                .setPositiveButton("Enviar", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.enviar), (dialog, which) -> {
                     String email = etEmail.getText().toString().trim();
                     if (email.isEmpty()) {
                         Toast.makeText(getContext(),
@@ -408,7 +408,7 @@ public class activity_fragment_registro extends Fragment {
                     }
                     enviarEmailReset(email);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 

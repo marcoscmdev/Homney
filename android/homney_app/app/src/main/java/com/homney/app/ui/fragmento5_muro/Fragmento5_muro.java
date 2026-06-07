@@ -85,11 +85,11 @@ public class Fragmento5_muro extends Fragment {
             if (Utilidades.hayConexionInternet(requireContext())) {
                 cargarDatos();
             } else {
-                tvSinPublicaciones.setText("Sin conexión a Internet");
+                tvSinPublicaciones.setText(getString(R.string.sin_conexion_internet));
             }
         } else {
             Toast.makeText(requireContext(),
-                    "Sesión no válida — vuelve a iniciar sesión",
+                    getString(R.string.sesion_no_valida),
                     Toast.LENGTH_LONG).show();
         }
 
@@ -157,7 +157,7 @@ public class Fragmento5_muro extends Fragment {
         loadingDialog.dismiss();
 
         if (listaPublis.isEmpty()) {
-            tvSinPublicaciones.setText("El muro está vacío");
+            tvSinPublicaciones.setText(getString(R.string.muro_vacio));
             tvSinPublicaciones.setVisibility(View.VISIBLE);
             recycler.setVisibility(View.GONE);
             return;
@@ -183,12 +183,12 @@ public class Fragmento5_muro extends Fragment {
         if (!isAdded()) return;
 
         new android.app.AlertDialog.Builder(requireContext())
-                .setTitle("Eliminar publicación")
-                .setMessage("¿Seguro que quieres eliminar esta publicación? No se puede deshacer.")
-                .setPositiveButton("Eliminar", (dialog, which) -> {
+                .setTitle(getString(R.string.dialog_eliminar_pub_titulo))
+                .setMessage(getString(R.string.dialog_eliminar_pub_msg))
+                .setPositiveButton(getString(R.string.eliminar), (dialog, which) -> {
                     if (!Utilidades.hayConexionInternet(requireContext())) {
                         Toast.makeText(requireContext(),
-                                "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+                                getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
                         return;
                     }
                     String url = WebService.URL_Muro + "?id_pub=" + idPub;
@@ -204,7 +204,7 @@ public class Fragmento5_muro extends Fragment {
                                                 listaPublis.remove(position);
                                                 recycler.getAdapter().notifyItemRemoved(position);
                                                 if (listaPublis.isEmpty()) {
-                                                    tvSinPublicaciones.setText("El muro está vacío");
+                                                    tvSinPublicaciones.setText(getString(R.string.muro_vacio));
                                                     tvSinPublicaciones.setVisibility(View.VISIBLE);
                                                     recycler.setVisibility(View.GONE);
                                                 }
@@ -213,7 +213,7 @@ public class Fragmento5_muro extends Fragment {
                                     } else {
                                         requireActivity().runOnUiThread(() ->
                                                 Toast.makeText(requireContext(),
-                                                        "No se pudo eliminar la publicación",
+                                                        getString(R.string.no_pudo_eliminar_pub),
                                                         Toast.LENGTH_SHORT).show());
                                     }
                                 } catch (org.json.JSONException e) { /* ignorar */ }
@@ -225,7 +225,7 @@ public class Fragmento5_muro extends Fragment {
                             }
                     ));
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 }

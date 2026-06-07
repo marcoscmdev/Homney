@@ -34,14 +34,14 @@
                 android:layout_height="wrap_content"
                 style="@style/Homney.Text.Title"
                 android:textSize="20sp"
-                android:text="Centro de ayuda" />
+                android:text="@string/centro_de_ayuda" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Homney.Text.Mid"
                 android:layout_marginTop="4dp"
-                android:text="Aprende a sacar el máximo partido a Homney. Aquí encontrarás todo lo que necesitas saber sobre cada sección de la app." />
+                android:text="@string/aprende_a_sacar_el_m_ximo_partido_a_homney_aqu_encontrar_s_todo_lo_que_necesitas_saber_sobre_cada_secci_n_de_la_app" />
         </LinearLayout>
 
         <View
@@ -90,13 +90,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         style="@style/Homney.Text.Title"
-                        android:text="Panel" />
+                        android:text="@string/menu_home" />
 
                     <TextView
                         style="@style/Homney.Tag.Yellow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Inicio" />
+                        android:text="@string/ayuda_seccion_inicio" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" />
@@ -111,36 +111,36 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/Homney.Text.Body"
-                        android:text="El Panel es la pantalla principal de Homney. De un vistazo verás el estado completo de tu hogar:" />
+                        android:text="@string/el_panel_es_la_pantalla_principal_de_homney_de_un_vistazo_ver_s_el_estado_completo_de_tu_hogar" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp">
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="3 tarjetas de resumen: gasto total del hogar, tareas pendientes asignadas a ti y publicaciones activas en el muro." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/_3_tarjetas_de_resumen_gasto_total_del_hogar_tareas_pendientes_asignadas_a_ti_y_publicaciones_activas_en_el_muro" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Vista previa de los últimos gastos, tareas pendientes y publicaciones del muro. Pulsa «Ver todos →» para ir a cada sección." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/vista_previa_de_los_ltimos_gastos_tareas_pendientes_y_publicaciones_del_muro_pulsa_ver_todos_para_ir_a_cada_secci_n" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Gráfico de líneas con las tareas completadas por cada miembro en los últimos 7 días." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/gr_fico_de_l_neas_con_las_tareas_completadas_por_cada_miembro_en_los_ltimos_7_d_as" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Gráfico de columnas con los importes pagados por cada conviviente este mes." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/gr_fico_de_columnas_con_los_importes_pagados_por_cada_conviviente_este_mes" />
                         </LinearLayout>
                     </LinearLayout>
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" android:layout_marginTop="14dp" android:layout_marginBottom="10dp" />
 
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:text="ACCESO RÁPIDO" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:text="@string/acceso_r_pido" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Mid" android:layout_marginTop="4dp"
-                        android:text="Pulsa el botón «+» de la barra superior para crear una nueva tarea, gasto o publicación desde cualquier pantalla sin tener que abrir el menú lateral." />
+                        android:text="@string/pulsa_el_bot_n_de_la_barra_superior_para_crear_una_nueva_tarea_gasto_o_publicaci_n_desde_cualquier_pantalla_sin_tener_que_abrir_el_men_lateral" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -186,13 +186,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         style="@style/Homney.Text.Title"
-                        android:text="Mi Hogar" />
+                        android:text="@string/mi_hogar" />
 
                     <TextView
                         style="@style/Homney.Tag.Green"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sección 2" />
+                        android:text="@string/secci_n_2" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" />
@@ -204,31 +204,31 @@
                     android:padding="16dp">
 
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Body"
-                        android:text="Toda la información de tu hogar compartido en un solo lugar:" />
+                        android:text="@string/toda_la_informaci_n_de_tu_hogar_compartido_en_un_solo_lugar" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp">
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_green" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Número y clave de invitación de tu hogar. Comparte la clave con quien quieras que se una al piso." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/n_mero_y_clave_de_invitaci_n_de_tu_hogar_comparte_la_clave_con_quien_quieras_que_se_una_al_piso" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_green" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Lista de miembros con nombre, correo y rol. El administrador aparece con etiqueta amarilla y el resto en verde." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/lista_de_miembros_con_nombre_correo_y_rol_el_administrador_aparece_con_etiqueta_amarilla_y_el_resto_en_verde" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_green" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Cuadrícula de habitaciones del hogar (cocina, salón, baño…) con sus iconos identificativos." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/cuadr_cula_de_habitaciones_del_hogar_cocina_sal_n_ba_o_con_sus_iconos_identificativos" />
                         </LinearLayout>
                     </LinearLayout>
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" android:layout_marginTop="14dp" android:layout_marginBottom="10dp" />
 
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:text="ASISTENTE IA" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:text="@string/asistente_ia" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Mid" android:layout_marginTop="4dp"
-                        android:text="Desde Mi Hogar puedes abrir el asistente inteligente de Homney. Hazle preguntas sobre tus gastos, tareas o el estado del hogar y te responderá al instante. También puede ejecutar acciones como registrar un gasto o marcar una tarea como completada." />
+                        android:text="@string/desde_mi_hogar_puedes_abrir_el_asistente_inteligente_de_homney_hazle_preguntas_sobre_tus_gastos_tareas_o_el_estado_del_hogar_y_te_responder_al_instante_tambi_n_puede_ejecutar_acciones_como_registrar_un_gasto_o_marcar_una_tarea_como_completada" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -274,7 +274,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         style="@style/Homney.Text.Title"
-                        android:text="Tareas" />
+                        android:text="@string/ayuda_seccion_tareas" />
 
                     <TextView
                         style="@style/Homney.Tag.Yellow"
@@ -292,53 +292,53 @@
                     android:padding="16dp">
 
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Body"
-                        android:text="Gestiona todas las tareas del hogar organizadas en cuatro bloques:" />
+                        android:text="@string/gestiona_todas_las_tareas_del_hogar_organizadas_en_cuatro_bloques" />
 
                     <!-- Mis tareas -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="MIS TAREAS" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="@string/ayuda_seccion_mis_tareas" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Tareas asignadas a ti que están pendientes. La cabecera muestra el contador de tareas por hacer." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/tareas_asignadas_a_ti_que_est_n_pendientes_la_cabecera_muestra_el_contador_de_tareas_por_hacer" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Pulsa sobre una tarea para marcarla como completada: podrás indicar el tiempo real dedicado y añadir observaciones." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/pulsa_sobre_una_tarea_para_marcarla_como_completada_podr_s_indicar_el_tiempo_real_dedicado_y_a_adir_observaciones" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Desliza una tarea hacia la izquierda para eliminarla." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/desliza_una_tarea_hacia_la_izquierda_para_eliminarla" />
                     </LinearLayout>
 
                     <!-- Otras tareas -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="OTRAS TAREAS" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="@string/otras_tareas_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Tareas asignadas a otros miembros. Solo lectura: puedes ver a quién están asignadas pero no modificarlas." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/tareas_asignadas_a_otros_miembros_solo_lectura_puedes_ver_a_qui_n_est_n_asignadas_pero_no_modificarlas" />
                     </LinearLayout>
 
                     <!-- Completadas -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="COMPLETADAS ESTE MES" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="@string/completadas_este_mes_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_green" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Historial de tareas finalizadas en el mes actual con marca verde y las observaciones anotadas al completarlas." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/historial_de_tareas_finalizadas_en_el_mes_actual_con_marca_verde_y_las_observaciones_anotadas_al_completarlas" />
                     </LinearLayout>
 
                     <!-- Historial -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="HISTORIAL DEL MES ANTERIOR" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="@string/historial_del_mes_anterior_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Sección colapsable con las tareas completadas el mes pasado, disponible para consulta." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/secci_n_colapsable_con_las_tareas_completadas_el_mes_pasado_disponible_para_consulta" />
                     </LinearLayout>
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" android:layout_marginTop="14dp" android:layout_marginBottom="10dp" />
 
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:text="FRECUENCIAS" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:text="@string/frecuencias_ayuda" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Mid" android:layout_marginTop="4dp"
-                        android:text="Cada tarea puede tener frecuencia Diaria, Semanal, Mensual o Variable. Homney calcula automáticamente si una tarea sigue pendiente según su frecuencia y la fecha de última realización." />
+                        android:text="@string/cada_tarea_puede_tener_frecuencia_diaria_semanal_mensual_o_variable_homney_calcula_autom_ticamente_si_una_tarea_sigue_pendiente_seg_n_su_frecuencia_y_la_fecha_de_ltima_realizaci_n" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -384,13 +384,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         style="@style/Homney.Text.Title"
-                        android:text="Mi Cartera" />
+                        android:text="@string/mi_cartera_ayuda" />
 
                     <TextView
                         style="@style/Homney.Tag.Red"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sección 4" />
+                        android:text="@string/secci_n_4_ayuda" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" />
@@ -402,65 +402,65 @@
                     android:padding="16dp">
 
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Body"
-                        android:text="Controla todos los gastos compartidos y las deudas pendientes del hogar:" />
+                        android:text="@string/controla_todos_los_gastos_compartidos_y_las_deudas_pendientes_del_hogar" />
 
                     <!-- Resumen -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="RESUMEN ECONÓMICO" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="@string/resumen_econ_mico_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_green" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="«Me deben» — importe total que otros convivientes te deben a ti este mes." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/me_deben_importe_total_que_otros_convivientes_te_deben_a_ti_este_mes" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_red" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="«Debo» — importe total que tú debes al resto de convivientes." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/debo_importe_total_que_t_debes_al_resto_de_convivientes" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="«Total gastado» — suma de todos los gastos del hogar en el mes en curso." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/total_gastado_suma_de_todos_los_gastos_del_hogar_en_el_mes_en_curso" />
                     </LinearLayout>
 
                     <!-- Cobros y pagos -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="COBROS Y PAGOS" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="@string/cobros_y_pagos_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_green" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Pulsa sobre un gasto en «Me deben» para confirmarlo como cobrado (se marca COBRADO en verde)." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/pulsa_sobre_un_gasto_en_me_deben_para_confirmarlo_como_cobrado_se_marca_cobrado_en_verde" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_red" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Pulsa sobre un gasto en «Debo» para confirmarlo como pagado (se marca PAGADO en rojo)." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/pulsa_sobre_un_gasto_en_debo_para_confirmarlo_como_pagado_se_marca_pagado_en_rojo" />
                     </LinearLayout>
 
                     <!-- Historial -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="HISTORIAL DE GASTOS" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="@string/historial_de_gastos_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Listado completo de todos los gastos del hogar con concepto, categoría, fecha y modo de pago." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/listado_completo_de_todos_los_gastos_del_hogar_con_concepto_categor_a_fecha_y_modo_de_pago" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Los gastos tuyos aparecen en verde (+) y los de otros en rojo (−). La etiqueta FIJO indica un gasto recurrente." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/los_gastos_tuyos_aparecen_en_verde_y_los_de_otros_en_rojo_la_etiqueta_fijo_indica_un_gasto_recurrente" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Desliza un gasto hacia la izquierda para eliminarlo." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/desliza_un_gasto_hacia_la_izquierda_para_eliminarlo" />
                     </LinearLayout>
 
                     <!-- Mes anterior -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="MES ANTERIOR" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginTop="14dp" android:layout_marginBottom="6dp" android:text="@string/mes_anterior_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Sección colapsable con el resumen del mes pasado: lo que pagaste, lo que te debían, lo que debías y el balance final." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/secci_n_colapsable_con_el_resumen_del_mes_pasado_lo_que_pagaste_lo_que_te_deb_an_lo_que_deb_as_y_el_balance_final" />
                     </LinearLayout>
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" android:layout_marginTop="14dp" android:layout_marginBottom="10dp" />
 
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:text="GASTOS FIJOS" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:text="@string/gastos_fijos_ayuda" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Mid" android:layout_marginTop="4dp"
-                        android:text="Los gastos marcados como «Fijo» se renuevan automáticamente al inicio de cada mes. Homney los copia al nuevo período para que no tengas que volver a registrarlos." />
+                        android:text="@string/los_gastos_marcados_como_fijo_se_renuevan_autom_ticamente_al_inicio_de_cada_mes_homney_los_copia_al_nuevo_per_odo_para_que_no_tengas_que_volver_a_registrarlos" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -506,7 +506,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         style="@style/Homney.Text.Title"
-                        android:text="Muro" />
+                        android:text="@string/ayuda_seccion_muro" />
 
                     <TextView
                         style="@style/Homney.Tag.Muted"
@@ -524,23 +524,23 @@
                     android:padding="16dp">
 
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Body"
-                        android:text="El Muro es el tablón de anuncios del hogar, un espacio compartido donde todos los miembros pueden comunicarse:" />
+                        android:text="@string/el_muro_es_el_tabl_n_de_anuncios_del_hogar_un_espacio_compartido_donde_todos_los_miembros_pueden_comunicarse" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp">
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Cada publicación muestra el avatar del autor, su nombre, la fecha y un resumen del contenido." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/cada_publicaci_n_muestra_el_avatar_del_autor_su_nombre_la_fecha_y_un_resumen_del_contenido" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Las publicaciones se ordenan cronológicamente, con las más recientes primero." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/las_publicaciones_se_ordenan_cronol_gicamente_con_las_m_s_recientes_primero" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Puedes adjuntar una imagen a cada publicación para ilustrar tu mensaje." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/puedes_adjuntar_una_imagen_a_cada_publicaci_n_para_ilustrar_tu_mensaje" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -588,13 +588,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         style="@style/Homney.Text.Title"
-                        android:text="Crear contenido" />
+                        android:text="@string/ayuda_crear_contenido" />
 
                     <TextView
                         style="@style/Homney.Tag.Yellow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Menú lateral" />
+                        android:text="@string/ayuda_menu_lateral" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" />
@@ -606,51 +606,51 @@
                     android:padding="16dp">
 
                     <!-- Nueva tarea -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginBottom="6dp" android:text="NUEVA TAREA" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginBottom="6dp" android:text="@string/nueva_tarea_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Escribe el nombre de la tarea (el campo sugiere tareas habituales automáticamente)." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/escribe_el_nombre_de_la_tarea_el_campo_sugiere_tareas_habituales_autom_ticamente" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Selecciona la habitación, la frecuencia (Diaria / Semanal / Mensual / Variable) y la duración estimada en horas y minutos." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/selecciona_la_habitaci_n_la_frecuencia_diaria_semanal_mensual_variable_y_la_duraci_n_estimada_en_horas_y_minutos" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Asigna la tarea al miembro que corresponda y pulsa «Crear tarea»." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/asigna_la_tarea_al_miembro_que_corresponda_y_pulsa_crear_tarea" />
                     </LinearLayout>
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" android:layout_marginTop="12dp" android:layout_marginBottom="12dp" />
 
                     <!-- Nuevo gasto -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginBottom="6dp" android:text="NUEVO GASTO" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginBottom="6dp" android:text="@string/nuevo_gasto_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Introduce el concepto, importe, fecha y selecciona la categoría y subcategoría." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/introduce_el_concepto_importe_fecha_y_selecciona_la_categor_a_y_subcategor_a" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Elige el modo de pago (Efectivo, Tarjeta, Transferencia u Otro) y el tipo: Variable o Fijo (se renovará automáticamente cada mes)." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/elige_el_modo_de_pago_efectivo_tarjeta_transferencia_u_otro_y_el_tipo_variable_o_fijo_se_renovar_autom_ticamente_cada_mes" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Activa «NO Compartir automáticamente» para que el gasto no se reparta entre todos los miembros del hogar. Es útil para tener un registro de las invitaciones y gastos personales." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/activa_no_compartir_autom_ticamente_para_que_el_gasto_no_se_reparta_entre_todos_los_miembros_del_hogar_es_til_para_tener_un_registro_de_las_invitaciones_y_gastos_personales" />
                     </LinearLayout>
 
                     <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" android:layout_marginTop="12dp" android:layout_marginBottom="12dp" />
 
                     <!-- Nueva publicación -->
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginBottom="6dp" android:text="NUEVA PUBLICACIÓN" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Label" android:layout_marginBottom="6dp" android:text="@string/nueva_publicaci_n_ayuda" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="6dp" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Escribe un título y el contenido del mensaje que quieres compartir con el hogar." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/escribe_un_t_tulo_y_el_contenido_del_mensaje_que_quieres_compartir_con_el_hogar" />
                     </LinearLayout>
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                         <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_yellow" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Adjunta opcionalmente una foto desde la galería o tomada en el momento con la cámara." />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/adjunta_opcionalmente_una_foto_desde_la_galer_a_o_tomada_en_el_momento_con_la_c_mara" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -697,13 +697,13 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         style="@style/Homney.Text.Title"
-                        android:text="Mi Perfil" />
+                        android:text="@string/ayuda_mi_perfil" />
 
                     <TextView
                         style="@style/Homney.Tag.Muted"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Avatar" />
+                        android:text="@string/ayuda_avatar" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/border" />
@@ -715,28 +715,28 @@
                     android:padding="16dp">
 
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" style="@style/Homney.Text.Body"
-                        android:text="Accede a tu perfil pulsando el avatar en la esquina superior derecha de la pantalla:" />
+                        android:text="@string/accede_a_tu_perfil_pulsando_el_avatar_en_la_esquina_superior_derecha_de_la_pantalla" />
 
                     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="12dp">
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Edita tu nombre, teléfono, fecha de nacimiento y género en cualquier momento." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/edita_tu_nombre_tel_fono_fecha_de_nacimiento_y_g_nero_en_cualquier_momento" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Cambia tu foto de perfil seleccionándola desde la galería o tomando una nueva con la cámara." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/cambia_tu_foto_de_perfil_seleccion_ndola_desde_la_galer_a_o_tomando_una_nueva_con_la_c_mara" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Cambia tu contraseña mediante el botón «Cambiar contraseña» disponible en la pantalla de perfil." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/cambia_tu_contrase_a_mediante_el_bot_n_cambiar_contrase_a_disponible_en_la_pantalla_de_perfil" />
                         </LinearLayout>
 
                         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="top">
                             <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/bg_tag_muted" android:layout_marginTop="5dp" android:layout_marginEnd="10dp" />
-                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="Para cerrar sesión, pulsa el avatar de la barra superior y selecciona «Cerrar Sesión»." />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" style="@style/Homney.Text.Body" android:text="@string/para_cerrar_sesi_n_pulsa_el_avatar_de_la_barra_superior_y_selecciona_cerrar_sesi_n" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -795,7 +795,7 @@
                     style="@style/Homney.Button.Primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Contactar por correo" />
+                    android:text="@string/contactar_por_correo" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -808,7 +808,7 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:layout_marginTop="24dp"
-            android:text="Homney · Tu colmena organizada" />
+            android:text="@string/homney_tu_colmena_organizada" />
 
     </LinearLayout>
 </ScrollView>

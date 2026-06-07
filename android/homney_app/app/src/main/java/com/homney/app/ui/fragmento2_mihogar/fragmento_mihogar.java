@@ -27,6 +27,8 @@ import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
 import com.homney.app.utils.LoadingDialog;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
 import com.homney.app.webservice.modelo.Habitacion;
@@ -116,11 +118,11 @@ public class fragmento_mihogar extends Fragment {
                 cargarHabitaciones();
             } else {
                 Toast.makeText(requireContext(),
-                        "No hay conexión a Internet", Toast.LENGTH_SHORT).show();
+                        getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(requireContext(),
-                    "Sesión no válida — vuelve a iniciar sesión", Toast.LENGTH_LONG).show();
+                    getString(R.string.sesion_no_valida), Toast.LENGTH_LONG).show();
         }
 
         return root;
@@ -150,7 +152,7 @@ public class fragmento_mihogar extends Fragment {
                                 if (h.getNombre() != null) {
                                     tvHogarTitulo.setText(h.getNombre());
                                 } else {
-                                    tvHogarTitulo.setText("Hogar");
+                                    tvHogarTitulo.setText(getString(R.string.hogar_default));
                                 }
                                 claveInvActual = h.getClave_inv() != null ? h.getClave_inv() : "";
                                 tvClaveHogar.setText(claveInvActual);
@@ -198,13 +200,13 @@ public class fragmento_mihogar extends Fragment {
                             if (resp.data != null && !resp.data.isEmpty()) {
                                 mostrarUsuarios(resp.data);
                             } else {
-                                tvSinUsuarios.setText("Sin compañeros registrados");
+                                tvSinUsuarios.setText(getString(R.string.sin_companeros));
                                 tvSinUsuarios.setVisibility(View.VISIBLE);
                             }
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar usuarios", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_usuarios), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -246,13 +248,13 @@ public class fragmento_mihogar extends Fragment {
                             if (resp.data != null && !resp.data.isEmpty()) {
                                 mostrarHabitaciones(resp.data);
                             } else {
-                                tvSinHabitaciones.setText("Sin habitaciones registradas");
+                                tvSinHabitaciones.setText(getString(R.string.sin_habitaciones));
                                 tvSinHabitaciones.setVisibility(View.VISIBLE);
                             }
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar habitaciones", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_habitaciones), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -274,14 +276,11 @@ public class fragmento_mihogar extends Fragment {
     ════════════════════════════════════════════════════════ */
 
     private void mostrarUsuarios(List<Usuario> usuarios) {
-        // Quitar el placeholder "Cargando…"
         tvSinUsuarios.setVisibility(View.GONE);
-
         LayoutInflater inflater = LayoutInflater.from(requireContext());
 
         for (Usuario u : usuarios) {
-            View card = inflater.inflate(
-                    R.layout.item_usuario_hogar, containerUsuarios, false);
+            View card = inflater.inflate(R.layout.item_usuario_hogar, containerUsuarios, false);
 
             ((TextView) card.findViewById(R.id.tv_nombre)).setText(u.getNombre());
             ((TextView) card.findViewById(R.id.tv_email)).setText(u.getEmail());
@@ -289,15 +288,59 @@ public class fragmento_mihogar extends Fragment {
             TextView tvRol = card.findViewById(R.id.tv_rol);
             String rol = u.getRol() != null ? u.getRol() : "miembro";
             tvRol.setText(rol.toUpperCase(Locale.getDefault()));
+            tvRol.setBackgroundResource("fundador".equalsIgnoreCase(rol)
+                    ? R.drawable.bg_tag_yellow : R.drawable.bg_tag_green);
 
-            if ("fundador".equalsIgnoreCase(rol)) {
-                tvRol.setBackgroundResource(R.drawable.bg_tag_yellow);
+            // ── Avatar: cargar imagen real del servidor o mostrar inicial ──
+            ImageView imgAvatar = card.findViewById(R.id.img_avatar);
+            String avatar = u.getAvatar();
+            boolean tieneAvatar = avatar != null
+                    && !avatar.isEmpty()
+                    && !avatar.contains("default.png");
+
+            if (tieneAvatar) {
+                String url = WebService.urlImagen(avatar, 0L);
+                Glide.with(this)
+                        .load(url)
+                        .apply(new RequestOptions()
+                                .circleCrop()
+                                .placeholder(R.drawable.ic_user)
+                                .error(R.drawable.ic_user))
+                        .into(imgAvatar);
+                imgAvatar.setPadding(0, 0, 0, 0);
             } else {
-                tvRol.setBackgroundResource(R.drawable.bg_tag_green);
+                // Sin foto: mostrar inicial sobre fondo de color accent
+                char inicial = (u.getNombre() != null && !u.getNombre().isEmpty())
+                        ? Character.toUpperCase(u.getNombre().charAt(0)) : '?';
+                imgAvatar.setImageDrawable(
+                        crearAvatarInicial(inicial, 0xFFF5C518));
+                imgAvatar.setPadding(0, 0, 0, 0);
+                imgAvatar.setClipToOutline(true);
             }
 
             containerUsuarios.addView(card);
         }
+    }
+
+    /** Genera un Drawable circular con la inicial del usuario sobre fondo accent. */
+    private android.graphics.drawable.Drawable crearAvatarInicial(char inicial, int colorFondo) {
+        int size = Math.round(android.util.TypedValue.applyDimension(
+                android.util.TypedValue.COMPLEX_UNIT_DIP, 48,
+                getResources().getDisplayMetrics()));
+        android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(
+                size, size, android.graphics.Bitmap.Config.ARGB_8888);
+        android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+        android.graphics.Paint bgPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        bgPaint.setColor(colorFondo);
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, bgPaint);
+        android.graphics.Paint textPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(android.graphics.Color.WHITE);
+        textPaint.setTextSize(size * 0.43f);
+        textPaint.setTextAlign(android.graphics.Paint.Align.CENTER);
+        textPaint.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        float yPos = size / 2f - (textPaint.descent() + textPaint.ascent()) / 2f;
+        canvas.drawText(String.valueOf(inicial), size / 2f, yPos, textPaint);
+        return new android.graphics.drawable.BitmapDrawable(getResources(), bitmap);
     }
 
     /* ════════════════════════════════════════════════════════
@@ -305,7 +348,7 @@ public class fragmento_mihogar extends Fragment {
     ════════════════════════════════════════════════════════ */
 
     private void mostrarHabitaciones(List<Habitacion> habitaciones) {
-        // Quitar el placeholder "Cargando…"
+        // Quitar el placeholder getString(R.string.cargando)
         tvSinHabitaciones.setVisibility(View.GONE);
 
         LayoutInflater inflater = LayoutInflater.from(requireContext());
@@ -414,31 +457,31 @@ public class fragmento_mihogar extends Fragment {
 
     private void editarNombreHogar() {
         android.widget.EditText etNombre = new android.widget.EditText(requireContext());
-        etNombre.setHint("Nombre del hogar");
+        etNombre.setHint(getString(R.string.hint_nombre_del_hogar));
         etNombre.setText(tvHogarTitulo.getText());
         etNombre.setSingleLine(true);
         int pad = dp(16);
         etNombre.setPadding(pad, pad / 2, pad, pad / 2);
 
         new android.app.AlertDialog.Builder(requireContext())
-                .setTitle("Editar nombre del hogar")
+                .setTitle(getString(R.string.dialog_editar_hogar_titulo))
                 .setView(etNombre)
-                .setPositiveButton("Guardar", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.guardar), (dialog, which) -> {
                     String nombre = etNombre.getText().toString().trim();
                     if (nombre.isEmpty()) {
                         Toast.makeText(requireContext(),
-                                "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
+                                getString(R.string.nombre_vacio), Toast.LENGTH_SHORT).show();
                         return;
                     }
                     guardarNombreHogar(nombre);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 
     private void guardarNombreHogar(String nombre) {
         if (!Utilidades.hayConexionInternet(requireContext())) {
-            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -463,14 +506,14 @@ public class fragmento_mihogar extends Fragment {
                             requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE)
                                     .edit().putString("nombre_hogar", nombre).apply();
                             Toast.makeText(requireContext(),
-                                    "Nombre actualizado ✓", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.nombre_actualizado), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(requireContext(),
-                                    "No se pudo actualizar el nombre", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.no_pudo_actualizar_nombre), Toast.LENGTH_SHORT).show();
                         }
                     } catch (org.json.JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -492,16 +535,16 @@ public class fragmento_mihogar extends Fragment {
     private void compartirCodigoHogar() {
         if (claveInvActual == null || claveInvActual.isEmpty()) {
             Toast.makeText(requireContext(),
-                    "El código aún no está disponible, espera un momento",
+                    getString(R.string.invitacion_codigo_no_disponible),
                     Toast.LENGTH_SHORT).show();
             return;
         }
 
         String nombreHogar = tvHogarTitulo.getText().toString().trim();
-        String mensaje = "🏠 ¡Te invito a unirte a mi colmena en Homney!\n\n"
-                + "Hogar: " + nombreHogar + "\n"
-                + "Código de invitación: " + claveInvActual + "\n\n"
-                + "Descarga Homney, crea tu cuenta y usa este código para unirte.";
+        String mensaje = getString(R.string.invitacion_linea1) + "\n\n"
+                + getString(R.string.invitacion_hogar_label) + nombreHogar + "\n"
+                + getString(R.string.invitacion_codigo_label) + claveInvActual + "\n\n"
+                + getString(R.string.invitacion_instrucciones);
 
         tv_codigo_invi.setText(claveInvActual);
         Intent intent = new Intent(Intent.ACTION_SEND);
@@ -520,7 +563,7 @@ public class fragmento_mihogar extends Fragment {
         // Limpiar el grid conservando el placeholder tv_sin_habitaciones
         gridHabitaciones.removeAllViews();
         gridHabitaciones.addView(tvSinHabitaciones);
-        tvSinHabitaciones.setText("Cargando habitaciones…");
+        tvSinHabitaciones.setText(getString(R.string.cargando_habitaciones));
         tvSinHabitaciones.setVisibility(View.VISIBLE);
 
         cargarHabitaciones();

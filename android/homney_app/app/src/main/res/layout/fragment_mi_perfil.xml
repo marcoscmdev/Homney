@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="👤 Mi perfil"
+            android:text="@string/mi_perfil_toolbar"
             style="@style/Homney.Text.Title"
             android:layout_marginBottom="16dp" />
 
@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="📷 Cambiar foto"
+                android:text="@string/cambiar_foto_menu"
                 android:textSize="13sp"
                 android:textColor="@color/accent_dark"
                 android:textStyle="bold"
@@ -61,7 +61,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Información personal"
+            android:text="@string/informaci_n_personal"
             style="@style/Homney.Text.Subtitle"
             android:layout_marginBottom="14dp" />
 
@@ -69,7 +69,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="EMAIL"
+            android:text="@string/email"
             style="@style/Homney.Text.Label"
             android:layout_marginBottom="4dp" />
 
@@ -90,7 +90,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NOMBRE"
+            android:text="@string/nombre"
             style="@style/Homney.Text.Label"
             android:layout_marginBottom="4dp" />
 
@@ -99,7 +99,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input"
-            android:hint="Tu nombre"
+            android:hint="@string/tu_nombre"
             android:inputType="textPersonName|textCapWords"
             android:textColor="@color/text"
             android:textColorHint="@color/muted"
@@ -115,7 +115,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TELÉFONO"
+            android:text="@string/tel_fono"
             style="@style/Homney.Text.Label"
             android:layout_marginBottom="4dp" />
 
@@ -124,7 +124,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input"
-            android:hint="Número de móvil"
+            android:hint="@string/n_mero_de_m_vil"
             android:inputType="phone"
             android:textColor="@color/text"
             android:textColorHint="@color/muted"
@@ -140,7 +140,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Genero"
+            android:text="@string/genero"
             style="@style/Homney.Text.Label"
             android:layout_marginBottom="4dp" />
 
@@ -157,7 +157,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FECHA DE NACIMIENTO"
+            android:text="@string/fecha_de_nacimiento"
             style="@style/Homney.Text.Label"
             android:layout_marginBottom="4dp" />
 
@@ -166,7 +166,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_input"
-            android:hint="aaaa-mm-dd"
+            android:hint="mm-dd-aaaa"
             android:textColor="@color/text"
             android:textColorHint="@color/muted"
             android:textSize="14sp"
@@ -189,7 +189,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             style="@style/Homney.Button.Ghost"
-            android:text="🔐  Cambiar contraseña"
+            android:text="@string/cambiar_contrase_a"
             android:textSize="14sp"
             android:layout_marginBottom="20dp" />
 
@@ -198,7 +198,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             style="@style/Homney.Button.Ghost"
-            android:text="⛔️ Eliminar cuenta"
+            android:text="@string/eliminar_cuenta"
             android:textSize="14sp"
             android:layout_marginBottom="20dp" />
 
@@ -218,7 +218,7 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
                 style="@style/Homney.Button.Ghost"
-                android:text="Cancelar"
+                android:text="@string/btn_cancelar"
                 android:textSize="15sp" />
 
             <Button
@@ -228,7 +228,7 @@
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
                 style="@style/Homney.Button.Primary"
-                android:text="Guardar"
+                android:text="@string/guardar"
                 android:textSize="15sp" />
         </LinearLayout>
 

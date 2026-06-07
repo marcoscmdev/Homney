@@ -97,7 +97,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Invita a la colmena" />
+                        android:text="@string/invita_a_la_colmena" />
 
                     <!-- Código de invitación visible bajo el botón -->
                     <LinearLayout
@@ -111,7 +111,7 @@
                             style="@style/Homney.Text.Muted"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Código: "
+                            android:text="@string/codigo_label"
                             android:textSize="12sp" />
 
                         <TextView
@@ -156,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="20dp"
-                android:text="Cargando compañeros…"
+                android:text="@string/cargando_companeros"
                 android:visibility="visible" />
         </LinearLayout>
 
@@ -207,7 +207,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="20dp"
-                android:text="Cargando habitaciones…"
+                android:text="@string/cargando_habitaciones"
                 android:visibility="visible" />
         </LinearLayout>
 

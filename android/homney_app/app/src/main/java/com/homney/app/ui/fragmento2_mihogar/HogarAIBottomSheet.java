@@ -547,10 +547,10 @@ public class HogarAIBottomSheet extends DialogFragment {
         if (descripcion == null) return;
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("¿Confirmar acción?")
+                .setTitle(getString(R.string.dialog_confirmar_accion_titulo))
                 .setMessage(descripcion)
-                .setPositiveButton("✅ Sí, hacerlo", (d, w) -> ejecutarAccion(tipo, datos))
-                .setNegativeButton("❌ No", null)
+                .setPositiveButton(getString(R.string.dialog_confirmar_accion_btn_si), (d, w) -> ejecutarAccion(tipo, datos))
+                .setNegativeButton(getString(R.string.dialog_confirmar_accion_btn_no), null)
                 .show();
     }
 
@@ -619,7 +619,7 @@ public class HogarAIBottomSheet extends DialogFragment {
     private void ejecutarCrearTarea(JSONObject datos) {
         try {
             JSONObject body = new JSONObject();
-            body.put("nombre",     datos.optString("nombre", "Nueva tarea"));
+            body.put("nombre",     datos.optString("nombre", getString(R.string.fab_nueva_tarea)));
             body.put("frecuencia", datos.optString("frecuencia", "semanal"));
             body.put("num_veces",  datos.optInt("num_veces", 1));
 
@@ -735,10 +735,10 @@ public class HogarAIBottomSheet extends DialogFragment {
 
     private void confirmarLimpiarHistorial() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Limpiar historial")
-                .setMessage("¿Borrar toda la conversación con Homney Mate?")
-                .setPositiveButton("Borrar", (d, w) -> limpiarHistorial())
-                .setNegativeButton("Cancelar", null)
+                .setTitle(getString(R.string.dialog_limpiar_historial_titulo))
+                .setMessage(getString(R.string.dialog_limpiar_historial_msg))
+                .setPositiveButton(getString(R.string.borrar), (d, w) -> limpiarHistorial())
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 

@@ -121,7 +121,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
                     granted -> {
                         if (granted) lanzarCamara();
-                        else Toast.makeText(this, "Se necesita permiso de cámara", Toast.LENGTH_SHORT).show();
+                        else Toast.makeText(this, getString(R.string.error_permiso_camara), Toast.LENGTH_SHORT).show();
                     });
 
     /* ════════════════════════════════════════════════════
@@ -195,15 +195,15 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                             JSONArray data = response.getJSONArray(WebService.JSON.DATA);
                             runOnUiThread(() -> mostrarHabitaciones(data));
                         } else {
-                            runOnUiThread(() -> tvHabLoading.setText("No se pudieron cargar las habitaciones"));
+                            runOnUiThread(() -> tvHabLoading.setText(getString(R.string.error_cargar_habitaciones)));
                         }
                     } catch (JSONException e) {
-                        runOnUiThread(() -> tvHabLoading.setText("Error al leer habitaciones"));
+                        runOnUiThread(() -> tvHabLoading.setText(getString(R.string.error_leer_habitaciones)));
                     }
                     registrarPeticionCompletada();
                 },
                 error -> {
-                    runOnUiThread(() -> tvHabLoading.setText("Sin conexión — revisa más tarde"));
+                    runOnUiThread(() -> tvHabLoading.setText(getString(R.string.sin_conexion_habitaciones)));
                     registrarPeticionCompletada();
                 }
         ));
@@ -214,7 +214,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         String gastosStr = getSharedPreferences("registro_wizard", MODE_PRIVATE)
                 .getString("registro_gastos", null);
         if (gastosStr == null) {
-            tvGastosLoading.setText("Sin gastos recurrentes configurados");
+            tvGastosLoading.setText(getString(R.string.sin_gastos_configurados));
             tvTotalGastos.setText("0 €");
             return;
         }
@@ -222,7 +222,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
             JSONArray data = new JSONArray(gastosStr);
             mostrarGastos(data);
         } catch (JSONException e) {
-            tvGastosLoading.setText("Sin gastos recurrentes configurados");
+            tvGastosLoading.setText(getString(R.string.sin_gastos_configurados));
             tvTotalGastos.setText("0 €");
         }
     }
@@ -287,7 +287,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         int n = data.length();
 
         if (n == 0) {
-            llGastos.addView(nuevaLinea("Sin gastos recurrentes configurados", true));
+            llGastos.addView(nuevaLinea(getString(R.string.sin_gastos_configurados), true));
             tvTotalGastos.setText("0 €");
             return;
         }
@@ -362,7 +362,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                             .circleCrop()
                             .placeholder(crearBitmapInicial(inicial)))
                     .into(ivAvatar);
-            tvCambiarFoto.setText("Cambiar foto");
+            tvCambiarFoto.setText(getString(R.string.cambiar_foto));
         } else {
             ivAvatar.setImageDrawable(crearBitmapInicial(inicial));
             ivAvatar.setClipToOutline(true);
@@ -374,7 +374,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                 .load(uri)
                 .apply(new RequestOptions().circleCrop())
                 .into(ivAvatar);
-        tvCambiarFoto.setText("Cambiar foto");
+        tvCambiarFoto.setText(getString(R.string.cambiar_foto));
     }
 
     private Drawable crearBitmapInicial(char inicial) {
@@ -400,7 +400,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.error_completa_registro), Toast.LENGTH_SHORT).show();
     }
 
     /* ════════════════════════════════════════════════════
@@ -409,7 +409,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
 
     private void mostrarDialogNombrarHogar() {
         android.widget.EditText etNombre = new android.widget.EditText(this);
-        etNombre.setHint("Ej: Casa de la playa, Piso compartido…");
+        etNombre.setHint(getString(R.string.hint_nombre_hogar));
         etNombre.setInputType(android.text.InputType.TYPE_CLASS_TEXT
                 | android.text.InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         if (!nombreHogar.isEmpty()) etNombre.setText(nombreHogar);
@@ -417,17 +417,17 @@ public class Activity4_resumen_registro extends AppCompatActivity {
         etNombre.setPadding(pad, dp(12), pad, dp(12));
 
         new android.app.AlertDialog.Builder(this)
-                .setTitle("¿Cómo se llama tu hogar?")
+                .setTitle(getString(R.string.dialog_nombre_hogar_titulo))
                 .setView(etNombre)
-                .setPositiveButton("Confirmar", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.confirmar), (dialog, which) -> {
                     String nombre = etNombre.getText().toString().trim();
                     if (nombre.isEmpty()) {
-                        Toast.makeText(this, "Escribe un nombre para tu hogar", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.error_nombre_hogar), Toast.LENGTH_SHORT).show();
                         return;
                     }
                     guardarNombreHogar(nombre);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 
@@ -465,11 +465,11 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                             });
                         } else {
                             Toast.makeText(this,
-                                    "No se pudo guardar el nombre", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.no_pudo_guardar_nombre), Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         Toast.makeText(this,
-                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -486,7 +486,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
 
     private void mostrarDialogElegirFoto() {
         new android.app.AlertDialog.Builder(this)
-                .setTitle("Foto de perfil")
+                .setTitle(getString(R.string.dialog_foto_perfil_titulo))
                 .setItems(new String[]{"📷  Cámara", "🖼️  Galería"}, (d, w) -> {
                     if (w == 0) {
                         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -515,7 +515,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                     getPackageName() + ".fileprovider", f);
             camaraLauncher.launch(cameraUri);
         } catch (Exception e) {
-            Toast.makeText(this, "Error al acceder a la cámara", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_camara), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -554,7 +554,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                             getSharedPreferences("sesion", Context.MODE_PRIVATE)
                                     .edit().putString("avatar", ruta).apply();
                             runOnUiThread(() ->
-                                    Toast.makeText(this, "Foto de perfil guardada ✓",
+                                    Toast.makeText(this, getString(R.string.foto_guardada),
                                             Toast.LENGTH_SHORT).show());
                         }
                     } catch (Exception ignored) {}
@@ -670,7 +670,7 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                 ? HogarAIBottomSheet.newBienvenida()
                 : new HogarAIBottomSheet();
         if (esBienvenida) {
-            // Al pulsar "Aceptar" en el BottomSheet → ir a MainActivity
+            // Al pulsar getString(R.string.aceptar) en el BottomSheet → ir a MainActivity
             sheet.setOnAceptarBienvenidaListener(this::irAMain);
         }
         sheet.show(getSupportFragmentManager(), "hogar_ai_bienvenida");

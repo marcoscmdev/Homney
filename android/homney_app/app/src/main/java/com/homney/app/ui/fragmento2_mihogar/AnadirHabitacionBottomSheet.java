@@ -233,13 +233,13 @@ public class AnadirHabitacionBottomSheet extends BottomSheetDialogFragment {
         String nombre = etNombre.getText() != null
                 ? etNombre.getText().toString().trim() : "";
         if (nombre.isEmpty()) {
-            tilNombre.setError("Introduce un nombre");
+            tilNombre.setError(getString(R.string.error_introduce_nombre));
             return;
         }
         tilNombre.setError(null);
 
         btnAnadir.setEnabled(false);
-        btnAnadir.setText("Añadiendo…");
+        btnAnadir.setText(getString(R.string.anhadiendo));
 
         try {
             JSONObject body = new JSONObject();
@@ -254,28 +254,28 @@ public class AnadirHabitacionBottomSheet extends BottomSheetDialogFragment {
                             if (response.getString(WebService.JSON.STATUS)
                                     .equals(WebService.JSON.SUCCESS)) {
                                 Toast.makeText(requireContext(),
-                                        "Habitación añadida", Toast.LENGTH_SHORT).show();
+                                        getString(R.string.habitacion_anadida), Toast.LENGTH_SHORT).show();
                                 if (listener != null) listener.onHabitacionAnadida();
                                 dismiss();
                             } else {
-                                mostrarErrorEnBoton("No se pudo añadir la habitación");
+                                mostrarErrorEnBoton(getString(R.string.no_pudo_anadir_habitacion));
                             }
                         } catch (JSONException e) {
-                            mostrarErrorEnBoton("Error al procesar la respuesta");
+                            mostrarErrorEnBoton(getString(R.string.error_procesar_respuesta));
                         }
                     },
                     error -> {
                         Utilidades.mostrar_error_peticion(requireContext(), TAG,
                                 "Error al añadir la habitación",
                                 Request.Method.POST, WebService.URL_Habitacion, error);
-                        mostrarErrorEnBoton("Error de red");
+                        mostrarErrorEnBoton(getString(R.string.error_procesar_red));
                     }
             );
 
             PeticionesRed.anhadirPeticionACola(peticion);
 
         } catch (JSONException e) {
-            mostrarErrorEnBoton("Error interno");
+            mostrarErrorEnBoton(getString(R.string.error_interno));
         }
     }
 
@@ -283,7 +283,7 @@ public class AnadirHabitacionBottomSheet extends BottomSheetDialogFragment {
         if (getActivity() == null) return;
         requireActivity().runOnUiThread(() -> {
             btnAnadir.setEnabled(true);
-            btnAnadir.setText("Añadir habitación");
+            btnAnadir.setText(getString(R.string.a_adir_habitaci_n));
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
         });
     }

@@ -2,6 +2,7 @@ package com.homney.app;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 // Tareas → añadir tarea
                 fab.show();
                 fab.setImageResource(R.drawable.ic_add);
-                fab.setContentDescription("Nueva tarea");
+                fab.setContentDescription(getString(R.string.fab_nueva_tarea));
                 fab.setOnClickListener(v ->
                         navController.navigate(R.id.nav_crear_tarea));
 
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 // Cartera → añadir gasto
                 fab.show();
                 fab.setImageResource(R.drawable.ic_add);
-                fab.setContentDescription("Nuevo gasto");
+                fab.setContentDescription(getString(R.string.fab_nuevo_gasto));
                 fab.setOnClickListener(v ->
                         navController.navigate(R.id.nav_crear_gasto));
 
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 // Muro → nueva publicación
                 fab.show();
                 fab.setImageResource(R.drawable.ic_add);
-                fab.setContentDescription("Nueva publicación");
+                fab.setContentDescription(getString(R.string.fab_nueva_publicacion));
                 fab.setOnClickListener(v ->
                         navController.navigate(R.id.nav_crear_publicacion));
 
@@ -103,14 +104,14 @@ public class MainActivity extends AppCompatActivity {
                 // Panel → acceso rápido: diálogo con las 3 opciones de creación
                 fab.show();
                 fab.setImageResource(R.drawable.ic_add);
-                fab.setContentDescription("Crear...");
+                fab.setContentDescription(getString(R.string.fab_crear));
                 fab.setOnClickListener(v -> mostrarDialogoCrearRapido(navController));
 
             } else if (id == R.id.fragmento2) {
                 // Mi Hogar → Asistente IA
                 fab.show();
                 fab.setImageResource(R.drawable.homney_mate);
-                fab.setContentDescription("Tu asistente con IA");
+                fab.setContentDescription(getString(R.string.fab_asistente_ia));
                 fab.setOnClickListener(v -> {
                     HogarAIBottomSheet sheet = new HogarAIBottomSheet();
                     sheet.show(getSupportFragmentManager(), "hogar_ai");
@@ -183,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     pulsadoUnaVezAtrasParaSalir = true;
                     Toast.makeText(getApplicationContext(),
-                            "Por favor, presione ATRÁS otra vez para SALIR",
+                            getString(R.string.presione_atras_para_salir),
                             Toast.LENGTH_LONG).show();
                     handler.removeCallbacks(cancelarSalida);
                     handler.postDelayed(cancelarSalida, 2000);
@@ -234,7 +235,11 @@ public class MainActivity extends AppCompatActivity {
         }
         if (item.getItemId() == R.id.menu_cerrar_sesion) {
             deleteSharedPreferences("sesion");
+            Intent intent = new Intent(this, loginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
             finish();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -253,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
     private void mostrarDialogoCrearRapido(NavController navController) {
         String[] opciones = {"📋  Nueva tarea", "💰  Nuevo gasto", "📣  Nueva publicación"};
         new AlertDialog.Builder(this)
-                .setTitle("¿Qué quieres crear?")
+                .setTitle(getString(R.string.dialog_que_crear_titulo))
                 .setItems(opciones, (dialog, which) -> {
                     switch (which) {
                         case 0: navController.navigate(R.id.nav_crear_tarea);        break;

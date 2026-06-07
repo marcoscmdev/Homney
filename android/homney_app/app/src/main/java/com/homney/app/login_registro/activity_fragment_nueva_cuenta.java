@@ -145,7 +145,7 @@ public class activity_fragment_nueva_cuenta extends Fragment {
             return;
         }
         if (!password.equals(password2)) {
-            enfocarCampo(reg_password2, "Las contraseñas no coinciden");
+            enfocarCampo(reg_password2, getString(R.string.passwords_no_coinciden));
             return;
         }
         if (modo == 1 && claveInv.isEmpty()) {
@@ -154,12 +154,12 @@ public class activity_fragment_nueva_cuenta extends Fragment {
         }
 
         if (!Utilidades.hayConexionInternet(requireContext())) {
-            Toast.makeText(getContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
             return;
         }
 
         btn_registro.setEnabled(false);
-        btn_registro.setText("Creando cuenta…");
+        btn_registro.setText(getString(R.string.creando_cuenta));
         loadingDialog.show();
 
         if (modo == 0) {

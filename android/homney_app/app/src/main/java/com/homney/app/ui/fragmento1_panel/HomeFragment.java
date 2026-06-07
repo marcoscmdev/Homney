@@ -148,11 +148,11 @@ public class HomeFragment extends Fragment {
 
         if (idHogar == -1 || idUsuario == -1) {
             Toast.makeText(requireContext(),
-                    "Sesión no válida — vuelve a iniciar sesión", Toast.LENGTH_LONG).show();
+                    getString(R.string.sesion_no_valida), Toast.LENGTH_LONG).show();
             return root;
         }
         if (!Utilidades.hayConexionInternet(requireContext())) {
-            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
             return root;
         }
 
@@ -172,7 +172,26 @@ public class HomeFragment extends Fragment {
        gastos, misAsig, pubs, allAsig, tareas, usuarios, realizadas
     ════════════════════════════════════════════ */
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refrescar datos al volver al panel (p.ej. tras marcar una tarea como realizada)
+        if (idHogar != -1 && idUsuario != -1 && Utilidades.hayConexionInternet(requireContext())) {
+            cargarDatos();
+        }
+    }
+
     private void cargarDatos() {
+        // ── Resetear TODOS los campos antes de empezar una nueva carga ──────
+        // Sin esto, intentarRender() puede disparar con datos mezclados
+        // (viejos + nuevos) si los callbacks asíncronos llegan en cualquier orden.
+        gastos     = null;
+        misAsig    = null;
+        pubs       = null;
+        usuarios   = null;
+        tareas     = null;
+        realizadasPorUsuario = null;
+
         loadingDialog.show();
         // 5 peticiones paralelas de fase-1
         final AtomicInteger fase1 = new AtomicInteger(5);
@@ -308,9 +327,10 @@ public class HomeFragment extends Fragment {
         for (Usuario u : usuarios) userMap.put(u.getId_usuario(), u);
 
         // ─── Últimos 4 gastos ───────────────────────────────
+        containerUltimosGastos.removeAllViews();
         tvSinGastos.setVisibility(View.GONE);
         if (gastos.isEmpty()) {
-            tvSinGastos.setText("Sin gastos registrados");
+            tvSinGastos.setText(getString(R.string.sin_gastos));
             tvSinGastos.setVisibility(View.VISIBLE);
         } else {
             int max = Math.min(4, gastos.size());
@@ -321,9 +341,10 @@ public class HomeFragment extends Fragment {
         }
 
         // ─── Mis 4 tareas pendientes ────────────────────────
+        containerMisTareasDash.removeAllViews();
         tvSinMisTareasDash.setVisibility(View.GONE);
         if (misAsig.isEmpty()) {
-            tvSinMisTareasDash.setText("Sin tareas pendientes");
+            tvSinMisTareasDash.setText(getString(R.string.sin_mis_tareas));
             tvSinMisTareasDash.setVisibility(View.VISIBLE);
         } else {
             int max = Math.min(4, misAsig.size());
@@ -335,9 +356,10 @@ public class HomeFragment extends Fragment {
         }
 
         // ─── Últimas 3 publicaciones ────────────────────────
+        containerPublicaciones.removeAllViews();
         tvSinPublicaciones.setVisibility(View.GONE);
         if (pubs.isEmpty()) {
-            tvSinPublicaciones.setText("El muro está vacío");
+            tvSinPublicaciones.setText(getString(R.string.muro_vacio));
             tvSinPublicaciones.setVisibility(View.VISIBLE);
         } else {
             int max = Math.min(3, pubs.size());
@@ -361,8 +383,27 @@ public class HomeFragment extends Fragment {
         Cartesian lineChart = AnyChart.line();
         lineChart.animation(true);
 
-        // Preparar etiquetas de los últimos 30 días
-        final int DIAS = 30;
+        // Mismos colores y orden que el gráfico de gastos:
+        // usuario actual primero (amber), resto por orden de aparición
+        final int MAX_USUARIOS = 5;
+        final String[] COLORES = {
+                "#F5C518",  // 1º — amber (usuario actual)
+                "#7CC87A",  // 2º — verde
+                "#9B59B6",  // 3º — morado
+                "#3498DB",  // 4º — azul
+                "#E89A30"   // 5º — naranja
+        };
+
+        // Construir lista ordenada: usuario actual primero
+        List<Usuario> ordenados = new ArrayList<>();
+        for (Usuario u : usuarios) {
+            if (u.getId_usuario() == idUsuario) { ordenados.add(0, u); }
+            else if (ordenados.size() < MAX_USUARIOS)  { ordenados.add(u); }
+        }
+        if (ordenados.size() > MAX_USUARIOS) ordenados = ordenados.subList(0, MAX_USUARIOS);
+
+        // Preparar etiquetas de los últimos 7 días
+        final int DIAS = 7;
         String[] dayLabels = new String[DIAS];
         String[] fullDates = new String[DIAS];
         SimpleDateFormat sdfDay  = new SimpleDateFormat("dd/MM", Locale.getDefault());
@@ -376,8 +417,8 @@ public class HomeFragment extends Fragment {
             fullDates[idx] = sdfFull.format(cal.getTime());
         }
 
-        for (int ci = 0; ci < usuarios.size(); ci++) {
-            Usuario u = usuarios.get(ci);
+        for (int ci = 0; ci < ordenados.size(); ci++) {
+            Usuario u = ordenados.get(ci);
             List<TareasRealizadas> realizadas =
                     realizadasPorUsuario.getOrDefault(u.getId_usuario(), new ArrayList<>());
 
@@ -391,12 +432,25 @@ public class HomeFragment extends Fragment {
                 puntos.add(new ValueDataEntry(dayLabels[d], count));
             }
 
+            String nombre = u.getNombre() != null
+                    ? u.getNombre().split(" ")[0] : "Usuario " + (ci + 1);
+            String color = COLORES[ci % COLORES.length];
+
             Line linea = (Line) lineChart.line(puntos);
-            linea.name(u.getNombre());
-            String color = USER_COLORS_HEX[ci % USER_COLORS_HEX.length];
+            linea.name(nombre);
             linea.stroke("2 " + color);
+            linea.markers().enabled(true);
+            linea.markers().size(3);
+            linea.markers().fill(color);
+            linea.markers().stroke("none");
             linea.hovered().markers().enabled(true);
+            linea.hovered().markers().size(5);
         }
+
+        // Leyenda (igual que gráfico de gastos)
+        lineChart.legend().enabled(true);
+        lineChart.legend().fontSize(11);
+        lineChart.legend().padding(4, 0, 0, 0);
 
         lineChart.tooltip()
                 .positionMode(TooltipPositionMode.POINT)
@@ -419,41 +473,76 @@ public class HomeFragment extends Fragment {
         Cartesian colChart = AnyChart.column();
         colChart.animation(true);
 
-        // Últimos 6 meses: una barra por mes con el total de gastos del hogar
         final int MESES = 6;
-        String[] monthLabels = new String[MESES];
-        double[] monthTotals = new double[MESES];
+        final int MAX_USUARIOS = 5;
 
+        // Colores por posición: el usuario actual siempre es el primero (amber)
+        final String[] COLORES = {
+                "#F5C518",   // 1º — amber (usuario actual)
+                "#7CC87A",   // 2º — verde
+                "#9B59B6",   // 3º — morado
+                "#3498DB",   // 4º — azul
+                "#E89A30"    // 5º — naranja
+        };
+
+        // Construir lista ordenada de IDs: usuario actual primero, resto por orden de aparición
+        List<Integer> ordenUsuarios = new ArrayList<>();
+        ordenUsuarios.add(idUsuario);
+        for (Gasto g : gastos) {
+            int uid = g.getId_usuario_pagador();
+            if (uid != idUsuario && !ordenUsuarios.contains(uid)) {
+                ordenUsuarios.add(uid);
+                if (ordenUsuarios.size() == MAX_USUARIOS) break;
+            }
+        }
+
+        // Calcular etiquetas de meses y totales por usuario
         SimpleDateFormat sdfKey   = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
         SimpleDateFormat sdfLabel = new SimpleDateFormat("MMM yy", new Locale("es"));
-        Calendar cal = Calendar.getInstance();
+
+        String[] monthLabels = new String[MESES];
+        // totales[usuarioIdx][mesIdx]
+        double[][] totales = new double[ordenUsuarios.size()][MESES];
+
         for (int i = MESES - 1; i >= 0; i--) {
             Calendar temp = Calendar.getInstance();
             temp.setTime(new Date());
             temp.add(Calendar.MONTH, -i);
-            int idx = (MESES - 1) - i;
-            String key = sdfKey.format(temp.getTime());
+            int idx   = (MESES - 1) - i;
+            String key   = sdfKey.format(temp.getTime());
             String label = sdfLabel.format(temp.getTime());
             monthLabels[idx] = Character.toUpperCase(label.charAt(0)) + label.substring(1);
-            double total = 0;
+
             for (Gasto g : gastos) {
-                if (g.getFecha() != null && g.getFecha().startsWith(key)) {
-                    total += g.getImporte();
-                }
+                if (g.getFecha() == null || !g.getFecha().startsWith(key)) continue;
+                int pos = ordenUsuarios.indexOf(g.getId_usuario_pagador());
+                if (pos >= 0) totales[pos][idx] += g.getImporte();
             }
-            monthTotals[idx] = total;
         }
 
-        List<DataEntry> data = new ArrayList<>();
-        for (int i = 0; i < MESES; i++) {
-            data.add(new ValueDataEntry(monthLabels[i], monthTotals[i]));
+        // Crear una serie por usuario
+        for (int u = 0; u < ordenUsuarios.size(); u++) {
+            int uid = ordenUsuarios.get(u);
+            Usuario usuario = userMap.get(uid);
+            String nombre = (usuario != null && usuario.getNombre() != null)
+                    ? usuario.getNombre().split(" ")[0]
+                    : "Usuario " + (u + 1);
+
+            List<DataEntry> serieData = new ArrayList<>();
+            for (int m = 0; m < MESES; m++) {
+                serieData.add(new ValueDataEntry(monthLabels[m], totales[u][m]));
+            }
+
+            Column serie = (Column) colChart.column(serieData);
+            serie.name(nombre);
+            serie.tooltip().format("{%Value}{groupsSeparator: ,} €");
+            serie.fill(COLORES[u]);
+            serie.stroke("none");
         }
 
-        Column column = (Column) colChart.column(data);
-        column.tooltip().format("{%Value}{groupsSeparator: ,} €");
-        column.fill("#F5C518");
-        column.stroke("none");
-
+        colChart.legend().enabled(true);
+        colChart.legend().fontSize(11);
+        colChart.legend().padding(4, 0, 0, 0);
         colChart.tooltip().positionMode(TooltipPositionMode.POINT);
         colChart.xAxis(0).title(false);
         colChart.yAxis(0).title(false);
@@ -594,7 +683,7 @@ public class HomeFragment extends Fragment {
 
         // Tiempo (min)
         TextView tvLabelDur = new TextView(requireContext());
-        tvLabelDur.setText("Tiempo empleado (min)");
+        tvLabelDur.setText(getString(R.string.tiempo_empleado_min));
         tvLabelDur.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         tvLabelDur.setTypeface(null, Typeface.BOLD);
         tvLabelDur.setTextColor(0xFF9A8A6A);
@@ -606,7 +695,7 @@ public class HomeFragment extends Fragment {
 
         EditText etDuracion = new EditText(requireContext());
         etDuracion.setInputType(InputType.TYPE_CLASS_NUMBER);
-        etDuracion.setHint("ej. 30");
+        etDuracion.setHint(getString(R.string.hint_duracion_minutos));
         if (t.getDuracion() != null) etDuracion.setText(String.valueOf(t.getDuracion()));
         LinearLayout.LayoutParams lpEd = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -616,7 +705,7 @@ public class HomeFragment extends Fragment {
 
         // Observaciones
         TextView tvLabelObs = new TextView(requireContext());
-        tvLabelObs.setText("Observaciones (opcional)");
+        tvLabelObs.setText(getString(R.string.observaciones_opcional));
         tvLabelObs.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         tvLabelObs.setTypeface(null, Typeface.BOLD);
         tvLabelObs.setTextColor(0xFF9A8A6A);
@@ -628,21 +717,21 @@ public class HomeFragment extends Fragment {
 
         EditText etObservaciones = new EditText(requireContext());
         etObservaciones.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        etObservaciones.setHint("¿Cómo fue la tarea?");
+        etObservaciones.setHint(getString(R.string.hint_como_fue_tarea));
         etObservaciones.setMinLines(2);
         etObservaciones.setMaxLines(4);
         layout.addView(etObservaciones);
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("¿Confirmas realizar la tarea?")
+                .setTitle(getString(R.string.dialog_confirmar_tarea_titulo))
                 .setView(layout)
-                .setPositiveButton("Confirmar", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.confirmar), (dialog, which) -> {
                     String durStr = etDuracion.getText().toString().trim();
                     String obs    = etObservaciones.getText().toString().trim();
                     marcarTareaRealizada(t, durStr.isEmpty() ? null : durStr,
                             obs, row, tvFrec, tvCheck);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 
@@ -661,7 +750,7 @@ public class HomeFragment extends Fragment {
             if (obs != null && !obs.isEmpty())
                 body.put("observaciones", obs);
         } catch (JSONException e) {
-            Toast.makeText(requireContext(), "Error al preparar el registro", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.error_preparar_registro), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -685,7 +774,7 @@ public class HomeFragment extends Fragment {
                             row.setClickable(false);
 
                             Toast.makeText(requireContext(),
-                                    "¡Tarea completada!", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.tarea_completada), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(requireContext(),
                                     response.optString("message", "Error al registrar"),
@@ -693,7 +782,7 @@ public class HomeFragment extends Fragment {
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> Utilidades.mostrar_error_peticion(requireContext(),
@@ -799,6 +888,7 @@ public class HomeFragment extends Fragment {
         JsonObjectRequest peticion = new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 response -> {
+                    if (!isAdded()) return; // fragment detachado: ignorar respuesta tardía
                     try {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {

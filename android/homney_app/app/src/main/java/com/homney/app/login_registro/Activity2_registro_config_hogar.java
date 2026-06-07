@@ -136,7 +136,7 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.error_completa_registro), Toast.LENGTH_SHORT).show();
     }
 
     /* ════════════════════════════════════════════════════
@@ -263,17 +263,17 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
         container.addView(spinner);
 
         new AlertDialog.Builder(this)
-                .setTitle("¿Qué tipo es "+ aliasEstancia + "?")
-                .setMessage("Elige el tipo que mejor describe esta estancia:")
+                .setTitle(getString(R.string.dialog_tipo_estancia_titulo, aliasEstancia))
+                .setMessage(getString(R.string.dialog_tipo_estancia_msg))
                 .setView(container)
-                .setPositiveButton("Añadir", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.a_adir), (dialog, which) -> {
                     int selIdx = spinner.getSelectedItemPosition();
                     habitacionesSeleccionadas.add(
                             new Estancia(aliasEstancia, TIPO_OPCIONES_VALOR[selIdx]));
                     actualizarListaSeleccionadas();
                     etCustomRoom.setText("");
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 
@@ -321,7 +321,7 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
         etAlias.setText(estancia.alias);
         etAlias.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         etAlias.setTextColor(getResources().getColor(R.color.text, null));
-        etAlias.setHint("Alias de la estancia");
+        etAlias.setHint(getString(R.string.hint_alias_estancia));
         etAlias.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         etAlias.setBackground(null); // sin borde por defecto, aspecto limpio
         etAlias.setPadding(0, 0, dp(6), 0);
@@ -387,30 +387,30 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
 
     private void guardarYContinuar() {
         if (habitacionesSeleccionadas.isEmpty()) {
-            Toast.makeText(this, "Añade al menos una estancia", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_min_una_estancia), Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Validar que ningún alias esté vacío
         for (Estancia e : habitacionesSeleccionadas) {
             if (e.alias == null || e.alias.isEmpty()) {
-                Toast.makeText(this, "El alias de cada estancia no puede estar vacío",
+                Toast.makeText(this, getString(R.string.error_alias_vacio),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
         }
 
         if (idHogar == -1) {
-            Toast.makeText(this, "Error: hogar no identificado", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_hogar_no_identificado), Toast.LENGTH_SHORT).show();
             return;
         }
         if (!Utilidades.hayConexionInternet(this)) {
-            Toast.makeText(this, "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
             return;
         }
 
         btnSiguiente.setEnabled(false);
-        btnSiguiente.setText("Guardando…");
+        btnSiguiente.setText(getString(R.string.guardando));
         loadingDialog.show();
 
         AtomicInteger pendiente = new AtomicInteger(habitacionesSeleccionadas.size());
@@ -457,7 +457,7 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
         runOnUiThread(() -> {
             loadingDialog.dismiss();
             btnSiguiente.setEnabled(true);
-            btnSiguiente.setText("Siguiente →");
+            btnSiguiente.setText(getString(R.string.siguiente));
 
             if (errores > 0) {
                 Toast.makeText(this,

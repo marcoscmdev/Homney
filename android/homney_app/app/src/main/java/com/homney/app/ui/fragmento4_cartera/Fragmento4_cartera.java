@@ -75,11 +75,7 @@ public class Fragmento4_cartera extends Fragment {
     private TextView tvSinMeDeben;
     private TextView tvSinDebo;
     private TextView tvSinHistorial;
-    private LinearLayout sectionMesAnteriorCartera;
-    private TextView tvMesAnteriorTitulo;
-    private TextView tagMesAnterior;
-    private LinearLayout containerMesAnterior;
-    private TextView tvSinMesAnterior;
+    private LinearLayout containerHistorialMeses;
 
     /* ── Colapsables ─────────────────────────────── */
     private LinearLayout llHeaderMeDeben;
@@ -133,11 +129,7 @@ public class Fragmento4_cartera extends Fragment {
         tvSinMeDeben = root.findViewById(R.id.tv_sin_me_deben);
         tvSinDebo = root.findViewById(R.id.tv_sin_debo);
         tvSinHistorial = root.findViewById(R.id.tv_sin_historial);
-        sectionMesAnteriorCartera = root.findViewById(R.id.section_mes_anterior_cartera);
-        tvMesAnteriorTitulo       = root.findViewById(R.id.tv_mes_anterior_titulo);
-        tagMesAnterior            = root.findViewById(R.id.tag_mes_anterior);
-        containerMesAnterior      = root.findViewById(R.id.container_mes_anterior);
-        tvSinMesAnterior          = root.findViewById(R.id.tv_sin_mes_anterior);
+        containerHistorialMeses = root.findViewById(R.id.container_historial_meses);
 
         llHeaderMeDeben   = root.findViewById(R.id.ll_header_me_deben);
         llHeaderDebo      = root.findViewById(R.id.ll_header_debo);
@@ -158,11 +150,11 @@ public class Fragmento4_cartera extends Fragment {
 
         if (idHogar == -1 || idUsuario == -1) {
             Toast.makeText(requireContext(),
-                    "Sesión no válida — vuelve a iniciar sesión", Toast.LENGTH_LONG).show();
+                    getString(R.string.sesion_no_valida), Toast.LENGTH_LONG).show();
             return root;
         }
         if (!Utilidades.hayConexionInternet(requireContext())) {
-            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
             return root;
         }
 
@@ -293,17 +285,17 @@ public class Fragmento4_cartera extends Fragment {
 
         // Resetear containers restaurando los placeholders
         containerMeDeben.removeAllViews();
-        tvSinMeDeben.setText("Cargando…");
+        tvSinMeDeben.setText(getString(R.string.cargando));
         tvSinMeDeben.setVisibility(View.VISIBLE);
         containerMeDeben.addView(tvSinMeDeben);
 
         containerDebo.removeAllViews();
-        tvSinDebo.setText("Cargando…");
+        tvSinDebo.setText(getString(R.string.cargando));
         tvSinDebo.setVisibility(View.VISIBLE);
         containerDebo.addView(tvSinDebo);
 
         containerHistorial.removeAllViews();
-        tvSinHistorial.setText("Cargando…");
+        tvSinHistorial.setText(getString(R.string.cargando));
         tvSinHistorial.setVisibility(View.VISIBLE);
         containerHistorial.addView(tvSinHistorial);
 
@@ -312,8 +304,8 @@ public class Fragmento4_cartera extends Fragment {
         tvStatBalance.setText("—");
         tvStatBalance.setTextColor(0xFF2D2416);
 
-        if (sectionMesAnteriorCartera != null)
-            sectionMesAnteriorCartera.setVisibility(View.GONE);
+        if (containerHistorialMeses != null)
+            containerHistorialMeses.removeAllViews();
 
         // Resetear datos y recargar
         gastos = null;
@@ -410,7 +402,7 @@ public class Fragmento4_cartera extends Fragment {
         // Lo que te deben
         tvSinMeDeben.setVisibility(View.GONE);
         if (meDebenMap.isEmpty()) {
-            tvSinMeDeben.setText("¡Nadie te debe dinero!");
+            tvSinMeDeben.setText(getString(R.string.nadie_te_debe));
             tvSinMeDeben.setVisibility(View.VISIBLE);
         } else {
             for (DeudorInfo d : meDebenMap.values())
@@ -420,7 +412,7 @@ public class Fragmento4_cartera extends Fragment {
         // Lo que debes tú
         tvSinDebo.setVisibility(View.GONE);
         if (deboMap.isEmpty()) {
-            tvSinDebo.setText("¡No debes nada a nadie!");
+            tvSinDebo.setText(getString(R.string.no_debes_nada));
             tvSinDebo.setVisibility(View.VISIBLE);
         } else {
             for (DeudorInfo d : deboMap.values())
@@ -430,69 +422,58 @@ public class Fragmento4_cartera extends Fragment {
         // Historial de gastos con swipe-to-delete
         tvSinHistorial.setVisibility(View.GONE);
         if (gastos.isEmpty()) {
-            tvSinHistorial.setText("Sin gastos registrados.");
+            tvSinHistorial.setText(getString(R.string.sin_gastos));
             tvSinHistorial.setVisibility(View.VISIBLE);
         } else {
             LayoutInflater inf = LayoutInflater.from(requireContext());
             for (Gasto g : gastos) {
+                boolean esPropio = g.getId_usuario_pagador() == idUsuario;
+
                 // 1. FrameLayout contenedor (misma técnica que en Tareas)
                 FrameLayout rootFrame = new FrameLayout(requireContext());
                 rootFrame.setLayoutParams(new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-                // 2. Botón rojo DEBAJO (capa inferior)
-                LinearLayout deleteBtn = new LinearLayout(requireContext());
-                deleteBtn.setBackgroundColor(0xFFE05C5C);
-                deleteBtn.setGravity(Gravity.CENTER);
-                FrameLayout.LayoutParams btnLp = new FrameLayout.LayoutParams(
-                        dp(80), ViewGroup.LayoutParams.MATCH_PARENT);
-                btnLp.gravity = Gravity.END;
-                deleteBtn.setLayoutParams(btnLp);
-                ImageView icDelete = new ImageView(requireContext());
-                icDelete.setImageResource(android.R.drawable.ic_menu_delete);
-                icDelete.setColorFilter(Color.WHITE);
-                deleteBtn.addView(icDelete);
-                rootFrame.addView(deleteBtn);
+                // 2. Botón rojo DEBAJO — solo si el usuario es el pagador del gasto
+                if (esPropio) {
+                    LinearLayout deleteBtn = new LinearLayout(requireContext());
+                    deleteBtn.setBackgroundColor(0xFFE05C5C);
+                    deleteBtn.setGravity(Gravity.CENTER);
+                    FrameLayout.LayoutParams btnLp = new FrameLayout.LayoutParams(
+                            dp(80), ViewGroup.LayoutParams.MATCH_PARENT);
+                    btnLp.gravity = Gravity.END;
+                    deleteBtn.setLayoutParams(btnLp);
+                    ImageView icDelete = new ImageView(requireContext());
+                    icDelete.setImageResource(android.R.drawable.ic_menu_delete);
+                    icDelete.setColorFilter(Color.WHITE);
+                    deleteBtn.addView(icDelete);
+                    rootFrame.addView(deleteBtn);
 
-                // 3. Fila de gasto ENCIMA (capa superior, fondo blanco opaco)
-                View row = inf.inflate(R.layout.item_gasto_historial, rootFrame, false);
-                row.setBackgroundColor(0xFFFFFFFF);
-                rootFrame.addView(row);
+                    // 3. Fila de gasto ENCIMA (capa superior, fondo blanco opaco)
+                    View row = inf.inflate(R.layout.item_gasto_historial, rootFrame, false);
+                    row.setBackgroundColor(0xFFFFFFFF);
+                    rootFrame.addView(row);
 
-                // 4. Rellenar datos de la fila
-                rellenarFilaGasto(row, g, userMap);
+                    // 4. Rellenar datos de la fila
+                    rellenarFilaGasto(row, g, userMap);
 
-                // 5. Touch listener para swipe + click en botón rojo
-                setupSwipeDeleteGasto(row, deleteBtn, g, rootFrame);
+                    // 5. Touch listener para swipe + click en botón rojo
+                    setupSwipeDeleteGasto(row, deleteBtn, g, rootFrame, userMap);
+                } else {
+                    // Gasto de otro usuario: solo mostrar la fila sin swipe ni botón eliminar
+                    View row = inf.inflate(R.layout.item_gasto_historial, rootFrame, false);
+                    row.setBackgroundColor(0xFFFFFFFF);
+                    rootFrame.addView(row);
+                    rellenarFilaGasto(row, g, userMap);
+                }
 
                 containerHistorial.addView(rootFrame);
                 agregarDivider(containerHistorial);
             }
         }
 
-        // ── Sección historial mes anterior ───────────────────
-        boolean hayDatosMesAnterior = prevMeDeben > 0 || prevDebo > 0 || prevGastado > 0;
-        if (sectionMesAnteriorCartera != null) {
-            sectionMesAnteriorCartera.setVisibility(hayDatosMesAnterior ? View.VISIBLE : View.GONE);
-        }
-        if (hayDatosMesAnterior && containerMesAnterior != null) {
-            String nomCap = nomMesPrev.substring(0, 1).toUpperCase(Locale.getDefault())
-                          + nomMesPrev.substring(1);
-            tvMesAnteriorTitulo.setText(nomCap);
-            tagMesAnterior.setText("HISTORIAL");
-            containerMesAnterior.removeAllViews();
-            tvSinMesAnterior.setVisibility(View.GONE);
-
-            agregarFilaHistorialMes(containerMesAnterior, "Pagado por ti", fmt(prevGastado), 0xFF2D2416, 0xFFFFF3C0);
-            agregarFilaHistorialMes(containerMesAnterior, "Te debían",     "+" + fmt(prevMeDeben), 0xFF58A856, 0xFFE8F5E8);
-            agregarFilaHistorialMes(containerMesAnterior, "Debías tú",     "−" + fmt(prevDebo),    0xFFE05C5C, 0xFFFDEAEA);
-
-            double balance = prevMeDeben - prevDebo;
-            int balColor = balance >= 0 ? 0xFF58A856 : 0xFFE05C5C;
-            int balBg    = balance >= 0 ? 0xFFE8F5E8 : 0xFFFDEAEA;
-            agregarFilaHistorialMes(containerMesAnterior, "Balance neto",
-                    (balance >= 0 ? "+" : "") + fmt(balance), balColor, balBg);
-        }
+        // ── Historial de todos los meses pasados (colapsable) ──
+        renderHistorialMeses(mesActual, meDebenMap, deboMap);
 
         // ── Gastos fijos: detectar y renovar automáticamente ─
         detectarYRenovarGastosFijos(mesActual, mesPrev);
@@ -503,7 +484,8 @@ public class Fragmento4_cartera extends Fragment {
     ════════════════════════════════════════════ */
 
     private void setupSwipeDeleteGasto(View row, LinearLayout deleteBtn,
-                                       Gasto g, FrameLayout rootFrame) {
+                                       Gasto g, FrameLayout rootFrame,
+                                       Map<Integer, Usuario> userMap) {
         // Foreground ripple para feedback de tap (el fondo blanco sólido permanece)
         TypedValue outValue = new TypedValue();
         requireContext().getTheme().resolveAttribute(
@@ -538,7 +520,7 @@ public class Fragmento4_cartera extends Fragment {
             return false;
         });
 
-        deleteBtn.setOnClickListener(v -> borrarGasto(g, rootFrame));
+        deleteBtn.setOnClickListener(v -> borrarGasto(g, rootFrame, userMap));
     }
 
     /* ════════════════════════════════════════════
@@ -548,14 +530,34 @@ public class Fragmento4_cartera extends Fragment {
        3) recargarCartera() para actualizar totales
     ════════════════════════════════════════════ */
 
-    private void borrarGasto(Gasto g, FrameLayout rootFrame) {
+    private void borrarGasto(Gasto g, FrameLayout rootFrame, Map<Integer, Usuario> userMap) {
+        // Bloquear eliminación si algún deudor ya abonó su parte
+        List<RepartoGasto> deudores = (repartosDeDeudores != null)
+                ? repartosDeDeudores.getOrDefault(g.getId_gasto(), new ArrayList<>())
+                : new ArrayList<>();
+
+        for (RepartoGasto r : deudores) {
+            if (r.isAbonado()) {
+                Usuario u = (userMap != null) ? userMap.get(r.getId_usuario()) : null;
+                String nombre = (u != null) ? u.getNombre() : "#" + r.getId_usuario();
+                // Reanimar la fila de vuelta al sitio (venía del swipe)
+                View rowView = rootFrame.getChildAt(rootFrame.getChildCount() - 1);
+                if (rowView != null) rowView.animate().translationX(0).setDuration(200).start();
+                new AlertDialog.Builder(requireContext())
+                        .setTitle(getString(R.string.dialog_gasto_no_editable_titulo))
+                        .setMessage(getString(R.string.dialog_gasto_no_editable_msg, nombre))
+                        .setPositiveButton(getString(R.string.entendido), null)
+                        .show();
+                return;
+            }
+        }
+
         new AlertDialog.Builder(requireContext())
-                .setTitle("¿Eliminar gasto?")
-                .setMessage("¿Seguro que quieres eliminar «" + g.getConcepto()
-                        + "» y su reparto asociado?")
-                .setPositiveButton("Eliminar", (dialog, which) ->
+                .setTitle(getString(R.string.dialog_eliminar_gasto_titulo))
+                .setMessage(getString(R.string.dialog_eliminar_gasto_msg, g.getConcepto()))
+                .setPositiveButton(getString(R.string.eliminar), (dialog, which) ->
                         eliminarRepartoYGasto(g, rootFrame))
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 
@@ -584,7 +586,7 @@ public class Fragmento4_cartera extends Fragment {
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -753,7 +755,7 @@ public class Fragmento4_cartera extends Fragment {
         } else {
             // Indicador de tap disponible
             TextView tvTap = new TextView(requireContext());
-            tvTap.setText("Pulsa para confirmar");
+            tvTap.setText(getString(R.string.pulsa_para_confirmar));
             tvTap.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9);
             tvTap.setTextColor(esMeDeben ? 0xFF58A856 : 0xFFE05C5C);
             tvTap.setTypeface(null, Typeface.ITALIC);
@@ -806,9 +808,9 @@ public class Fragmento4_cartera extends Fragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle(titulo)
                 .setMessage(mensaje)
-                .setPositiveButton("Sí, confirmar", (dialog, which) ->
+                .setPositiveButton(getString(R.string.dialog_confirmar_pago_btn), (dialog, which) ->
                         marcarAbonado(item))
-                .setNegativeButton("No", null)
+                .setNegativeButton(getString(R.string.no_btn), null)
                 .show();
     }
 
@@ -826,7 +828,7 @@ public class Fragmento4_cartera extends Fragment {
             body.put("importe", item.reparto.getImporte());
             body.put("pagador", false);
         } catch (JSONException e) {
-            Toast.makeText(requireContext(), "Error al preparar la solicitud", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.error_preparar_peticion), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -847,7 +849,7 @@ public class Fragmento4_cartera extends Fragment {
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -915,10 +917,9 @@ public class Fragmento4_cartera extends Fragment {
                 Usuario u = userMap.get(r.getId_usuario());
                 String nombre = (u != null) ? u.getNombre() : "#" + r.getId_usuario();
                 new AlertDialog.Builder(requireContext())
-                        .setTitle("No se puede editar")
-                        .setMessage("No es posible editar el gasto, ya ha sido compensado por "
-                                + nombre + ".")
-                        .setPositiveButton("Entendido", null)
+                        .setTitle(getString(R.string.dialog_gasto_no_editable_titulo))
+                        .setMessage(getString(R.string.dialog_gasto_no_editable_msg, nombre))
+                        .setPositiveButton(getString(R.string.entendido), null)
                         .show();
                 return;
             }
@@ -1020,10 +1021,10 @@ public class Fragmento4_cartera extends Fragment {
 
         // ── AlertDialog ──
         AlertDialog dialog = new AlertDialog.Builder(ctx)
-                .setTitle("✏️ Editar gasto")
+                .setTitle(getString(R.string.dialog_editar_gasto_titulo))
                 .setView(scrollView)
-                .setPositiveButton("Guardar", null)   // null → no auto-dismiss
-                .setNegativeButton("Cancelar", null)
+                .setPositiveButton(getString(R.string.guardar), null)   // null → no auto-dismiss
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .create();
         dialog.show();
 
@@ -1035,7 +1036,7 @@ public class Fragmento4_cartera extends Fragment {
             String categoria  = etCategoria.getText().toString().trim();
 
             if (concepto.isEmpty() || importeStr.isEmpty() || fechaVisual.isEmpty()) {
-                Toast.makeText(ctx, "Rellena todos los campos obligatorios",
+                Toast.makeText(ctx, getString(R.string.rellena_campos_obligatorios),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -1044,7 +1045,7 @@ public class Fragmento4_cartera extends Fragment {
                 importe = Double.parseDouble(importeStr);
                 if (importe <= 0) throw new NumberFormatException();
             } catch (NumberFormatException e) {
-                Toast.makeText(ctx, "Importe inválido", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, getString(R.string.importe_invalido), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (categoria.isEmpty()) categoria = "Otros";
@@ -1064,7 +1065,7 @@ public class Fragmento4_cartera extends Fragment {
                 body.put("tipo",               tipo);
                 body.put("id_usuario_pagador", g.getId_usuario_pagador());
             } catch (JSONException e) {
-                Toast.makeText(ctx, "Error al preparar los datos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ctx, getString(R.string.error_preparar_datos), Toast.LENGTH_SHORT).show();
                 return;
             }
             dialog.dismiss();
@@ -1110,7 +1111,7 @@ public class Fragmento4_cartera extends Fragment {
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -1187,6 +1188,204 @@ public class Fragmento4_cartera extends Fragment {
             if (!r.isAbonado()) totalPendiente += r.getImporte();
             else totalAbonado += r.getImporte();
         }
+    }
+
+    /* ════════════════════════════════════════════
+       HISTORIAL DE TODOS LOS MESES — colapsable
+    ════════════════════════════════════════════ */
+
+    /**
+     * Construye una card colapsable por cada mes pasado que tenga datos.
+     * Los meses se ordenan de más reciente a más antiguo.
+     * Se muestran tanto importes pendientes como ya abonados (visión histórica completa).
+     */
+    private void renderHistorialMeses(String mesActual,
+                                      Map<Integer, DeudorInfo> meDebenMap,
+                                      Map<Integer, DeudorInfo> deboMap) {
+        if (containerHistorialMeses == null) return;
+        containerHistorialMeses.removeAllViews();
+
+        // Recopilar todos los meses distintos con datos (excluyendo el mes actual)
+        java.util.TreeSet<String> meses = new java.util.TreeSet<>(java.util.Collections.reverseOrder());
+
+        for (Gasto g : gastos) {
+            if (g.getId_usuario_pagador() == idUsuario && g.getFecha() != null
+                    && g.getFecha().length() >= 7) {
+                String m = g.getFecha().substring(0, 7);
+                if (!m.equals(mesActual)) meses.add(m);
+            }
+        }
+        for (DeudorInfo d : meDebenMap.values()) {
+            for (ItemReparto item : d.items) {
+                if (item.gasto != null && item.gasto.getFecha() != null
+                        && item.gasto.getFecha().length() >= 7) {
+                    String m = item.gasto.getFecha().substring(0, 7);
+                    if (!m.equals(mesActual)) meses.add(m);
+                }
+            }
+        }
+        for (DeudorInfo d : deboMap.values()) {
+            for (ItemReparto item : d.items) {
+                if (item.gasto != null && item.gasto.getFecha() != null
+                        && item.gasto.getFecha().length() >= 7) {
+                    String m = item.gasto.getFecha().substring(0, 7);
+                    if (!m.equals(mesActual)) meses.add(m);
+                }
+            }
+        }
+
+        if (meses.isEmpty()) return;
+
+        for (String mes : meses) {
+            double gastado = 0, meDeben = 0, debo = 0;
+
+            // Total pagado por mí ese mes
+            for (Gasto g : gastos) {
+                if (g.getId_usuario_pagador() == idUsuario
+                        && g.getFecha() != null && g.getFecha().startsWith(mes)) {
+                    gastado += g.getImporte();
+                }
+            }
+            // Total que me debían ese mes (pendiente + abonado)
+            for (DeudorInfo d : meDebenMap.values()) {
+                for (ItemReparto item : d.items) {
+                    if (item.gasto != null && item.gasto.getFecha() != null
+                            && item.gasto.getFecha().startsWith(mes)) {
+                        meDeben += item.reparto.getImporte();
+                    }
+                }
+            }
+            // Total que debía ese mes (pendiente + abonado)
+            for (DeudorInfo d : deboMap.values()) {
+                for (ItemReparto item : d.items) {
+                    if (item.gasto != null && item.gasto.getFecha() != null
+                            && item.gasto.getFecha().startsWith(mes)) {
+                        debo += item.reparto.getImporte();
+                    }
+                }
+            }
+
+            if (gastado == 0 && meDeben == 0 && debo == 0) continue;
+
+            // Formatear nombre del mes: "2025-03" → "Marzo 2025"
+            String nombreMes;
+            try {
+                java.util.Calendar c = java.util.Calendar.getInstance();
+                c.set(Integer.parseInt(mes.substring(0, 4)),
+                      Integer.parseInt(mes.substring(5, 7)) - 1, 1);
+                nombreMes = new java.text.SimpleDateFormat("MMMM yyyy", new Locale("es"))
+                        .format(c.getTime());
+                nombreMes = nombreMes.substring(0, 1).toUpperCase(Locale.getDefault())
+                          + nombreMes.substring(1);
+            } catch (Exception e) {
+                nombreMes = mes;
+            }
+
+            containerHistorialMeses.addView(
+                    crearCardMesColapsable(nombreMes, gastado, meDeben, debo));
+        }
+    }
+
+    /**
+     * Crea una CardView colapsable con el resumen económico de un mes.
+     * Al pulsar la cabecera se expande/colapsa el cuerpo.
+     */
+    private View crearCardMesColapsable(String titulo, double gastado,
+                                        double meDeben, double debo) {
+        // Contenedor externo (no CardView, para que podamos cambiar el contenido interior)
+        androidx.cardview.widget.CardView card = new androidx.cardview.widget.CardView(requireContext());
+        androidx.cardview.widget.CardView.LayoutParams cardLp =
+                new androidx.cardview.widget.CardView.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+        cardLp.setMargins(dp(16), dp(10), dp(16), dp(2));
+        card.setLayoutParams(cardLp);
+        card.setRadius(dp(14));
+        card.setCardElevation(dp(2));
+        card.setCardBackgroundColor(getResources().getColor(R.color.surface, null));
+
+        LinearLayout inner = new LinearLayout(requireContext());
+        inner.setOrientation(LinearLayout.VERTICAL);
+        card.addView(inner);
+
+        // ── Cabecera: título + badge + chevron ──────────────
+        LinearLayout header = new LinearLayout(requireContext());
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        header.setGravity(android.view.Gravity.CENTER_VERTICAL);
+        header.setPadding(dp(16), dp(14), dp(16), dp(10));
+        header.setClickable(true);
+        header.setFocusable(true);
+        android.util.TypedValue tv = new android.util.TypedValue();
+        requireContext().getTheme().resolveAttribute(
+                android.R.attr.selectableItemBackground, tv, true);
+        header.setForeground(requireContext().getDrawable(tv.resourceId));
+        inner.addView(header);
+
+        TextView tvTitulo = new TextView(requireContext());
+        tvTitulo.setText(titulo);
+        tvTitulo.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 15);
+        tvTitulo.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvTitulo.setTextColor(getResources().getColor(R.color.text, null));
+        tvTitulo.setLayoutParams(new LinearLayout.LayoutParams(0,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        header.addView(tvTitulo);
+
+        TextView tvBadge = new TextView(requireContext());
+        tvBadge.setText(getString(R.string.tag_historial));
+        tvBadge.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 10);
+        tvBadge.setTypeface(null, android.graphics.Typeface.BOLD);
+        tvBadge.setTextColor(getResources().getColor(R.color.text, null));
+        tvBadge.setBackgroundResource(R.drawable.bg_tag_yellow);
+        tvBadge.setPadding(dp(8), dp(3), dp(8), dp(3));
+        LinearLayout.LayoutParams badgeLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        badgeLp.setMarginEnd(dp(8));
+        tvBadge.setLayoutParams(badgeLp);
+        header.addView(tvBadge);
+
+        TextView chevron = new TextView(requireContext());
+        chevron.setText("▲");
+        chevron.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 11);
+        chevron.setTextColor(getResources().getColor(R.color.muted, null));
+        header.addView(chevron);
+
+        // ── Separador ───────────────────────────────────────
+        View divider = new View(requireContext());
+        divider.setBackgroundColor(getResources().getColor(R.color.border, null));
+        divider.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 1));
+        inner.addView(divider);
+
+        // ── Cuerpo colapsable ────────────────────────────────
+        LinearLayout body = new LinearLayout(requireContext());
+        body.setOrientation(LinearLayout.VERTICAL);
+        body.setPadding(dp(16), dp(10), dp(16), dp(10));
+        inner.addView(body);
+
+        agregarFilaHistorialMes(body, "Pagado por ti",
+                fmt(gastado),                   0xFF2D2416, 0xFFFFF3C0);
+        agregarFilaHistorialMes(body, "Te debían",
+                "+" + fmt(meDeben),             0xFF58A856, 0xFFE8F5E8);
+        agregarFilaHistorialMes(body, "Debías tú",
+                "−" + fmt(debo),                0xFFE05C5C, 0xFFFDEAEA);
+
+        double balance = meDeben - debo;
+        agregarFilaHistorialMes(body, "Balance neto",
+                (balance >= 0 ? "+" : "") + fmt(balance),
+                balance >= 0 ? 0xFF58A856 : 0xFFE05C5C,
+                balance >= 0 ? 0xFFE8F5E8 : 0xFFFDEAEA);
+
+        // ── Lógica de colapsar/expandir ──────────────────────
+        final boolean[] expanded = {true};
+        header.setOnClickListener(v -> {
+            expanded[0] = !expanded[0];
+            body.setVisibility(expanded[0] ? View.VISIBLE : View.GONE);
+            divider.setVisibility(expanded[0] ? View.VISIBLE : View.GONE);
+            chevron.setText(expanded[0] ? "▲" : "▼");
+        });
+
+        return card;
     }
 
     /** Añade una fila resumen al contenedor de historial del mes anterior. */

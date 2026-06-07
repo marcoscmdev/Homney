@@ -155,7 +155,7 @@ public class Fragmento3_tareas extends Fragment {
 
         if (idHogar == -1 || idUsuario == -1) {
             Toast.makeText(requireContext(),
-                    "Sesión no válida — vuelve a iniciar sesión", Toast.LENGTH_LONG).show();
+                    getString(R.string.sesion_no_valida), Toast.LENGTH_LONG).show();
         }
 
         // Los datos se cargan en onResume para refrescarse al volver de crear/editar
@@ -226,7 +226,7 @@ public class Fragmento3_tareas extends Fragment {
             resetContainers();
             cargarDatos();
         } else if (!Utilidades.hayConexionInternet(requireContext())) {
-            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -394,7 +394,7 @@ public class Fragmento3_tareas extends Fragment {
         tagPendientes.setText(pendCount + (pendCount == 1 ? " pendiente" : " pendientes"));
 
         if (misTareas.isEmpty()) {
-            tvSinMisTareas.setText("Sin tareas pendientes.");
+            tvSinMisTareas.setText(getString(R.string.sin_mis_tareas));
             tvSinMisTareas.setVisibility(View.VISIBLE);
         } else {
             for (Tarea t : misTareas) {
@@ -428,7 +428,7 @@ public class Fragmento3_tareas extends Fragment {
         // ─── Sección 2: Otras tareas del hogar ──────────────
         tvSinOtrasTareas.setVisibility(View.GONE);
         if (otrasTareas.isEmpty()) {
-            tvSinOtrasTareas.setText("No hay más tareas en el hogar.");
+            tvSinOtrasTareas.setText(getString(R.string.sin_tareas_hogar));
             tvSinOtrasTareas.setVisibility(View.VISIBLE);
         } else {
             for (Tarea t : otrasTareas) {
@@ -442,7 +442,7 @@ public class Fragmento3_tareas extends Fragment {
         // ─── Sección 3: Completadas este mes ─────────────────
         tvSinCompletadas.setVisibility(View.GONE);
         if (completadasEsteMes.isEmpty()) {
-            tvSinCompletadas.setText("Sin tareas completadas este mes.");
+            tvSinCompletadas.setText(getString(R.string.sin_tareas_completadas_este_mes));
             tvSinCompletadas.setVisibility(View.VISIBLE);
         } else {
             for (TareasRealizadas r : completadasEsteMes) {
@@ -458,7 +458,7 @@ public class Fragmento3_tareas extends Fragment {
                 tvCheck.setText("✓");
                 tvCheck.setBackgroundResource(R.drawable.bg_tag_green);
                 TextView tvTag = row.findViewById(R.id.tv_tag_estado);
-                tvTag.setText("COMPLETADA");
+                tvTag.setText(getString(R.string.tag_completada));
                 tvTag.setBackgroundResource(R.drawable.bg_tag_green);
                 containerCompletadas.addView(row);
                 agregarDivider(containerCompletadas);
@@ -488,7 +488,7 @@ public class Fragmento3_tareas extends Fragment {
                 tvCheck.setBackgroundResource(R.drawable.bg_tag_muted);
                 tvCheck.setAlpha(0.7f);
                 TextView tvTag = row.findViewById(R.id.tv_tag_estado);
-                tvTag.setText("ANTERIOR");
+                tvTag.setText(getString(R.string.tag_anterior));
                 tvTag.setBackgroundResource(R.drawable.bg_tag_muted);
                 containerHistorialMesTareas.addView(row);
                 agregarDivider(containerHistorialMesTareas);
@@ -511,7 +511,9 @@ public class Fragmento3_tareas extends Fragment {
                 t.getNombre() != null ? t.getNombre() : "");
 
         StringBuilder fr = new StringBuilder(labelFrecuencia(t.getFrecuencia()));
-        if (t.getNum_veces() != null && !"1".equals(t.getNum_veces()))
+        if (t.getNum_veces() != null
+                && t.getNum_veces().matches("\\d+")
+                && Integer.parseInt(t.getNum_veces()) > 1)
             fr.append(" · ").append(t.getNum_veces()).append("x");
         fr.append(t.getDuracion() != null
                 ? " · " + t.getDuracion() + " min" : " · Sin duración");
@@ -566,7 +568,7 @@ public class Fragmento3_tareas extends Fragment {
             tvAsig.setTypeface(null, Typeface.ITALIC);
 
             if (asigs.isEmpty()) {
-                tvAsig.setText("Sin asignar");
+                tvAsig.setText(getString(R.string.sin_asignar));
                 tvAsig.setTextColor(0xFFBCAB88);
             } else {
                 StringBuilder names = new StringBuilder("Asignado a: ");
@@ -584,7 +586,7 @@ public class Fragmento3_tareas extends Fragment {
         // Tag de estado
         TextView tvTag = row.findViewById(R.id.tv_tag_estado);
         if (yaHecha) {
-            tvTag.setText("HECHA HOY");
+            tvTag.setText(getString(R.string.tag_hecha_hoy));
             tvTag.setBackgroundResource(R.drawable.bg_tag_green);
         } else {
             tvTag.setText(labelFrecuencia(t.getFrecuencia()).toUpperCase(Locale.getDefault()));
@@ -667,9 +669,9 @@ public class Fragmento3_tareas extends Fragment {
         tvNombreTarea.setLayoutParams(lpNombre);
         layout.addView(tvNombreTarea);
 
-        // ── Label "Tiempo empleado" ──────────────────────────────────────────
+        // ── Label getString(R.string.tiempo_empleado) ──────────────────────────────────────────
         TextView tvLabelDur = new TextView(requireContext());
-        tvLabelDur.setText("Tiempo empleado");
+        tvLabelDur.setText(getString(R.string.tiempo_empleado));
         tvLabelDur.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         tvLabelDur.setTypeface(null, Typeface.BOLD);
         tvLabelDur.setTextColor(0xFF9A8A6A);
@@ -726,7 +728,7 @@ public class Fragmento3_tareas extends Fragment {
         layout.addView(filaPickets);
 
         TextView tvLabelObs = new TextView(requireContext());
-        tvLabelObs.setText("Observaciones (opcional)");
+        tvLabelObs.setText(getString(R.string.observaciones_opcional));
         tvLabelObs.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         tvLabelObs.setTypeface(null, Typeface.BOLD);
         tvLabelObs.setTextColor(0xFF9A8A6A);
@@ -738,21 +740,21 @@ public class Fragmento3_tareas extends Fragment {
 
         EditText etObservaciones = new EditText(requireContext());
         etObservaciones.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        etObservaciones.setHint("¿Cómo fue la tarea?");
+        etObservaciones.setHint(getString(R.string.hint_como_fue_tarea));
         etObservaciones.setMinLines(2);
         etObservaciones.setMaxLines(4);
         layout.addView(etObservaciones);
 
         new AlertDialog.Builder(requireContext())
-                .setTitle("¿Confirmas realizar la tarea?")
+                .setTitle(getString(R.string.dialog_confirmar_tarea_titulo))
                 .setView(layout)
-                .setPositiveButton("Confirmar", (dialog, which) -> {
+                .setPositiveButton(getString(R.string.confirmar), (dialog, which) -> {
                     int totalMinutos = npHoras.getValue() * 60 + npMinutos.getValue() * stepMin;
                     String durStr = totalMinutos > 0 ? String.valueOf(totalMinutos) : null;
                     String obs    = etObservaciones.getText().toString().trim();
                     marcarTareaRealizada(t, durStr, obs, row, tvFrec, tvCheck, tvTag);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 
@@ -764,12 +766,11 @@ public class Fragmento3_tareas extends Fragment {
 
     private void borrarTarea(Tarea t, View rootFrame) {
         new AlertDialog.Builder(requireContext())
-                .setTitle("¿Eliminar tarea?")
-                .setMessage("¿Seguro que quieres eliminar «" + t.getNombre()
-                        + "» y todas sus asignaciones?")
-                .setPositiveButton("Eliminar", (dialog, which) ->
+                .setTitle(getString(R.string.dialog_eliminar_tarea_titulo))
+                .setMessage(getString(R.string.dialog_eliminar_tarea_msg, t.getNombre()))
+                .setPositiveButton(getString(R.string.eliminar), (dialog, which) ->
                         eliminarAsignacionesYTarea(t, rootFrame))
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 
@@ -787,16 +788,16 @@ public class Fragmento3_tareas extends Fragment {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
                             Toast.makeText(requireContext(),
-                                    "Tarea eliminada", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.tarea_eliminada), Toast.LENGTH_SHORT).show();
                             ViewGroup parent = (ViewGroup) rootFrame.getParent();
                             if (parent != null) parent.removeView(rootFrame);
                         } else {
                             Toast.makeText(requireContext(),
-                                    "No se pudo eliminar la tarea", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.no_pudo_eliminar_tarea), Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -841,7 +842,7 @@ public class Fragmento3_tareas extends Fragment {
                 body.put("observaciones", obs);
         } catch (JSONException e) {
             loadingDialog.dismiss();
-            Toast.makeText(requireContext(), "Error al preparar el registro", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.error_preparar_registro), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -881,7 +882,7 @@ public class Fragmento3_tareas extends Fragment {
                                             }
                                             // Si el contenedor quedó vacío, mostrar mensaje
                                             if (containerMisTareas.getChildCount() == 0) {
-                                                tvSinMisTareas.setText("Sin tareas pendientes.");
+                                                tvSinMisTareas.setText(getString(R.string.sin_mis_tareas));
                                                 tvSinMisTareas.setVisibility(View.VISIBLE);
                                             }
                                         }).start();
@@ -895,12 +896,12 @@ public class Fragmento3_tareas extends Fragment {
                                     .setText(t.getNombre());
                             ((TextView) compRow.findViewById(R.id.tv_frecuencia))
                                     .setText((obs != null && !obs.isEmpty())
-                                            ? obs : "Completada ahora");
+                                            ? obs : getString(R.string.completada_ahora));
                             TextView ck = compRow.findViewById(R.id.tv_check);
                             ck.setText("✓");
                             ck.setBackgroundResource(R.drawable.bg_tag_green);
                             TextView tg = compRow.findViewById(R.id.tv_tag_estado);
-                            tg.setText("COMPLETADA");
+                            tg.setText(getString(R.string.tag_completada));
                             tg.setBackgroundResource(R.drawable.bg_tag_green);
                             containerCompletadas.addView(compRow, 0);
                             // Divider justo debajo de la nueva fila
@@ -913,7 +914,7 @@ public class Fragmento3_tareas extends Fragment {
                             containerCompletadas.addView(div, 1);
 
                             Toast.makeText(requireContext(),
-                                    "¡Tarea completada!", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.tarea_completada), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(requireContext(),
                                     response.optString("message", "Error al registrar"),
@@ -921,7 +922,7 @@ public class Fragmento3_tareas extends Fragment {
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -960,8 +961,8 @@ public class Fragmento3_tareas extends Fragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle("«" + t.getNombre() + "»")
                 .setMessage(msg.toString())
-                .setPositiveButton("Asignarme", (dialog, which) -> asignarseaTarea(t))
-                .setNegativeButton("Cancelar", null)
+                .setPositiveButton(getString(R.string.dialog_asignar_tarea_btn), (dialog, which) -> asignarseaTarea(t))
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 
@@ -973,7 +974,7 @@ public class Fragmento3_tareas extends Fragment {
             body.put("id_usuario", idUsuario);
         } catch (JSONException e) {
             loadingDialog.dismiss();
-            Toast.makeText(requireContext(), "Error al preparar la petición", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.error_preparar_peticion), Toast.LENGTH_SHORT).show();
             return;
         }
         String url = WebService.URL_Asignacion_Tarea;
@@ -986,7 +987,7 @@ public class Fragmento3_tareas extends Fragment {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
                             Toast.makeText(requireContext(),
-                                    "¡Tarea asignada! Ahora aparece en \"Mis tareas\"",
+                                    getString(R.string.tarea_asignada_msg),
                                     Toast.LENGTH_SHORT).show();
                             // Recargar toda la pantalla para reflejar el cambio
                             resetContainers();
@@ -998,7 +999,7 @@ public class Fragmento3_tareas extends Fragment {
                         }
                     } catch (Exception e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {

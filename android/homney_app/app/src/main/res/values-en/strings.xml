@@ -321,4 +321,203 @@
     <string name="tag_historial">HISTORY</string>
     <string name="sin_asignar">Unassigned</string>
 
+
+    <!-- Session -->
+    <string name="sesion_no_valida">Session invalid — please log in again</string>
+    <string name="presione_atras_para_salir">Please press BACK again to exit</string>
+
+    <!-- Additional empty states -->
+    <string name="sin_nombre">No name</string>
+    <string name="sin_movimientos_mes_anterior">No activity last month.</string>
+    <string name="mes_anterior_titulo">Previous month</string>
+    <string name="tareas_completadas_mes_pasado">Tasks completed last month</string>
+
+    <!-- Positive confirmations -->
+    <string name="tarea_completada">Task completed!</string>
+    <string name="tarea_eliminada">Task deleted</string>
+    <string name="tarea_asignada_msg">Task assigned! It now appears in «My tasks»</string>
+    <string name="completada_ahora">Completed just now</string>
+    <string name="nombre_actualizado">Name updated ✓</string>
+    <string name="perfil_actualizado">Profile updated ✓</string>
+    <string name="contrasena_actualizada">Password updated ✓</string>
+
+    <!-- Errors -->
+    <string name="no_pudo_eliminar_tarea">Could not delete task</string>
+    <string name="no_pudo_eliminar_pub">Could not delete post</string>
+    <string name="no_pudo_actualizar_nombre">Could not update name</string>
+    <string name="error_procesar_respuesta">Error processing response</string>
+    <string name="error_procesar_usuarios">Error processing users</string>
+    <string name="error_procesar_habitaciones">Error processing rooms</string>
+    <string name="nombre_vacio">Name cannot be empty</string>
+    <string name="rellena_ambos_campos">Fill in both fields</string>
+    <string name="minimo_6_caracteres">Minimum 6 characters</string>
+    <string name="passwords_no_coinciden">Passwords do not match</string>
+    <string name="no_se_pudo_preparar_camara">Could not prepare camera</string>
+    <string name="no_pudo_guardar_nombre">Could not save name</string>
+    <string name="habitacion_anadida">Room added</string>
+    <string name="no_pudo_anadir_habitacion">Could not add room</string>
+    <string name="error_procesar_red">Network error</string>
+    <string name="error_interno">Internal error</string>
+    <string name="error_procesar_respuesta_short">Error processing response</string>
+
+    <!-- Registration wizard: steps -->
+    <string name="paso_2_de_3">Step 2 of 3</string>
+    <string name="paso_3_de_3">Step 3 of 3</string>
+    <string name="anadir_foto">Add photo</string>
+    <string name="quitar_foto">✕ Remove photo</string>
+    <string name="anhadir_btn">Add</string>
+
+    <!-- Wallet -->
+    <string name="subcategoria_opcional">Subcategory (optional)</string>
+    <string name="no_compartir">Do Not Share</string>
+    <string name="nuevo_gasto_toolbar"> 💳 New Expense</string>
+    <string name="importe_euros">Amount €</string>
+    <string name="historial_mes_pasado">Expense history last month</string>
+
+    <!-- My Home -->
+    <string name="invita_a_la_colmena">Invite to the hive</string>
+    <string name="codigo_label">Code: </string>
+
+    <!-- Homney Mate AI -->
+    <string name="homney_mate_titulo">Homney Mate</string>
+    <string name="homney_mate_subtitulo">Your AI worker bee</string>
+
+    <!-- Login -->
+    <string name="olvidaste_contrasena">Forgot your password?</string>
+    <string name="recordarme">Remember me</string>
+    <string name="dialog_recuperar_pass_btn">Send</string>
+
+    <!-- My Profile -->
+    <string name="mi_perfil_toolbar">👤 My profile</string>
+    <string name="dialog_eliminar_cuenta_msg">WARNING: This action is irreversible. You will lose all your data and it cannot be recovered.</string>
+
+    <!-- New task -->
+    <string name="nueva_tarea_toolbar">New Task</string>
+
+    <!-- Help — section labels -->
+    <string name="ayuda_seccion_mis_tareas">MY TASKS</string>
+    <string name="ayuda_crear_contenido">Create content</string>
+    <string name="ayuda_menu_lateral">Side menu</string>
+    <string name="ayuda_mi_perfil">My Profile</string>
+    <string name="ayuda_avatar">Avatar</string>
+    <string name="ayuda_seccion_inicio">Home</string>
+    <string name="ayuda_seccion_tareas">Tasks</string>
+    <string name="ayuda_seccion_muro">Board</string>
+
+    <!-- MainActivity -->
+    <string name="fab_nueva_tarea">New task</string>
+    <string name="fab_nuevo_gasto">New expense</string>
+    <string name="fab_nueva_publicacion">New post</string>
+    <string name="fab_crear">Create...</string>
+    <string name="fab_asistente_ia">Your AI assistant</string>
+    <string name="fab_opcion_nueva_tarea">📋  New task</string>
+    <string name="fab_opcion_nuevo_gasto">💰  New expense</string>
+    <string name="fab_opcion_nueva_publicacion">📣  New post</string>
+
+
+    <!-- ════════════════════════════════════════════════
+         HELP SECTION — fragment_ayuda.xml
+         ════════════════════════════════════════════════ -->
+    <string name="centro_de_ayuda">Help centre</string>
+    <string name="aprende_a_sacar_el_m_ximo_partido_a_homney_aqu_encontrar_s_todo_lo_que_necesitas_saber_sobre_cada_secci_n_de_la_app">Learn how to get the most out of Homney. Here you\'ll find everything you need to know about each section of the app.</string>
+    <string name="el_panel_es_la_pantalla_principal_de_homney_de_un_vistazo_ver_s_el_estado_completo_de_tu_hogar">The Dashboard is Homney\'s main screen. At a glance you\'ll see the full status of your home:</string>
+    <string name="_3_tarjetas_de_resumen_gasto_total_del_hogar_tareas_pendientes_asignadas_a_ti_y_publicaciones_activas_en_el_muro">3 summary cards: total home expenditure, pending tasks assigned to you, and active posts on the board.</string>
+    <string name="vista_previa_de_los_ltimos_gastos_tareas_pendientes_y_publicaciones_del_muro_pulsa_ver_todos_para_ir_a_cada_secci_n">Preview of latest expenses, pending tasks and board posts. Tap «See all →» to go to each section.</string>
+    <string name="gr_fico_de_l_neas_con_las_tareas_completadas_por_cada_miembro_en_los_ltimos_7_d_as">Line chart showing tasks completed by each member over the last 7 days.</string>
+    <string name="gr_fico_de_columnas_con_los_importes_pagados_por_cada_conviviente_este_mes">Bar chart showing amounts paid by each flatmate this month.</string>
+    <string name="acceso_r_pido">QUICK ACCESS</string>
+    <string name="pulsa_el_bot_n_de_la_barra_superior_para_crear_una_nueva_tarea_gasto_o_publicaci_n_desde_cualquier_pantalla_sin_tener_que_abrir_el_men_lateral">Tap the «+» button in the top bar to create a new task, expense or post from any screen without opening the side menu.</string>
+    <string name="mi_hogar">My Home</string>
+    <string name="secci_n_2">Section 2</string>
+    <string name="toda_la_informaci_n_de_tu_hogar_compartido_en_un_solo_lugar">All your shared home information in one place:</string>
+    <string name="n_mero_y_clave_de_invitaci_n_de_tu_hogar_comparte_la_clave_con_quien_quieras_que_se_una_al_piso">Your home\'s number and invitation code. Share the code with anyone you want to join the flat.</string>
+    <string name="lista_de_miembros_con_nombre_correo_y_rol_el_administrador_aparece_con_etiqueta_amarilla_y_el_resto_en_verde">Member list with name, email and role. The admin has a yellow badge; others appear in green.</string>
+    <string name="cuadr_cula_de_habitaciones_del_hogar_cocina_sal_n_ba_o_con_sus_iconos_identificativos">Room grid (kitchen, living room, bathroom…) with identifying icons.</string>
+    <string name="asistente_ia">AI ASSISTANT</string>
+    <string name="desde_mi_hogar_puedes_abrir_el_asistente_inteligente_de_homney_hazle_preguntas_sobre_tus_gastos_tareas_o_el_estado_del_hogar_y_te_responder_al_instante_tambi_n_puede_ejecutar_acciones_como_registrar_un_gasto_o_marcar_una_tarea_como_completada">From My Home you can open Homney\'s intelligent assistant. Ask it questions about your expenses, tasks or the home status and it will answer instantly. It can also execute actions such as recording an expense or marking a task as completed.</string>
+    <string name="gestiona_todas_las_tareas_del_hogar_organizadas_en_cuatro_bloques">Manage all home tasks organised into four sections:</string>
+    <string name="tareas_asignadas_a_ti_que_est_n_pendientes_la_cabecera_muestra_el_contador_de_tareas_por_hacer">Tasks assigned to you that are pending. The header shows the to-do task counter.</string>
+    <string name="pulsa_sobre_una_tarea_para_marcarla_como_completada_podr_s_indicar_el_tiempo_real_dedicado_y_a_adir_observaciones">Tap a task to mark it as completed: you can log the actual time spent and add notes.</string>
+    <string name="desliza_una_tarea_hacia_la_izquierda_para_eliminarla">Swipe a task to the left to delete it.</string>
+    <string name="tareas_asignadas_a_otros_miembros_solo_lectura_puedes_ver_a_qui_n_est_n_asignadas_pero_no_modificarlas">Tasks assigned to other members. Read-only: you can see who they are assigned to but cannot modify them.</string>
+    <string name="completadas_este_mes_ayuda">COMPLETED THIS MONTH</string>
+    <string name="otras_tareas_ayuda">OTHER TASKS</string>
+    <string name="historial_de_tareas_finalizadas_en_el_mes_actual_con_marca_verde_y_las_observaciones_anotadas_al_completarlas">History of tasks completed this month with a green tick and the notes logged when completing them.</string>
+    <string name="historial_del_mes_anterior_ayuda">PREVIOUS MONTH HISTORY</string>
+    <string name="secci_n_colapsable_con_las_tareas_completadas_el_mes_pasado_disponible_para_consulta">Collapsible section with tasks completed last month, available for reference.</string>
+    <string name="cada_tarea_puede_tener_frecuencia_diaria_semanal_mensual_o_variable_homney_calcula_autom_ticamente_si_una_tarea_sigue_pendiente_seg_n_su_frecuencia_y_la_fecha_de_ltima_realizaci_n">Each task can have Daily, Weekly, Monthly or Variable frequency. Homney automatically calculates whether a task is still pending based on its frequency and the date it was last completed.</string>
+    <string name="frecuencias_ayuda">FREQUENCIES</string>
+    <string name="mi_cartera_ayuda">My Wallet</string>
+    <string name="secci_n_4_ayuda">Section 4</string>
+    <string name="controla_todos_los_gastos_compartidos_y_las_deudas_pendientes_del_hogar">Track all shared expenses and outstanding debts in the home:</string>
+    <string name="resumen_econ_mico_ayuda">FINANCIAL SUMMARY</string>
+    <string name="me_deben_importe_total_que_otros_convivientes_te_deben_a_ti_este_mes">«They owe me» — total amount other flatmates owe you this month.</string>
+    <string name="debo_importe_total_que_t_debes_al_resto_de_convivientes">«I owe» — total amount you owe the rest of the flatmates.</string>
+    <string name="total_gastado_suma_de_todos_los_gastos_del_hogar_en_el_mes_en_curso">«Total spent» — sum of all home expenses in the current month.</string>
+    <string name="cobros_y_pagos_ayuda">COLLECTIONS AND PAYMENTS</string>
+    <string name="pulsa_sobre_un_gasto_en_me_deben_para_confirmarlo_como_cobrado_se_marca_cobrado_en_verde">Tap an expense in «They owe me» to confirm it as collected (marked COLLECTED in green).</string>
+    <string name="pulsa_sobre_un_gasto_en_debo_para_confirmarlo_como_pagado_se_marca_pagado_en_rojo">Tap an expense in «I owe» to confirm it as paid (marked PAID in red).</string>
+    <string name="historial_de_gastos_ayuda">EXPENSE HISTORY</string>
+    <string name="listado_completo_de_todos_los_gastos_del_hogar_con_concepto_categor_a_fecha_y_modo_de_pago">Full list of all home expenses with concept, category, date and payment method.</string>
+    <string name="los_gastos_tuyos_aparecen_en_verde_y_los_de_otros_en_rojo_la_etiqueta_fijo_indica_un_gasto_recurrente">Your expenses appear in green (+) and others\' in red (−). The FIXED label indicates a recurring expense.</string>
+    <string name="desliza_un_gasto_hacia_la_izquierda_para_eliminarlo">Swipe an expense to the left to delete it.</string>
+    <string name="mes_anterior_ayuda">PREVIOUS MONTH</string>
+    <string name="secci_n_colapsable_con_el_resumen_del_mes_pasado_lo_que_pagaste_lo_que_te_deb_an_lo_que_deb_as_y_el_balance_final">Collapsible section with last month\'s summary: what you paid, what you were owed, what you owed and the final balance.</string>
+    <string name="los_gastos_marcados_como_fijo_se_renuevan_autom_ticamente_al_inicio_de_cada_mes_homney_los_copia_al_nuevo_per_odo_para_que_no_tengas_que_volver_a_registrarlos">Expenses marked as «Fixed» are automatically renewed at the start of each month. Homney copies them to the new period so you don\'t have to re-enter them.</string>
+    <string name="gastos_fijos_ayuda">FIXED EXPENSES</string>
+    <string name="el_muro_es_el_tabl_n_de_anuncios_del_hogar_un_espacio_compartido_donde_todos_los_miembros_pueden_comunicarse">The Board is the home\'s notice board, a shared space where all members can communicate:</string>
+    <string name="cada_publicaci_n_muestra_el_avatar_del_autor_su_nombre_la_fecha_y_un_resumen_del_contenido">Each post shows the author\'s avatar, their name, the date and a summary of the content.</string>
+    <string name="las_publicaciones_se_ordenan_cronol_gicamente_con_las_m_s_recientes_primero">Posts are sorted chronologically, with the most recent first.</string>
+    <string name="puedes_adjuntar_una_imagen_a_cada_publicaci_n_para_ilustrar_tu_mensaje">You can attach an image to each post to illustrate your message.</string>
+    <string name="nueva_tarea_ayuda">NEW TASK</string>
+    <string name="escribe_el_nombre_de_la_tarea_el_campo_sugiere_tareas_habituales_autom_ticamente">Enter the task name (the field suggests common tasks automatically).</string>
+    <string name="selecciona_la_habitaci_n_la_frecuencia_diaria_semanal_mensual_variable_y_la_duraci_n_estimada_en_horas_y_minutos">Select the room, the frequency (Daily / Weekly / Monthly / Variable) and the estimated duration in hours and minutes.</string>
+    <string name="asigna_la_tarea_al_miembro_que_corresponda_y_pulsa_crear_tarea">Assign the task to the relevant member and tap «Create task».</string>
+    <string name="nuevo_gasto_ayuda">NEW EXPENSE</string>
+    <string name="introduce_el_concepto_importe_fecha_y_selecciona_la_categor_a_y_subcategor_a">Enter the concept, amount, date and select the category and subcategory.</string>
+    <string name="elige_el_modo_de_pago_efectivo_tarjeta_transferencia_u_otro_y_el_tipo_variable_o_fijo_se_renovar_autom_ticamente_cada_mes">Choose the payment method (Cash, Card, Transfer or Other) and the type: Variable or Fixed (automatically renewed each month).</string>
+    <string name="activa_no_compartir_autom_ticamente_para_que_el_gasto_no_se_reparta_entre_todos_los_miembros_del_hogar_es_til_para_tener_un_registro_de_las_invitaciones_y_gastos_personales">Enable «Do Not Share automatically» so the expense is not split among all home members. Useful for keeping a record of personal invitations and expenses.</string>
+    <string name="nueva_publicaci_n_ayuda">NEW POST</string>
+    <string name="escribe_un_t_tulo_y_el_contenido_del_mensaje_que_quieres_compartir_con_el_hogar">Write a title and the content of the message you want to share with the home.</string>
+    <string name="adjunta_opcionalmente_una_foto_desde_la_galer_a_o_tomada_en_el_momento_con_la_c_mara">Optionally attach a photo from the gallery or taken in the moment with the camera.</string>
+    <string name="accede_a_tu_perfil_pulsando_el_avatar_en_la_esquina_superior_derecha_de_la_pantalla">Access your profile by tapping the avatar in the top-right corner of the screen:</string>
+    <string name="edita_tu_nombre_tel_fono_fecha_de_nacimiento_y_g_nero_en_cualquier_momento">Edit your name, phone, date of birth and gender at any time.</string>
+    <string name="cambia_tu_foto_de_perfil_seleccion_ndola_desde_la_galer_a_o_tomando_una_nueva_con_la_c_mara">Change your profile photo by selecting one from the gallery or taking a new one with the camera.</string>
+    <string name="cambia_tu_contrase_a_mediante_el_bot_n_cambiar_contrase_a_disponible_en_la_pantalla_de_perfil">Change your password via the «Change password» button available on the profile screen.</string>
+    <string name="para_cerrar_sesi_n_pulsa_el_avatar_de_la_barra_superior_y_selecciona_cerrar_sesi_n">To log out, tap the avatar in the top bar and select «Log Out».</string>
+    <string name="contactar_por_correo">Contact by email</string>
+    <string name="homney_tu_colmena_organizada">Homney · Your organised hive</string>
+    <string name="nueva_publicaci_n">💬 New post</string>
+    <string name="cerrar">Close</string>
+    <string name="o_contin_a_con">or continue with</string>
+    <string name="cuenta_google_boton">Google account</string>
+    <string name="cambiar_foto_menu">📷 Change photo</string>
+    <string name="informaci_n_personal">Personal information</string>
+    <string name="email">EMAIL</string>
+    <string name="nombre">NAME</string>
+    <string name="tu_nombre">Your name</string>
+    <string name="tel_fono">PHONE</string>
+    <string name="n_mero_de_m_vil">Mobile number</string>
+    <string name="genero">Gender</string>
+    <string name="fecha_de_nacimiento">DATE OF BIRTH</string>
+    <string name="cambiar_contrase_a">🔐 Change password</string>
+    <string name="eliminar_cuenta">⛔️ Delete account</string>
+
+    <string name="solicitud_permiso">Permission request</string>
+
+    <!-- Home invitation message (share) -->
+    <string name="invitacion_linea1">🏠 I\'m inviting you to join my hive on Homney!</string>
+    <string name="invitacion_hogar_label">Home: </string>
+    <string name="invitacion_codigo_label">Invitation code: </string>
+    <string name="invitacion_instrucciones">Download Homney, create your account and use this code to join.</string>
+    <string name="invitacion_codigo_no_disponible">The code is not available yet, please wait a moment</string>
+
+
+    <!-- Create task -->
+    <string name="habitacion_general">🏠 General (whole house)</string>
+    <string name="spinner_selecciona_habitacion">— Select room —</string>
+    <string name="spinner_sin_asignar">— Unassigned —</string>
+    <string name="error_selecciona_habitacion">Select a room or choose General</string>
+    <string name="tarea_creada_asignada">Task created and assigned! ✓</string>
+
 </resources>

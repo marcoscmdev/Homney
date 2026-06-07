@@ -189,10 +189,10 @@ public class fragment_mi_perfil extends Fragment {
         btnCancelar.setOnClickListener(btn -> {
             if (hayCambios()) {
                 new AlertDialog.Builder(requireContext())
-                        .setTitle("Cambios sin guardar")
-                        .setMessage("Tienes cambios sin confirmar. ¿Quieres salir sin guardar?")
-                        .setPositiveButton("Salir sin guardar", (d, w) -> navegarAtras())
-                        .setNegativeButton("Seguir editando", null)
+                        .setTitle(getString(R.string.dialog_cambios_sin_guardar_titulo))
+                        .setMessage(getString(R.string.dialog_cambios_sin_guardar_msg))
+                        .setPositiveButton(getString(R.string.salir_sin_guardar), (d, w) -> navegarAtras())
+                        .setNegativeButton(getString(R.string.seguir_editando), null)
                         .show();
             } else {
                 navegarAtras();
@@ -202,15 +202,15 @@ public class fragment_mi_perfil extends Fragment {
         /* Guardar */
         btnGuardar.setOnClickListener(btn -> {
             if (!hayCambios()) {
-                Toast.makeText(requireContext(), "No hay cambios que guardar",
+                Toast.makeText(requireContext(), getString(R.string.sin_cambios_que_guardar),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
             new AlertDialog.Builder(requireContext())
-                    .setTitle("Confirmar cambios")
-                    .setMessage("¿Estás seguro de que quieres guardar los cambios en tu perfil?")
-                    .setPositiveButton("Guardar", (d, w) -> procesarGuardado())
-                    .setNegativeButton("Cancelar", null)
+                    .setTitle(getString(R.string.dialog_confirmar_cambios_titulo))
+                    .setMessage(getString(R.string.dialog_confirmar_cambios_msg))
+                    .setPositiveButton(getString(R.string.guardar), (d, w) -> procesarGuardado())
+                    .setNegativeButton(getString(R.string.btn_cancelar), null)
                     .show();
         });
 
@@ -359,7 +359,7 @@ public class fragment_mi_perfil extends Fragment {
     /** Diálogo para elegir entre galería y cámara. */
     private void mostrarDialogElegirFoto() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Cambiar foto de perfil")
+                .setTitle(getString(R.string.dialog_cambiar_foto_titulo))
                 .setItems(new String[]{"📷  Cámara", "🖼️  Galería"}, (dialog, which) -> {
                     if (which == 0) {
                         // Cámara
@@ -376,7 +376,7 @@ public class fragment_mi_perfil extends Fragment {
                         galeriaLauncher.launch(intent);
                     }
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 
@@ -397,7 +397,7 @@ public class fragment_mi_perfil extends Fragment {
                     imageFile);
         } catch (Exception e) {
             Toast.makeText(requireContext(),
-                    "No se pudo preparar la cámara", Toast.LENGTH_SHORT).show();
+                    getString(R.string.no_se_pudo_preparar_camara), Toast.LENGTH_SHORT).show();
             return null;
         }
     }
@@ -559,7 +559,7 @@ public class fragment_mi_perfil extends Fragment {
                             requireActivity().invalidateOptionsMenu();
 
                             Toast.makeText(requireContext(),
-                                    "Perfil actualizado ✓", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.perfil_actualizado), Toast.LENGTH_SHORT).show();
                             navegarAtras();
 
                         } else {
@@ -595,7 +595,7 @@ public class fragment_mi_perfil extends Fragment {
         layout.setPadding(px, px / 2, px, 0);
 
         EditText etNuevaPass = new EditText(requireContext());
-        etNuevaPass.setHint("Nueva contraseña");
+        etNuevaPass.setHint(getString(R.string.hint_nueva_pass));
         etNuevaPass.setInputType(InputType.TYPE_CLASS_TEXT
                 | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(etNuevaPass);
@@ -606,17 +606,17 @@ public class fragment_mi_perfil extends Fragment {
         layout.addView(separador);
 
         EditText etConfirmaPass = new EditText(requireContext());
-        etConfirmaPass.setHint("Confirmar contraseña");
+        etConfirmaPass.setHint(getString(R.string.hint_confirma_pass));
         etConfirmaPass.setInputType(InputType.TYPE_CLASS_TEXT
                 | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(etConfirmaPass);
 
         // setPositiveButton(null) para controlar el dismiss manualmente
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle("Cambiar contraseña")
+                .setTitle(getString(R.string.dialog_cambiar_pass_titulo))
                 .setView(layout)
-                .setPositiveButton("Cambiar", null) // null → no auto-dismiss
-                .setNegativeButton("Cancelar", null)
+                .setPositiveButton(getString(R.string.cambiar_btn), null) // null → no auto-dismiss
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .create();
 
         dialog.show();
@@ -628,17 +628,17 @@ public class fragment_mi_perfil extends Fragment {
 
             if (nueva.isEmpty() || confirma.isEmpty()) {
                 Toast.makeText(requireContext(),
-                        "Rellena ambos campos", Toast.LENGTH_SHORT).show();
+                        getString(R.string.rellena_ambos_campos), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (nueva.length() < 6) {
                 Toast.makeText(requireContext(),
-                        "Mínimo 6 caracteres", Toast.LENGTH_SHORT).show();
+                        getString(R.string.minimo_6_caracteres), Toast.LENGTH_SHORT).show();
                 return;
             }
             if (!nueva.equals(confirma)) {
                 Toast.makeText(requireContext(),
-                        "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+                        getString(R.string.passwords_no_coinciden), Toast.LENGTH_SHORT).show();
                 return;
             }
             dialog.dismiss();
@@ -666,7 +666,7 @@ public class fragment_mi_perfil extends Fragment {
                         if (response.getString(WebService.JSON.STATUS)
                                 .equals(WebService.JSON.SUCCESS)) {
                             Toast.makeText(requireContext(),
-                                    "Contraseña actualizada ✓", Toast.LENGTH_SHORT).show();
+                                    getString(R.string.contrasena_actualizada), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(requireContext(),
                                     response.optString("message", "Error al cambiar contraseña"),
@@ -674,7 +674,7 @@ public class fragment_mi_perfil extends Fragment {
                         }
                     } catch (JSONException e) {
                         Toast.makeText(requireContext(),
-                                "Error al procesar respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
@@ -693,15 +693,15 @@ public class fragment_mi_perfil extends Fragment {
 
     /**
      * Muestra un diálogo de confirmación con doble aviso antes de eliminar la cuenta.
-     * El usuario debe pulsar "Aceptar" para proceder; "Cancelar" cierra sin hacer nada.
+     * El usuario debe pulsar getString(R.string.aceptar) para proceder; getString(R.string.btn_cancelar) cierra sin hacer nada.
      */
     private void mostrarDialogEliminarCuenta() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("⚠️ ATENCIÓN")
-                .setMessage("ATENCIÓN!! Esta acción es irreversible, perderás todos tus datos "
+                .setTitle(getString(R.string.dialog_eliminar_cuenta_titulo))
+                .setMessage(getString(R.string.dialog_eliminar_cuenta_msg)
                         + "y no podrás recuperarlos.\n\n¿Estás seguro de que quieres eliminar tu cuenta?")
-                .setPositiveButton("Aceptar", (dialog, which) -> eliminarCuenta())
-                .setNegativeButton("Cancelar", null)
+                .setPositiveButton(getString(R.string.aceptar), (dialog, which) -> eliminarCuenta())
+                .setNegativeButton(getString(R.string.btn_cancelar), null)
                 .show();
     }
 

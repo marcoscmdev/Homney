@@ -267,7 +267,7 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
     private void mostrarSinHabitaciones() {
         llSecciones.removeAllViews();
         TextView tv = new TextView(this);
-        tv.setText("No se encontraron habitaciones. Vuelve atrás y añádelas primero.");
+        tv.setText(getString(R.string.no_habitaciones_wizard));
         tv.setTextColor(getResources().getColor(R.color.muted, null));
         tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         tv.setGravity(Gravity.CENTER);
@@ -447,7 +447,7 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
             if (values[i].equals(item.frecuencia)) { cur = i; break; }
         }
         new AlertDialog.Builder(this)
-                .setTitle("Cambiar frecuencia")
+                .setTitle(getString(R.string.dialog_cambiar_frecuencia_titulo))
                 .setSingleChoiceItems(labels, cur, (d, which) -> {
                     item.frecuencia = values[which];
                     tvBadge.setText(labels[which]);
@@ -480,7 +480,7 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
                 LinearLayout.LayoutParams.WRAP_CONTENT));
 
         EditText etNombre = new EditText(this);
-        etNombre.setHint("Añadir tarea personalizada…");
+        etNombre.setHint(getString(R.string.hint_tarea_personalizada));
         etNombre.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
         etNombre.setBackground(crearBordeInput());
         etNombre.setPadding(dp(10), dp(8), dp(10), dp(8));
@@ -518,7 +518,7 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
         llChips.setLayoutParams(chipsLp);
 
         TextView tvLabel = new TextView(this);
-        tvLabel.setText("Periodicidad: ");
+        tvLabel.setText(getString(R.string.periodicidad_label));
         tvLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
         tvLabel.setTextColor(getResources().getColor(R.color.muted, null));
         LinearLayout.LayoutParams lblLp = new LinearLayout.LayoutParams(
@@ -558,7 +558,7 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
         btnAdd.setOnClickListener(v -> {
             String nombre = etNombre.getText().toString().trim();
             if (nombre.isEmpty()) {
-                Toast.makeText(this, "Escribe el nombre de la tarea", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.error_escribe_nombre_tarea), Toast.LENGTH_SHORT).show();
                 return;
             }
             TareaItem custom = new TareaItem(nombre, freqSel[0], 1, true);
@@ -635,7 +635,7 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(this, "Por favor completa el registro", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.error_completa_registro), Toast.LENGTH_SHORT).show();
     }
 
     /* ══════════════════════════════════════════════════════════════

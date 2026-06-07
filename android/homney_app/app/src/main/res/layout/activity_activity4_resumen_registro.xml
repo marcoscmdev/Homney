@@ -69,7 +69,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Sin nombre"
+                    android:text="@string/sin_nombre"
                     android:textColor="@color/muted"
                     android:textSize="13sp"
                     android:gravity="center"
@@ -132,7 +132,7 @@
                             android:id="@+id/tv_cambiar_foto_resumen"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Añadir foto"
+                            android:text="@string/anadir_foto"
                             android:textColor="@color/accent_dark"
                             android:textSize="11sp"
                             android:paddingTop="4dp"
@@ -222,7 +222,7 @@
                         style="@style/Homney.Text.Muted"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cargando habitaciones…" />
+                        android:text="@string/cargando_habitaciones" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -272,7 +272,7 @@
                         style="@style/Homney.Text.Muted"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cargando gastos…" />
+                        android:text="@string/cargando" />
                 </LinearLayout>
             </LinearLayout>
 

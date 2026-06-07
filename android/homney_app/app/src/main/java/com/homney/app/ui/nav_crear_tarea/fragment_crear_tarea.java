@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -65,7 +64,15 @@ public class fragment_crear_tarea extends Fragment {
     private LoadingDialog loadingDialog;
 
     private static final String TAG = "WS_CREAR_TAREA";
-    private int stepMinutos = 5;
+    private static final int STEP_MIN = 5;
+
+    /*
+     * Spinner habitación:
+     *   pos 0 = "— Selecciona —"  (placeholder, inválido)
+     *   pos 1 = "General"         (toda la casa)
+     *   pos 2+ = habitaciones reales
+     */
+    private static final int POS_GENERAL = 1;
 
     /* ════════════════════════════════════════════
        CICLO DE VIDA
@@ -88,34 +95,25 @@ public class fragment_crear_tarea extends Fragment {
         btnCrear          = v.findViewById(R.id.btn_crear_tarea);
         npHoras           = v.findViewById(R.id.np_horas);
         npMinutos         = v.findViewById(R.id.np_minutos);
+
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
         idUsuario = prefs.getInt("id_usuario", -1);
         idHogar   = prefs.getInt("id_hogar",   -1);
 
         loadingDialog = new LoadingDialog(requireContext());
-
-        // configurar formato de pickers en tiempo de ejecucion
         configurarPickers();
 
-        // IMPORTANTE: evitar que el ScrollView robe el gesto si no, no se mueven los pickers
-        npHoras.setOnTouchListener((view, event) -> {
-            view.getParent().requestDisallowInterceptTouchEvent(true);
-            return false;
-        });
-        npMinutos.setOnTouchListener((view, event) -> {
-            view.getParent().requestDisallowInterceptTouchEvent(true);
-            return false;
-        });
+        npHoras.setOnTouchListener((view, e) -> {
+            view.getParent().requestDisallowInterceptTouchEvent(true); return false; });
+        npMinutos.setOnTouchListener((view, e) -> {
+            view.getParent().requestDisallowInterceptTouchEvent(true); return false; });
 
-
-
-        // AutoComplete con sugerencias de tareas comunes
+        // AutoComplete sugerencias
         String[] sugerencias = requireContext().getResources()
                 .getStringArray(R.array.tareas_options);
-        ArrayAdapter<String> acAdapter = new ArrayAdapter<>(
-                requireContext(), android.R.layout.simple_dropdown_item_1line, sugerencias);
-        etNombreTarea.setAdapter(acAdapter);
+        etNombreTarea.setAdapter(new ArrayAdapter<>(
+                requireContext(), android.R.layout.simple_dropdown_item_1line, sugerencias));
         etNombreTarea.setThreshold(1);
 
         btnCancelar.setOnClickListener(btn ->
@@ -126,42 +124,33 @@ public class fragment_crear_tarea extends Fragment {
             cargarHabitaciones();
             cargarUsuarios();
         } else {
-            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(),
+                    getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
         }
 
         return v;
     }
 
-    // configurar visualizacion de numberpicker
     private void configurarPickers() {
-        // -------- HORAS --------
-        int maxHoras = 12;
-        String[] horasValores = new String[maxHoras + 1];
-        for (int i = 0; i <= maxHoras; i++) {
-            horasValores[i] = i + " h";
-        }
-        npHoras.setMinValue(0);
-        npHoras.setMaxValue(maxHoras);
-        npHoras.setDisplayedValues(horasValores);
-        // -------- MINUTOS --------
-        int cantidadValores = 60 / stepMinutos;
-        String[] minutosValores = new String[cantidadValores];
-        for (int i = 0; i < cantidadValores; i++) {
-            int valor = i * stepMinutos;
-            minutosValores[i] = String.format("%02d m", valor);
-        }
-        npMinutos.setMinValue(0);
-        npMinutos.setMaxValue(cantidadValores - 1);
-        npMinutos.setDisplayedValues(minutosValores);
+        String[] horasVal = new String[13];
+        for (int i = 0; i <= 12; i++) horasVal[i] = i + " h";
+        npHoras.setMinValue(0); npHoras.setMaxValue(12);
+        npHoras.setDisplayedValues(horasVal);
+
+        int n = 60 / STEP_MIN;
+        String[] minVal = new String[n];
+        for (int i = 0; i < n; i++) minVal[i] = String.format("%02d m", i * STEP_MIN);
+        npMinutos.setMinValue(0); npMinutos.setMaxValue(n - 1);
+        npMinutos.setDisplayedValues(minVal);
     }
 
     /* ════════════════════════════════════════════
-       CARGA DINÁMICA DE SPINNERS DESDE BD
+       CARGA DINÁMICA DE SPINNERS
     ════════════════════════════════════════════ */
 
     private void cargarHabitaciones() {
         String url = WebService.URL_Habitacion + "?id_hogar=" + idHogar;
-        JsonObjectRequest peticion = new JsonObjectRequest(
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 response -> {
                     if (!isAdded()) return;
@@ -170,25 +159,21 @@ public class fragment_crear_tarea extends Fragment {
                                 .equals(WebService.JSON.SUCCESS)) {
                             Gson gson = new GsonBuilder().create();
                             Type tipo = new TypeToken<RespuestaLista<Habitacion>>() {}.getType();
-                            RespuestaLista<Habitacion> resp =
-                                    gson.fromJson(response.toString(), tipo);
+                            RespuestaLista<Habitacion> resp = gson.fromJson(response.toString(), tipo);
                             listaHabitaciones = resp.data != null ? resp.data : new ArrayList<>();
                             poblarSpinnerHabitaciones();
                         }
                     } catch (JSONException ignored) {}
                 },
-                error -> {
-                    if (isAdded())
-                        Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                                "Error habitaciones", Request.Method.GET, url, error);
-                }
-        );
-        PeticionesRed.anhadirPeticionACola(peticion);
+                error -> { if (isAdded())
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error habitaciones", Request.Method.GET, url, error); }
+        ));
     }
 
     private void cargarUsuarios() {
         String url = WebService.URL_Usuario + "?id_hogar=" + idHogar;
-        JsonObjectRequest peticion = new JsonObjectRequest(
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
                 Request.Method.GET, url, null,
                 response -> {
                     if (!isAdded()) return;
@@ -197,47 +182,49 @@ public class fragment_crear_tarea extends Fragment {
                                 .equals(WebService.JSON.SUCCESS)) {
                             Gson gson = new GsonBuilder().create();
                             Type tipo = new TypeToken<RespuestaLista<Usuario>>() {}.getType();
-                            RespuestaLista<Usuario> resp =
-                                    gson.fromJson(response.toString(), tipo);
+                            RespuestaLista<Usuario> resp = gson.fromJson(response.toString(), tipo);
                             listaUsuarios = resp.data != null ? resp.data : new ArrayList<>();
                             poblarSpinnerUsuarios();
                         }
                     } catch (JSONException ignored) {}
                 },
-                error -> {
-                    if (isAdded())
-                        Utilidades.mostrar_error_peticion(requireContext(), TAG,
-                                "Error usuarios", Request.Method.GET, url, error);
-                }
-        );
-        PeticionesRed.anhadirPeticionACola(peticion);
+                error -> { if (isAdded())
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error usuarios", Request.Method.GET, url, error); }
+        ));
     }
 
     private void poblarSpinnerHabitaciones() {
         if (!isAdded()) return;
         List<String> nombres = new ArrayList<>();
-        nombres.add("— Selecciona habitación —");
-        for (Habitacion h : listaHabitaciones) nombres.add(h.getNombre());
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        nombres.add(getString(R.string.spinner_selecciona_habitacion)); // 0 — placeholder
+        nombres.add(getString(R.string.habitacion_general));             // 1 — General
+        for (Habitacion h : listaHabitaciones) nombres.add(h.getNombre()); // 2+
+
+        ArrayAdapter<String> a = new ArrayAdapter<>(
                 requireContext(), android.R.layout.simple_spinner_item, nombres);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerHabitacion.setAdapter(adapter);
+        a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerHabitacion.setAdapter(a);
+        spinnerHabitacion.setSelection(0);
     }
 
     private void poblarSpinnerUsuarios() {
         if (!isAdded()) return;
         List<String> nombres = new ArrayList<>();
-        int indexPropio = 0;
+        nombres.add(getString(R.string.spinner_sin_asignar)); // 0 — sin asignar
+        int seleccion = 0;
+
         for (int i = 0; i < listaUsuarios.size(); i++) {
             Usuario u = listaUsuarios.get(i);
-            String label = u.getNombre() != null ? u.getNombre() : "Usuario " + u.getId_usuario();
-            if (u.getId_usuario() == idUsuario) indexPropio = i;
+            nombres.add(u.getNombre() != null ? u.getNombre() : "Usuario " + u.getId_usuario());
+            if (u.getId_usuario() == idUsuario) seleccion = i + 1;
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+
+        ArrayAdapter<String> a = new ArrayAdapter<>(
                 requireContext(), android.R.layout.simple_spinner_item, nombres);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerAsigna.setAdapter(adapter);
-        spinnerAsigna.setSelection(indexPropio);
+        a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerAsigna.setAdapter(a);
+        spinnerAsigna.setSelection(seleccion);
     }
 
     /* ════════════════════════════════════════════
@@ -245,32 +232,27 @@ public class fragment_crear_tarea extends Fragment {
     ════════════════════════════════════════════ */
 
     private void validarYCrearTarea() {
+
+        // ── Nombre ──────────────────────────────────
         String nombre = etNombreTarea.getText().toString().trim();
         if (nombre.isEmpty()) {
-            Toast.makeText(requireContext(), "El nombre es obligatorio", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // ── Habitación: OBLIGATORIA para que la tarea sea visible en el hogar ──
-        int habPos = spinnerHabitacion.getSelectedItemPosition();
-        if (habPos <= 0 || listaHabitaciones.isEmpty()) {
             Toast.makeText(requireContext(),
-                    "Selecciona una habitación para la tarea", Toast.LENGTH_SHORT).show();
+                    getString(R.string.error_nombre_obligatorio), Toast.LENGTH_SHORT).show();
             return;
         }
-        if (habPos - 1 >= listaHabitaciones.size()) {
-            Toast.makeText(requireContext(), "Error al leer la habitación", Toast.LENGTH_SHORT).show();
+
+        // ── Habitación ──────────────────────────────
+        int habPos = spinnerHabitacion.getSelectedItemPosition();
+        if (habPos <= 0) {
+            Toast.makeText(requireContext(),
+                    getString(R.string.error_selecciona_habitacion), Toast.LENGTH_SHORT).show();
             return;
         }
-        int idHabitacion = listaHabitaciones.get(habPos - 1).getId_habitacion();
 
-        // Duración (opcional)
-        Integer duracion = null;
-        int horas = npHoras.getValue();
-        int minutos = npMinutos.getValue() * stepMinutos;
-        duracion = horas * 60 + minutos;
+        // ── Duración ────────────────────────────────
+        int duracion = npHoras.getValue() * 60 + npMinutos.getValue() * STEP_MIN;
 
-        // Nº veces
+        // ── Nº veces ────────────────────────────────
         int numVeces = 1;
         String nvStr = etNumVeces.getText().toString().trim();
         if (!nvStr.isEmpty()) {
@@ -282,43 +264,152 @@ public class fragment_crear_tarea extends Fragment {
                     return;
                 }
             } catch (NumberFormatException e) {
-                Toast.makeText(requireContext(), "Nº veces inválido", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(),
+                        getString(R.string.error_num_veces_invalido), Toast.LENGTH_SHORT).show();
                 return;
             }
         }
 
-        // Frecuencia (array en el mismo orden que frecuencia_options del XML)
+        // ── Frecuencia ──────────────────────────────
         String[] freqValues = {"dia", "semana", "mes", "variable"};
         String frecuencia = freqValues[spinnerFrecuencia.getSelectedItemPosition()];
 
-        // Usuario a asignar
-        int asignarUID = idUsuario;
+        // ── Usuario a asignar ───────────────────────
+        int asignarUID = -1; // -1 = sin asignar
         int userPos = spinnerAsigna.getSelectedItemPosition();
-        if (!listaUsuarios.isEmpty() && userPos >= 0 && userPos < listaUsuarios.size()) {
-            asignarUID = listaUsuarios.get(userPos).getId_usuario();
-        }
-
-        // Construir JSON
-        JSONObject body = new JSONObject();
-        try {
-            body.put("nombre",     nombre);
-            body.put("frecuencia", frecuencia);
-            body.put("num_veces",  numVeces);
-            body.put("id_habitacion", idHabitacion);
-            if (duracion != null) body.put("duracion", duracion);
-            body.put("explicacion_frecuencia_variable",
-                    frecuencia.equals("variable") ? "" : JSONObject.NULL);
-        } catch (JSONException e) {
-            Toast.makeText(requireContext(), "Error al preparar los datos", Toast.LENGTH_SHORT).show();
-            return;
+        if (userPos > 0 && userPos <= listaUsuarios.size()) {
+            asignarUID = listaUsuarios.get(userPos - 1).getId_usuario();
         }
 
         btnCrear.setEnabled(false);
         loadingDialog.show();
-        final int uidAsignar = asignarUID;
+
+        final String fNombre    = nombre;
+        final String fFrecuencia = frecuencia;
+        final int    fDuracion  = duracion;
+        final int    fNumVeces  = numVeces;
+        final int    fAsignar   = asignarUID;
+
+        if (habPos == POS_GENERAL) {
+            // ── Tarea general: necesitamos un id_habitacion válido ──────────
+            // El servidor filtra tareas por habitación (JOIN).
+            // Buscamos una habitación de tipo "generica" existente; si no hay, la creamos.
+            resolverHabitacionGeneral(idHab ->
+                    crearTareaConId(fNombre, idHab, fFrecuencia, fDuracion, fNumVeces, fAsignar));
+        } else {
+            // Habitación real seleccionada
+            int idx = habPos - 2;
+            if (idx < 0 || idx >= listaHabitaciones.size()) {
+                loadingDialog.dismiss();
+                btnCrear.setEnabled(true);
+                Toast.makeText(requireContext(),
+                        getString(R.string.error_leer_habitacion), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            int idHab = listaHabitaciones.get(idx).getId_habitacion();
+            crearTareaConId(fNombre, idHab, fFrecuencia, fDuracion, fNumVeces, fAsignar);
+        }
+    }
+
+    /* ════════════════════════════════════════════
+       RESOLVER HABITACIÓN GENERAL
+       Reutiliza la primera habitación de tipo "generica"
+       del hogar; si no existe la crea automáticamente.
+    ════════════════════════════════════════════ */
+
+    interface HabitacionCallback { void onResuelta(int idHabitacion); }
+
+    private void resolverHabitacionGeneral(HabitacionCallback cb) {
+        // Buscar habitación "generica" ya existente
+        for (Habitacion h : listaHabitaciones) {
+            if ("generica".equalsIgnoreCase(h.getTipo())) {
+                cb.onResuelta(h.getId_habitacion());
+                return;
+            }
+        }
+
+        // No existe → crearla en el servidor
+        JSONObject body = new JSONObject();
+        try {
+            body.put("nombre",   "General");
+            body.put("tipo",     "generica");
+            body.put("id_hogar", idHogar);
+        } catch (JSONException e) {
+            loadingDialog.dismiss(); btnCrear.setEnabled(true);
+            Toast.makeText(requireContext(),
+                    getString(R.string.error_preparar_datos), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = WebService.URL_Habitacion;
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
+                Request.Method.POST, url, body,
+                response -> {
+                    if (!isAdded()) { loadingDialog.dismiss(); return; }
+                    try {
+                        if (response.getString(WebService.JSON.STATUS)
+                                .equals(WebService.JSON.SUCCESS)) {
+                            int idHab = -1;
+                            if (response.has(WebService.JSON.DATA)
+                                    && !response.isNull(WebService.JSON.DATA)) {
+                                idHab = response.getJSONObject(WebService.JSON.DATA)
+                                        .optInt("autoincrement", -1);
+                            }
+                            if (idHab != -1) {
+                                // Añadir a la lista local para no volver a crearla
+                                Habitacion nueva = new Habitacion("General", "generica", idHogar);
+                                nueva.setId_habitacion(idHab);
+                                listaHabitaciones.add(nueva);
+                                cb.onResuelta(idHab);
+                            } else {
+                                loadingDialog.dismiss(); btnCrear.setEnabled(true);
+                                Toast.makeText(requireContext(),
+                                        getString(R.string.error_preparar_datos),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            loadingDialog.dismiss(); btnCrear.setEnabled(true);
+                            Toast.makeText(requireContext(),
+                                    getString(R.string.error_preparar_datos),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (JSONException e) {
+                        loadingDialog.dismiss(); btnCrear.setEnabled(true);
+                    }
+                },
+                error -> {
+                    if (!isAdded()) return;
+                    loadingDialog.dismiss(); btnCrear.setEnabled(true);
+                    Utilidades.mostrar_error_peticion(requireContext(), TAG,
+                            "Error crear habitación general", Request.Method.POST, url, error);
+                }
+        ));
+    }
+
+    /* ════════════════════════════════════════════
+       POST tarea
+    ════════════════════════════════════════════ */
+
+    private void crearTareaConId(String nombre, int idHabitacion, String frecuencia,
+                                  int duracion, int numVeces, int uidAsignar) {
+        JSONObject body = new JSONObject();
+        try {
+            body.put("nombre",        nombre);
+            body.put("frecuencia",    frecuencia);
+            body.put("num_veces",     numVeces);
+            body.put("id_habitacion", idHabitacion);
+            if (duracion > 0) body.put("duracion", duracion);
+            body.put("explicacion_frecuencia_variable",
+                    frecuencia.equals("variable") ? "" : JSONObject.NULL);
+        } catch (JSONException e) {
+            loadingDialog.dismiss(); btnCrear.setEnabled(true);
+            Toast.makeText(requireContext(),
+                    getString(R.string.error_preparar_datos), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         String url = WebService.URL_Tarea;
-        JsonObjectRequest peticion = new JsonObjectRequest(
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
                 Request.Method.POST, url, body,
                 response -> {
                     if (!isAdded()) return;
@@ -334,11 +425,14 @@ public class fragment_crear_tarea extends Fragment {
                                         .optInt("autoincrement", -1);
                             }
 
-                            if (idTarea != -1) {
+                            if (idTarea != -1 && uidAsignar != -1) {
                                 crearAsignacion(idTarea, uidAsignar);
                             } else {
-                                Toast.makeText(requireContext(),
-                                        "Tarea creada", Toast.LENGTH_SHORT).show();
+                                // Sin asignación (usuario no seleccionado o autoincrement no devuelto)
+                                String msg = (uidAsignar != -1)
+                                        ? "Tarea creada, pero no se pudo asignar automáticamente"
+                                        : getString(R.string.tarea_creada_sin_asignar);
+                                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
                                 navegarAtras();
                             }
                         } else {
@@ -350,67 +444,61 @@ public class fragment_crear_tarea extends Fragment {
                     } catch (JSONException e) {
                         btnCrear.setEnabled(true);
                         Toast.makeText(requireContext(),
-                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
                     if (!isAdded()) return;
-                    loadingDialog.dismiss();
-                    btnCrear.setEnabled(true);
+                    loadingDialog.dismiss(); btnCrear.setEnabled(true);
                     Utilidades.mostrar_error_peticion(requireContext(), TAG,
                             "Error al crear tarea", Request.Method.POST, url, error);
                 }
-        );
-        PeticionesRed.anhadirPeticionACola(peticion);
+        ));
     }
 
-    /** POST asignacion_tarea: asigna la tarea recién creada al usuario seleccionado. */
+    /* ════════════════════════════════════════════
+       POST asignacion_tarea
+    ════════════════════════════════════════════ */
+
     private void crearAsignacion(int idTarea, int idUsuarioAsig) {
         JSONObject body = new JSONObject();
         try {
             body.put("id_tarea",   idTarea);
             body.put("id_usuario", idUsuarioAsig);
         } catch (JSONException e) {
-            if (isAdded())
-                Toast.makeText(requireContext(), "Tarea creada (sin asignar)", Toast.LENGTH_SHORT).show();
-            navegarAtras();
-            return;
+            Toast.makeText(requireContext(),
+                    getString(R.string.tarea_creada_sin_asignar), Toast.LENGTH_SHORT).show();
+            navegarAtras(); return;
         }
 
         String url = WebService.URL_Asignacion_Tarea;
-        JsonObjectRequest peticion = new JsonObjectRequest(
+        PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
                 Request.Method.POST, url, body,
                 response -> {
                     if (!isAdded()) return;
-                    loadingDialog.dismiss();
                     try {
-                        if (response.getString(WebService.JSON.STATUS)
-                                .equals(WebService.JSON.SUCCESS)) {
-                            Toast.makeText(requireContext(),
-                                    "Tarea creada y asignada ✓", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(requireContext(),
-                                    "Tarea creada pero no asignada", Toast.LENGTH_SHORT).show();
-                        }
+                        String msg = WebService.JSON.SUCCESS.equals(
+                                response.getString(WebService.JSON.STATUS))
+                                ? getString(R.string.tarea_creada_asignada)
+                                : getString(R.string.tarea_creada_sin_asignar);
+                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
                     } catch (JSONException ignored) {}
                     navegarAtras();
                 },
                 error -> {
                     if (!isAdded()) return;
                     Toast.makeText(requireContext(),
-                            "Tarea creada pero error al asignar", Toast.LENGTH_SHORT).show();
+                            getString(R.string.tarea_creada_sin_asignar), Toast.LENGTH_SHORT).show();
                     navegarAtras();
                 }
-        );
-        PeticionesRed.anhadirPeticionACola(peticion);
+        ));
     }
 
-        private void navegarAtras() {
-            if (isAdded()) {
-                Intent intent = new Intent(requireContext(), com.homney.app.MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("destino", R.id.fragmento3);
-                startActivity(intent);
-            }
+    private void navegarAtras() {
+        if (!isAdded()) return;
+        Intent intent = new Intent(requireContext(), com.homney.app.MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("destino", R.id.fragmento3);
+        startActivity(intent);
     }
 }

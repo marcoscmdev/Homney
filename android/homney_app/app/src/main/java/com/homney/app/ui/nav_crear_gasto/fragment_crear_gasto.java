@@ -140,7 +140,7 @@ public class fragment_crear_gasto extends Fragment {
             cargarCategorias();
             cargarUsuarios();
         } else {
-            Toast.makeText(requireContext(), "Sin conexión a Internet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.sin_conexion_internet), Toast.LENGTH_SHORT).show();
             poblarCategoriasFallback();
         }
 
@@ -364,7 +364,7 @@ public class fragment_crear_gasto extends Fragment {
         String fecha      = Utilidades.fechaSalidaAEntrada(etFecha.getText().toString().trim());
         if (concepto.isEmpty() || importeStr.isEmpty() || fecha.isEmpty()) {
             Toast.makeText(requireContext(),
-                    "Rellena todos los campos obligatorios", Toast.LENGTH_SHORT).show();
+                    getString(R.string.rellena_campos_obligatorios), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -373,7 +373,7 @@ public class fragment_crear_gasto extends Fragment {
             importe = Double.parseDouble(importeStr.replace(",", "."));
             if (importe <= 0) throw new NumberFormatException();
         } catch (NumberFormatException e) {
-            Toast.makeText(requireContext(), "Importe inválido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.importe_invalido), Toast.LENGTH_SHORT).show();
             return;
         }
         // Categoría final (padre o hijo según selección)
@@ -394,7 +394,7 @@ public class fragment_crear_gasto extends Fragment {
             body.put("id_hogar",           idHogar);
             body.put("id_usuario_pagador", idUsuario);
         } catch (JSONException e) {
-            Toast.makeText(requireContext(), "Error al preparar los datos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.error_preparar_datos), Toast.LENGTH_SHORT).show();
             return;
         }
         btnCrear.setEnabled(false);
@@ -434,7 +434,7 @@ public class fragment_crear_gasto extends Fragment {
                         loadingDialog.dismiss();
                         btnCrear.setEnabled(true);
                         Toast.makeText(requireContext(),
-                                "Error al procesar la respuesta", Toast.LENGTH_SHORT).show();
+                                getString(R.string.error_procesar_respuesta), Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
