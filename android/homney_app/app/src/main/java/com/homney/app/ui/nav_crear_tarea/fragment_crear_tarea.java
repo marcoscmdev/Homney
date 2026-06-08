@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import com.android.volley.Request;
@@ -496,9 +497,10 @@ public class fragment_crear_tarea extends Fragment {
 
     private void navegarAtras() {
         if (!isAdded()) return;
-        Intent intent = new Intent(requireContext(), com.homney.app.MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("destino", R.id.fragmento3);
-        startActivity(intent);
+        Navigation.findNavController(requireView()).navigate(
+                R.id.fragmento3, null,
+                new NavOptions.Builder()
+                        .setPopUpTo(R.id.nav_home, false)
+                        .build());
     }
 }

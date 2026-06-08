@@ -307,15 +307,12 @@ public class fragmento_mihogar extends Fragment {
                                 .placeholder(R.drawable.ic_user)
                                 .error(R.drawable.ic_user))
                         .into(imgAvatar);
-                imgAvatar.setPadding(0, 0, 0, 0);
             } else {
                 // Sin foto: mostrar inicial sobre fondo de color accent
                 char inicial = (u.getNombre() != null && !u.getNombre().isEmpty())
                         ? Character.toUpperCase(u.getNombre().charAt(0)) : '?';
                 imgAvatar.setImageDrawable(
                         crearAvatarInicial(inicial, 0xFFF5C518));
-                imgAvatar.setPadding(0, 0, 0, 0);
-                imgAvatar.setClipToOutline(true);
             }
 
             containerUsuarios.addView(card);

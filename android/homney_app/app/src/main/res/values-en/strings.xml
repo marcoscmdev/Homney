@@ -298,6 +298,7 @@
     <string name="error_num_veces_invalido">Invalid number of times</string>
     <string name="tarea_creada_sin_asignar">Task created (unassigned)</string>
     <string name="publicado">Published</string>
+    <string name="publicado_sin_imagen">Published, but the image could not be processed</string>
 
     <!-- Homney Mate (AI) -->
     <string name="dialog_confirmar_accion_titulo">Confirm action?</string>

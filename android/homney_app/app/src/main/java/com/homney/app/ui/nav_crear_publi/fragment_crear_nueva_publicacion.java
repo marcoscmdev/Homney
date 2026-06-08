@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import java.io.File;
@@ -36,7 +36,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
 import com.homney.app.VolleyMultipartRequest;
-import com.homney.app.ui.fragmento5_muro.Fragmento5_muro;
 import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
 import com.homney.app.webservice.WebService;
@@ -305,55 +304,69 @@ public class fragment_crear_nueva_publicacion extends Fragment {
      * Máx 1080px, calidad 80 — rápido para una foto de muro.
      */
     private void subirImagenYActualizar(int idPub, String titulo, String cuerpo) {
-        byte[] bytes = Utilidades.uriABytesJpeg(requireContext(), imagenUri, 1080, 80);
-        if (bytes == null) {
-            // Si la conversión falla, la publicación ya existe → navegamos sin imagen
-            Toast.makeText(requireContext(),
-                    "Publicado, pero no se pudo procesar la imagen",
-                    Toast.LENGTH_SHORT).show();
-            finalizarPublicacion();
-            return;
-        }
+        // La codificación del bitmap (I/O + CPU) se hace en un hilo de background
+        // para no bloquear el hilo principal y evitar que la animación de carga se congele.
+        new Thread(() -> {
+            byte[] bytes = Utilidades.uriABytesJpeg(requireContext(), imagenUri, 1080, 80);
 
-        Map<String, String> params = new HashMap<>();
-        params.put("tipo", "muro");
-        params.put("id",   String.valueOf(idPub));
+            // Volvemos al hilo principal para encolcar la petición Volley
+            if (!isAdded()) return;
+            requireActivity().runOnUiThread(() -> {
+                if (!isAdded()) {
+                    loadingDialog.dismiss();
+                    return;
+                }
 
-        String nombreFich = Utilidades.nombreFicheroImagen("pub", idPub); // "pub_12.jpg"
+                if (bytes == null) {
+                    // Si la conversión falla, la publicación ya existe → navegamos sin imagen
+                    Toast.makeText(requireContext(),
+                            getString(R.string.publicado_sin_imagen),
+                            Toast.LENGTH_SHORT).show();
+                    finalizarPublicacion();
+                    return;
+                }
 
-        VolleyMultipartRequest upload = new VolleyMultipartRequest(
-                Request.Method.POST,
-                WebService.URL_SubirImagen,
-                params,
-                nombreFich,
-                bytes,
-                15000,   // 15 s de timeout — suficiente para fotos comprimidas
-                (NetworkResponse networkResponse) -> {
-                    if (!isAdded()) return;
-                    try {
-                        JSONObject json = new JSONObject(
-                                new String(networkResponse.data, "UTF-8"));
-                        if (json.getString(WebService.JSON.STATUS)
-                                .equals(WebService.JSON.SUCCESS)) {
-                            String ruta = json.getJSONObject(WebService.JSON.DATA)
-                                             .getString("ruta");
-                            // Paso 3: enlaza la imagen al registro del muro
-                            actualizarMuroConImagen(idPub, titulo, cuerpo, ruta);
-                        } else {
-                            // Imagen fallida, pero la publi ya existe
+                Map<String, String> params = new HashMap<>();
+                params.put("tipo", "muro");
+                params.put("id",   String.valueOf(idPub));
+
+                String nombreFich = Utilidades.nombreFicheroImagen("pub", idPub); // "pub_12.jpg"
+
+                VolleyMultipartRequest upload = new VolleyMultipartRequest(
+                        Request.Method.POST,
+                        WebService.URL_SubirImagen,
+                        params,
+                        nombreFich,
+                        bytes,
+                        15000,   // 15 s de timeout — suficiente para fotos comprimidas
+                        (NetworkResponse networkResponse) -> {
+                            if (!isAdded()) { loadingDialog.dismiss(); return; }
+                            try {
+                                JSONObject json = new JSONObject(
+                                        new String(networkResponse.data, "UTF-8"));
+                                if (json.getString(WebService.JSON.STATUS)
+                                        .equals(WebService.JSON.SUCCESS)) {
+                                    String ruta = json.getJSONObject(WebService.JSON.DATA)
+                                                     .getString("ruta");
+                                    // Paso 3: enlaza la imagen al registro del muro
+                                    actualizarMuroConImagen(idPub, titulo, cuerpo, ruta);
+                                } else {
+                                    // Imagen fallida, pero la publi ya existe
+                                    finalizarPublicacion();
+                                }
+                            } catch (Exception e) {
+                                finalizarPublicacion();
+                            }
+                        },
+                        error -> {
+                            if (!isAdded()) { loadingDialog.dismiss(); return; }
+                            // Upload fallido, la publi ya existe sin imagen
                             finalizarPublicacion();
                         }
-                    } catch (Exception e) {
-                        finalizarPublicacion();
-                    }
-                },
-                error -> {
-                    if (!isAdded()) return;
-                    // Upload fallido, la publi ya existe sin imagen
-                    finalizarPublicacion();
-                }
-        );
-        PeticionesRed.anhadirPeticionACola(upload);
+                );
+                PeticionesRed.anhadirPeticionACola(upload);
+            });
+        }).start();
     }
 
     /** Paso 3: PUT muro añadiendo la ruta de imagen al registro ya creado. */
@@ -372,12 +385,13 @@ public class fragment_crear_nueva_publicacion extends Fragment {
         PeticionesRed.anhadirPeticionACola(new JsonObjectRequest(
                 Request.Method.PUT, WebService.URL_Muro, body,
                 response -> {
-                    if (!isAdded()) return;
+                    if (!isAdded()) { loadingDialog.dismiss(); return; }
                     finalizarPublicacion();
                 },
                 error -> {
                     // La imagen ya está subida en el servidor aunque el PUT falle
                     if (isAdded()) finalizarPublicacion();
+                    else loadingDialog.dismiss();
                 }
         ));
     }
@@ -390,11 +404,14 @@ public class fragment_crear_nueva_publicacion extends Fragment {
     }
 
     private void navegarAtras() {
-        if (isAdded()) {
-            Intent intent = new Intent(requireContext(), com.homney.app.MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.putExtra("destino", R.id.fragmento5);
-            startActivity(intent);
-        }
+        if (!isAdded()) return;
+        // Navegar a fragmento5 dentro del NavController existente, sin recrear la Activity.
+        // setPopUpTo limpia la pila hasta nav_home (inclusive=false lo conserva) para que
+        // no quede nav_crear_publicacion ni fragmento5 apilados debajo del nuevo fragmento5.
+        Navigation.findNavController(requireView()).navigate(
+                R.id.fragmento5, null,
+                new NavOptions.Builder()
+                        .setPopUpTo(R.id.nav_home, false)
+                        .build());
     }
 }

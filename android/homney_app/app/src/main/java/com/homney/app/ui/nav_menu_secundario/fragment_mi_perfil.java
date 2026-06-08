@@ -72,6 +72,15 @@ import java.util.Map;
 
 public class fragment_mi_perfil extends Fragment {
 
+    /**
+     * Valores canónicos que se almacenan en BD, independientes del idioma del dispositivo.
+     * El índice coincide 1:1 con el de sexo_options en values/arrays.xml y values-en/arrays.xml.
+     */
+    private static final String[] SEXO_CANONICAL = {
+            "Mujer", "Hombre", "No binario", "Género fluido",
+            "Transgénero", "Agénero", "Prefiero no decirlo", "Otro"
+    };
+
     /* ── Vistas ──────────────────────────────────────── */
     private ImageView ivAvatar;
     private TextView  tvCambiarFoto, tvEmail;
@@ -270,12 +279,12 @@ public class fragment_mi_perfil extends Fragment {
         etFechaNac.setText(Utilidades.fechaEntradaASalida(u.getFecha_nacimiento()));
         tvEmail.setText(u.getEmail() != null ? u.getEmail() : "");
 
-        /* Spinner sexo: buscar índice que coincida */
+        /* Spinner sexo: buscar índice usando valores canónicos (independiente del idioma).
+         * El array sexo_options puede estar en español o inglés según el locale del dispositivo,
+         * pero los valores en BD siempre se guardan en español (SEXO_CANONICAL). */
         if (u.getSexo() != null) {
-            String[] opts = requireContext().getResources()
-                    .getStringArray(R.array.sexo_options);
-            for (int i = 0; i < opts.length; i++) {
-                if (opts[i].equalsIgnoreCase(u.getSexo())) {
+            for (int i = 0; i < SEXO_CANONICAL.length; i++) {
+                if (SEXO_CANONICAL[i].equalsIgnoreCase(u.getSexo())) {
                     spinnerSexo.setSelection(i);
                     break;
                 }
@@ -523,8 +532,12 @@ public class fragment_mi_perfil extends Fragment {
             body.put("id_usuario",     idUsuario);
             body.put("nombre",         etNombre.getText().toString().trim());
             body.put("telefono_movil", etTelefono.getText().toString().trim());
-            body.put("sexo",           spinnerSexo.getSelectedItem() != null
-                    ? spinnerSexo.getSelectedItem().toString() : "");
+            // Usar el valor canónico (siempre en español) según la posición seleccionada,
+            // para que el dato en BD no dependa del idioma del dispositivo.
+            int sexoPos = spinnerSexo.getSelectedItemPosition();
+            String sexoCanonical = (sexoPos >= 0 && sexoPos < SEXO_CANONICAL.length)
+                    ? SEXO_CANONICAL[sexoPos] : "";
+            body.put("sexo", sexoCanonical);
             String fnac = Utilidades.fechaSalidaAEntrada(etFechaNac.getText().toString().trim());
             if (!fnac.isEmpty()) body.put("fecha_nacimiento", fnac);
             if (nuevaRutaAvatar != null) body.put("avatar", nuevaRutaAvatar);

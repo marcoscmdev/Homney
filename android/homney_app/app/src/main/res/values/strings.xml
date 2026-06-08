@@ -279,6 +279,7 @@
     <string name="error_num_veces_invalido">Nº veces inválido</string>
     <string name="tarea_creada_sin_asignar">Tarea creada (sin asignar)</string>
     <string name="publicado">Publicado</string>
+    <string name="publicado_sin_imagen">Publicado, pero no se pudo procesar la imagen</string>
 
     <!-- ── Homney Mate (IA) ── -->
     <string name="dialog_confirmar_accion_titulo">¿Confirmar acción?</string>

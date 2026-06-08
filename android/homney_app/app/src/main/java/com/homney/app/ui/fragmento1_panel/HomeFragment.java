@@ -181,6 +181,14 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Cerrar el loading dialog al pasar a segundo plano para que no quede
+        // flotando sobre otros fragmentos (p.ej. al navegar al Muro tras publicar)
+        if (loadingDialog != null) loadingDialog.dismiss();
+    }
+
     private void cargarDatos() {
         // ── Resetear TODOS los campos antes de empezar una nueva carga ──────
         // Sin esto, intentarRender() puede disparar con datos mezclados

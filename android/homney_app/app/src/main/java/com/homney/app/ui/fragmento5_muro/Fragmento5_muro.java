@@ -96,6 +96,13 @@ public class Fragmento5_muro extends Fragment {
         return root;
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Evitar que el loading dialog quede visible sobre otros fragmentos
+        if (loadingDialog != null) loadingDialog.dismiss();
+    }
+
     /* ════════════════════════════════════════════════════════
        PETICIONES — Publicaciones y Usuarios en paralelo
        Cuando las dos lleguen → mostrarPublicaciones()

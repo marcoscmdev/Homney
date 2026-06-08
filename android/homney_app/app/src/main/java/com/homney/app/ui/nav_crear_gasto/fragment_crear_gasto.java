@@ -21,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import com.android.volley.Request;
@@ -378,11 +379,12 @@ public class fragment_crear_gasto extends Fragment {
         }
         // Categoría final (padre o hijo según selección)
         String categoria = getCategoriaSeleccionada();
-        // Modo y tipo
-        String[] modos = requireContext().getResources().getStringArray(R.array.modo_pago_options);
-        String modo = modos[spinnerModoPago.getSelectedItemPosition()];
-        String[] tipos = requireContext().getResources().getStringArray(R.array.tipo_gasto_options);
-        String tipo = tipos[spinnerTipoPago.getSelectedItemPosition()];
+        // Valores canónicos (siempre en español) para que el dato en BD no dependa del idioma.
+        // El índice del spinner coincide 1:1 con modo_pago_options y tipo_gasto_options.
+        String[] modoCanonical = {"efectivo", "transferencia", "tarjeta", "bizum"};
+        String modo = modoCanonical[spinnerModoPago.getSelectedItemPosition()];
+        String[] tipoCanonical = {"ocasional", "fijo"};
+        String tipo = tipoCanonical[spinnerTipoPago.getSelectedItemPosition()];
         JSONObject body = new JSONObject();
         try {
             body.put("concepto",           concepto);
@@ -510,11 +512,11 @@ public class fragment_crear_gasto extends Fragment {
     }
 
     private void navegarAtras() {
-        if (isAdded()) {
-            Intent intent = new Intent(requireContext(), com.homney.app.MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.putExtra("destino", R.id.fragmento4);
-            startActivity(intent);
-        }
+        if (!isAdded()) return;
+        Navigation.findNavController(requireView()).navigate(
+                R.id.fragmento4, null,
+                new NavOptions.Builder()
+                        .setPopUpTo(R.id.nav_home, false)
+                        .build());
     }
 }
