@@ -11,8 +11,8 @@ android {
         applicationId "com.homney.app"
         minSdk 25
         targetSdk 35        // Play Store 2025 exige >= 35; compileSdk 35 coincide
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

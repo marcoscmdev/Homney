@@ -79,7 +79,8 @@
         android:text="@string/recordarme"
         style="@style/Homney.Text.Label"
         android:layout_marginBottom="6dp"
-        android:buttonTint="@color/accent" />
+        android:buttonTint="@color/accent"
+        android:checked="true"/>
 
     <!-- Botón Entrar -->
     <Button

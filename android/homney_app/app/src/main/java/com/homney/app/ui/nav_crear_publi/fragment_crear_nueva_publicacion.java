@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,13 +75,11 @@ public class fragment_crear_nueva_publicacion extends Fragment {
      * Galería: abre el selector de imágenes del dispositivo.
      * Al volver con RESULT_OK guarda la URI y muestra la previsualización.
      */
-    private final ActivityResultLauncher<Intent> galeriaLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == Activity.RESULT_OK
-                                && result.getData() != null
-                                && result.getData().getData() != null) {
-                            imagenUri = result.getData().getData();
+    private final ActivityResultLauncher<PickVisualMediaRequest> galeriaLauncher =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(),
+                    uri -> {
+                        if (uri != null) {
+                            imagenUri = uri;
                             mostrarPreview(imagenUri);
                         }
                     });
@@ -142,11 +141,11 @@ public class fragment_crear_nueva_publicacion extends Fragment {
         loadingDialog = new LoadingDialog(requireContext());
 
         /* ── Galería ──────────────────────────────────────── */
-        img_sube_foto.setOnClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            galeriaLauncher.launch(intent);
-        });
+        img_sube_foto.setOnClickListener(view ->
+            galeriaLauncher.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build())
+        );
 
         /* ── Cámara ───────────────────────────────────────── */
         img_lanza_cam.setOnClickListener(view -> {

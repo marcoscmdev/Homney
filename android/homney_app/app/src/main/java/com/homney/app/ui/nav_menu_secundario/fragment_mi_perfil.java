@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -110,13 +111,11 @@ public class fragment_mi_perfil extends Fragment {
        LAUNCHERS  (declarados antes de onCreate)
     ════════════════════════════════════════════════════ */
 
-    private final ActivityResultLauncher<Intent> galeriaLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == Activity.RESULT_OK
-                                && result.getData() != null
-                                && result.getData().getData() != null) {
-                            avatarUri = result.getData().getData();
+    private final ActivityResultLauncher<PickVisualMediaRequest> galeriaLauncher =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(),
+                    uri -> {
+                        if (uri != null) {
+                            avatarUri = uri;
                             mostrarAvatarPreview(avatarUri);
                         }
                     });
@@ -380,9 +379,9 @@ public class fragment_mi_perfil extends Fragment {
                         }
                     } else {
                         // Galería
-                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                        intent.setType("image/*");
-                        galeriaLauncher.launch(intent);
+                        galeriaLauncher.launch(new PickVisualMediaRequest.Builder()
+                                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                                .build());
                     }
                 })
                 .setNegativeButton(getString(R.string.btn_cancelar), null)

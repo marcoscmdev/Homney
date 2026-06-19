@@ -160,6 +160,7 @@ public class activity_fragment_registro extends Fragment {
         btn_google        = vista.findViewById(R.id.btn_google);
         tv_olvidar_pass   = vista.findViewById(R.id.tv_olvidar_pass);
 
+
         preferences = requireContext().getSharedPreferences("sesion", Context.MODE_PRIVATE);
         editor      = preferences.edit();
         loadingDialog = new LoadingDialog(requireContext());

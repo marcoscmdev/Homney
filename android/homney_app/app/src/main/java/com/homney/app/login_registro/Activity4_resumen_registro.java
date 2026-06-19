@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -95,13 +96,11 @@ public class Activity4_resumen_registro extends AppCompatActivity {
        LAUNCHERS  (registrados antes de onCreate)
     ════════════════════════════════════════════════════ */
 
-    private final ActivityResultLauncher<Intent> galeriaLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == Activity.RESULT_OK
-                                && result.getData() != null
-                                && result.getData().getData() != null) {
-                            avatarUri = result.getData().getData();
+    private final ActivityResultLauncher<PickVisualMediaRequest> galeriaLauncher =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(),
+                    uri -> {
+                        if (uri != null) {
+                            avatarUri = uri;
                             mostrarAvatarPreview(avatarUri);
                             subirFotoAhora(); // sube inmediatamente al seleccionar
                         }
@@ -496,9 +495,9 @@ public class Activity4_resumen_registro extends AppCompatActivity {
                             cameraPermLauncher.launch(Manifest.permission.CAMERA);
                         }
                     } else {
-                        Intent intent = new Intent(Intent.ACTION_PICK);
-                        intent.setType("image/*");
-                        galeriaLauncher.launch(intent);
+                        galeriaLauncher.launch(new PickVisualMediaRequest.Builder()
+                                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                                .build());
                     }
                 })
                 .show();
