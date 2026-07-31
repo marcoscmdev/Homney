@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.homney.app.login_registro.activity_fragment_nueva_cuenta;
 
@@ -33,6 +37,16 @@ public class loginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Edge-to-edge forzado en Android 15/16: sin esto la pantalla de login
+        // aparecía descentrada (contenido bajo la barra de estado/navegación).
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        View loginRoot = findViewById(R.id.login_root);
+        ViewCompat.setOnApplyWindowInsetsListener(loginRoot, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return windowInsets;
+        });
 
         btn_login = findViewById(R.id.btn_login);
         tab_login = findViewById(R.id.tab_login);

@@ -5,14 +5,14 @@ plugins {
 
 android {
     // compileSdk debe ser >= targetSdk
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.homney.app"
         minSdk 25
-        targetSdk 35        // Play Store 2025 exige >= 35; compileSdk 35 coincide
-        versionCode 3
-        versionName "1.2"
+        targetSdk 36        // Google Play exige Android 16 (API 36) a partir del 31 ago 2026
+        versionCode 4
+        versionName "1.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

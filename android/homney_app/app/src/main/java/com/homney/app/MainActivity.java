@@ -39,6 +39,11 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import android.view.ViewGroup;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+        // Android 15/16 fuerza edge-to-edge: gestionamos los insets a mano
+        // para que el Toolbar y el contenido no queden tapados por las barras del sistema.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
         /* Barra de acción */
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -61,6 +70,40 @@ public class MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        View mainContentRoot = findViewById(R.id.main_content_root);
+        ViewGroup.MarginLayoutParams fabLayoutParams = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+        final int fabMarginOriginal = fabLayoutParams.bottomMargin;
+
+        // Altura "normal" del Toolbar (?attr/actionBarSize) antes de sumarle el inset.
+        // Así los iconos (hamburguesa, avatar) conservan su tamaño en vez de comprimirse
+        // dentro del padding-top que necesitamos para bajarlos de la status bar.
+        TypedValue tv = new TypedValue();
+        getTheme().resolveAttribute(androidx.appcompat.R.attr.actionBarSize, tv, true);
+        final int toolbarHeightOriginal = TypedValue.complexToDimensionPixelSize(
+                tv.data, getResources().getDisplayMetrics());
+
+        ViewCompat.setOnApplyWindowInsetsListener(mainContentRoot, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+            // Empuja el Toolbar por debajo de la barra de estado, ampliando su altura
+            // (no solo el padding) para que los iconos no se compriman.
+            ViewGroup.LayoutParams toolbarLp = toolbar.getLayoutParams();
+            toolbarLp.height = toolbarHeightOriginal + bars.top;
+            toolbar.setLayoutParams(toolbarLp);
+            toolbar.setPadding(toolbar.getPaddingLeft(), bars.top, toolbar.getPaddingRight(), toolbar.getPaddingBottom());
+
+            // Deja hueco abajo (y a los lados, en modo gesto/landscape) para que el contenido
+            // no quede debajo de la barra de navegación del sistema
+            v.setPadding(bars.left, 0, bars.right, bars.bottom);
+
+            // El FAB mantiene su margen original + el hueco de la barra de navegación
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+            lp.bottomMargin = fabMarginOriginal + bars.bottom;
+            fab.setLayoutParams(lp);
+
+            return windowInsets;
+        });
 
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.fragmento2, R.id.fragmento3, R.id.fragmento4, R.id.fragmento5,

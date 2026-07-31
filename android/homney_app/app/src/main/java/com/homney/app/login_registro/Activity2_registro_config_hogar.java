@@ -23,6 +23,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -109,6 +113,16 @@ public class Activity2_registro_config_hogar extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity2_registro_config_hogar);
+
+        // Edge-to-edge forzado en Android 15/16: sin esto el contenido y el botón
+        // "Siguiente" quedaban tapados por la status bar / barra de navegación.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        View rootConfigHogar = findViewById(R.id.root_config_hogar);
+        ViewCompat.setOnApplyWindowInsetsListener(rootConfigHogar, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return windowInsets;
+        });
 
         SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
         idHogar = prefs.getInt("id_hogar", -1);

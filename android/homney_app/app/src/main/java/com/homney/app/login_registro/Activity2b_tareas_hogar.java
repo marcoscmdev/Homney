@@ -18,6 +18,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -214,6 +218,22 @@ public class Activity2b_tareas_hogar extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity2b_tareas_hogar);
+
+        // Edge-to-edge forzado en Android 15/16: la barra superior del wizard y los
+        // botones inferiores deben apartarse de la status bar / barra de navegación.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        View barraSuperior = findViewById(R.id.barra_superior_tareas);
+        View barraInferior = findViewById(R.id.barra_inferior_tareas);
+        int barraSuperiorPaddingBase = barraSuperior.getPaddingTop();
+        int barraInferiorPaddingBase = barraInferior.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            barraSuperior.setPadding(barraSuperior.getPaddingLeft(), barraSuperiorPaddingBase + bars.top,
+                    barraSuperior.getPaddingRight(), barraSuperior.getPaddingBottom());
+            barraInferior.setPadding(barraInferior.getPaddingLeft(), barraInferior.getPaddingTop(),
+                    barraInferior.getPaddingRight(), barraInferiorPaddingBase + bars.bottom);
+            return windowInsets;
+        });
 
         SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
         idHogar   = prefs.getInt("id_hogar",   -1);

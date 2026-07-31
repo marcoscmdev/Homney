@@ -13,6 +13,7 @@
 
     <!-- ══ Barra superior del wizard ══════════════════════ -->
     <LinearLayout
+        android:id="@+id/barra_superior_tareas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -92,6 +93,7 @@
 
     <!-- ══ Botones inferiores ════════════════════════════════ -->
     <LinearLayout
+        android:id="@+id/barra_inferior_tareas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

@@ -32,6 +32,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -131,6 +135,16 @@ public class Activity4_resumen_registro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity4_resumen_registro);
+
+        // Edge-to-edge forzado en Android 15/16: reparte los insets al FrameLayout raíz
+        // para que ni el título ni el botón "Entrar a la colmena" queden tapados.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        View rootResumen = findViewById(R.id.root_resumen);
+        ViewCompat.setOnApplyWindowInsetsListener(rootResumen, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return windowInsets;
+        });
 
         loadingDialog = new LoadingDialog(this);
 

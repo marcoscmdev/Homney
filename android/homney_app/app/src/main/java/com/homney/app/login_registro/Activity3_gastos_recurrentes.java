@@ -17,6 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -102,6 +106,16 @@ public class Activity3_gastos_recurrentes extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity3_gastos_recurrentes);
+
+        // Edge-to-edge forzado en Android 15/16: sin esto el botón "Comenzar" quedaba
+        // tapado por la barra de navegación del sistema.
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        View rootGastos = findViewById(R.id.root_gastos);
+        ViewCompat.setOnApplyWindowInsetsListener(rootGastos, (v, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return windowInsets;
+        });
 
         // Sesión
         SharedPreferences prefs = getSharedPreferences("sesion", Context.MODE_PRIVATE);
