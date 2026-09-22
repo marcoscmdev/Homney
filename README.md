@@ -145,6 +145,13 @@ Si te interesa contribuir al desarrollo de Homney — ya sea con nuevas funciona
 
 ---
 
+## 📄 Licencia
+
+Este repositorio es público solo para fines de consulta/portfolio. Todos los derechos reservados.
+No se permite el uso, copia o modificación sin mi permiso explícito (Marcos CM).
+
+---
+
 ## 👤 Autor
 
 **Marcos Castro Miranda**
