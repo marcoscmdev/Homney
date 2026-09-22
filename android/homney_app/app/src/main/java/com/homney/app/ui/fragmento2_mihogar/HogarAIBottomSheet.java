@@ -31,6 +31,7 @@ import android.app.Dialog;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import androidx.fragment.app.DialogFragment;
+import com.homney.app.BuildConfig;
 import com.homney.app.R;
 import com.homney.app.Utilidades;
 import com.homney.app.webservice.PeticionesRed;
@@ -80,9 +81,11 @@ public class HogarAIBottomSheet extends DialogFragment {
         return sheet;
     }
 
-    /* ── Groq (llamada directa desde Android; AwardSpace bloquea puerto 443 saliente) ── */
+    /* ── Groq (llamada directa desde Android; AwardSpace bloquea puerto 443 saliente) ──
+     * La clave NO va hardcodeada: se inyecta en tiempo de compilación desde
+     * secrets.properties (gitignorado) vía BuildConfig. Ver secrets.properties.example. */
     private static final String GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions";
-    private static final String GROQ_KEY   = "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";
+    private static final String GROQ_KEY   = BuildConfig.GROQ_API_KEY;
     private static final String GROQ_MODEL = "llama-3.3-70b-versatile";
 
     private static final String PREFS_IA       = "homney_ia";
