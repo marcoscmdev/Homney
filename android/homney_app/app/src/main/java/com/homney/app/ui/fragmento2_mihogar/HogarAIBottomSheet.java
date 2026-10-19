@@ -86,7 +86,7 @@ public class HogarAIBottomSheet extends DialogFragment {
      * secrets.properties (gitignorado) vía BuildConfig. Ver secrets.properties.example. */
     private static final String GROQ_URL   = "https://api.groq.com/openai/v1/chat/completions";
     private static final String GROQ_KEY   = BuildConfig.GROQ_API_KEY;
-    private static final String GROQ_MODEL = "llama-3.3-70b-versatile";
+    private static final String GROQ_MODEL = "openai/gpt-oss-20b";
 
     private static final String PREFS_IA       = "homney_ia";
     private static final long   MILLIS_30_DIAS = 30L * 24 * 60 * 60 * 1000;
@@ -527,10 +527,11 @@ public class HogarAIBottomSheet extends DialogFragment {
             mensajes.put(new JSONObject().put("role", "user").put("content", userMsg));
 
             JSONObject body = new JSONObject();
-            body.put("model",       GROQ_MODEL);
-            body.put("messages",    mensajes);
-            body.put("max_tokens",  1400);
-            body.put("temperature", 0.7);
+            body.put("model",            GROQ_MODEL);
+            body.put("messages",         mensajes);
+            body.put("max_tokens",       2000);
+            body.put("temperature",      0.7);
+            body.put("reasoning_effort", "low");
 
             final String preguntaFinal = pregunta;
             JsonObjectRequest req = new JsonObjectRequest(
@@ -542,6 +543,7 @@ public class HogarAIBottomSheet extends DialogFragment {
                             int code = error.networkResponse.statusCode;
                             if (code == 429) msg = "⚠️ Límite de peticiones alcanzado. Espera un momento.";
                             else if (code == 401) msg = "⚠️ Clave de API no válida.";
+                            else if (code == 404 || code == 400) msg = "⚠️ El asistente no está disponible ahora mismo";
                             else msg = "⚠️ Error HTTP " + code + " del proveedor IA";
                         } else {
                             msg = "⚠️ Sin respuesta del proveedor IA — comprueba la conexión";
