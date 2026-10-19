@@ -17,8 +17,8 @@ android {
         applicationId "com.homney.app"
         minSdk 25
         targetSdk 36        // Google Play exige Android 16 (API 36) a partir del 31 ago 2026
-        versionCode 5
-        versionName "1.3.1"
+        versionCode 6
+        versionName "1.3.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
