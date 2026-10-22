@@ -1,5 +1,6 @@
 package com.homney.app;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,10 +27,14 @@ import com.bumptech.glide.request.RequestOptions;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.homney.app.ui.fragmento2_mihogar.HogarAIBottomSheet;
 import com.homney.app.webservice.WebService;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
@@ -52,11 +57,70 @@ public class MainActivity extends AppCompatActivity {
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable cancelarSalida = () -> pulsadoUnaVezAtrasParaSalir = false;
 
+    // Permiso de notificaciones (Android 13+), pedido tras elegir la hora del recordatorio.
+    // La hora ya está guardada (activado=false) por si el proceso muere con el diálogo abierto.
+    private final ActivityResultLauncher<String> lanzadorPermisoNotificaciones =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), concedido -> {
+                Recordatorios.guardarActivado(this, concedido);
+                if (concedido) {
+                    avisarRecordatorioActivado();
+                } else {
+                    Toast.makeText(this, getString(R.string.recordatorio_sin_permiso),
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+
+    /**
+     * Ofrece configurar el recordatorio diario (una sola vez en la vida de la app).
+     * @return true si se ha mostrado el diálogo ahora mismo.
+     */
+    public boolean mostrarDialogoRecordatorioSiProcede() {
+        if (Recordatorios.dialogoMostrado(this)) return false;
+        Recordatorios.marcarDialogoMostrado(this);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.recordatorio_dialogo_titulo)
+                .setMessage(R.string.recordatorio_dialogo_msg)
+                .setPositiveButton(R.string.recordatorio_elegir_hora, (d, w) -> elegirHoraRecordatorio())
+                .setNegativeButton(R.string.recordatorio_ahora_no, null)
+                .show();
+        return true;
+    }
+
+    private void elegirHoraRecordatorio() {
+        MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(Recordatorios.getHora(this))
+                .setMinute(Recordatorios.getMinuto(this))
+                .setTitleText(R.string.recordatorio_picker_titulo)
+                .build();
+        picker.addOnPositiveButtonClickListener(v -> {
+            int hora = picker.getHour();
+            int minuto = picker.getMinute();
+            if (Recordatorios.tienePermisoNotificaciones(this)) {
+                Recordatorios.guardar(this, true, hora, minuto);
+                avisarRecordatorioActivado();
+            } else {
+                Recordatorios.guardar(this, false, hora, minuto);
+                lanzadorPermisoNotificaciones.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        });
+        picker.show(getSupportFragmentManager(), "hora_recordatorio");
+    }
+
+    private void avisarRecordatorioActivado() {
+        Toast.makeText(this, getString(R.string.recordatorio_activado_toast,
+                Recordatorios.formatoHora(Recordatorios.getHora(this), Recordatorios.getMinuto(this))),
+                Toast.LENGTH_LONG).show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        // Recordatorio diario de tareas (KEEP: no se duplica entre arranques)
+        Recordatorios.programar(this, false);
 
         // Android 15/16 fuerza edge-to-edge: gestionamos los insets a mano
         // para que el Toolbar y el contenido no queden tapados por las barras del sistema.

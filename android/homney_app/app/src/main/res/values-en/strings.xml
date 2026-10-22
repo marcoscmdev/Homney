@@ -521,4 +521,17 @@
     <string name="error_selecciona_habitacion">Select a room or choose General</string>
     <string name="tarea_creada_asignada">Task created and assigned! ✓</string>
 
+    <string name="notif_canal_nombre">Task reminders</string>
+    <string name="notif_titulo">Homney</string>
+    <string name="notif_texto_recordatorio">Have you done your tasks today?</string>
+    <string name="recordatorio_dialogo_titulo">Daily reminder</string>
+    <string name="recordatorio_dialogo_msg">Want a daily nudge so no task slips through? Pick a time.</string>
+    <string name="recordatorio_elegir_hora">Choose time</string>
+    <string name="recordatorio_ahora_no">Not now</string>
+    <string name="recordatorio_picker_titulo">What time should the reminder be?</string>
+    <string name="recordatorio_activado_toast">Daily reminder set for %1$s</string>
+    <string name="recordatorio_sin_permiso">Notifications are blocked. Enable them in your phone Settings, then turn the reminder on in My profile.</string>
+    <string name="perfil_recordatorio_titulo">Task reminder</string>
+    <string name="perfil_recordatorio_switch">Remind me daily about my tasks</string>
+    <string name="perfil_recordatorio_hora">Reminder time: %1$s (tap to change)</string>
 </resources>

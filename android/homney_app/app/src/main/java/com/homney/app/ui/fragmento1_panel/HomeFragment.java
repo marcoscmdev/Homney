@@ -189,6 +189,15 @@ public class HomeFragment extends Fragment {
         if (loadingDialog != null) loadingDialog.dismiss();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Si el fragment se reemplaza antes de llegar a onStart (p.ej. al abrir la app desde una
+        // notificación que navega directo a otra pantalla), onStop no se ejecuta y la respuesta
+        // tardía se ignora por !isAdded(): sin esto el loading quedaría eternamente.
+        if (loadingDialog != null) loadingDialog.dismiss();
+    }
+
     private void cargarDatos() {
         // ── Resetear TODOS los campos antes de empezar una nueva carga ──────
         // Sin esto, intentarRender() puede disparar con datos mezclados
@@ -911,6 +920,7 @@ public class HomeFragment extends Fragment {
                     }
                 },
                 error -> {
+                    if (!isAdded()) return; // fragment detachado: ignorar respuesta tardía
                     Utilidades.mostrar_error_peticion(requireContext(), TAG,
                             "Error petición", Request.Method.GET, url, error);
                     callback.accept(new ArrayList<>());

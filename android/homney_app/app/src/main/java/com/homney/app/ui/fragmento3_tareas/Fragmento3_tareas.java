@@ -31,6 +31,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
+import com.homney.app.Recordatorios;
 import com.homney.app.Utilidades;
 import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
@@ -230,6 +231,12 @@ public class Fragmento3_tareas extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (loadingDialog != null) loadingDialog.dismiss();
+    }
+
     /** Limpia el estado anterior para evitar duplicados al recargar. */
     private void resetContainers() {
         asigMias = null; allAsig = null; usuarios = null; realizadas = null; tareas = null;
@@ -282,8 +289,8 @@ public class Fragmento3_tareas extends Fragment {
     private void intentarRender() {
         if (asigMias != null && allAsig != null
                 && usuarios != null && realizadas != null && tareas != null) {
+            loadingDialog.dismiss(); // siempre, aunque el fragment ya no esté añadido
             if (isAdded()) {
-                loadingDialog.dismiss();
                 renderTareas();
             }
         }
@@ -915,6 +922,9 @@ public class Fragmento3_tareas extends Fragment {
 
                             Toast.makeText(requireContext(),
                                     getString(R.string.tarea_completada), Toast.LENGTH_SHORT).show();
+
+                            // Momento positivo: permiso de notificaciones (1ª vez) o reseña
+                            Recordatorios.alCompletarAccionPositiva(requireActivity());
                         } else {
                             Toast.makeText(requireContext(),
                                     response.optString("message", "Error al registrar"),

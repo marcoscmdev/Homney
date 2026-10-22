@@ -30,6 +30,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
+import com.homney.app.Recordatorios;
 import com.homney.app.Utilidades;
 import com.homney.app.utils.LoadingDialog;
 import com.homney.app.webservice.PeticionesRed;
@@ -508,6 +509,8 @@ public class fragment_crear_gasto extends Fragment {
         else if (huboError)  msg = "Gasto registrado (reparto parcial)";
         else                 msg = "Gasto registrado y repartido correctamente";
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+        // Momento positivo: permiso de notificaciones (1ª vez) o reseña
+        Recordatorios.alCompletarAccionPositiva(requireActivity());
         navegarAtras();
     }
 

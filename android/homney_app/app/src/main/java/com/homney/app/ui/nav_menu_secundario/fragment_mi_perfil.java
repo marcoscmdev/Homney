@@ -47,10 +47,14 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.homney.app.R;
+import com.homney.app.Recordatorios;
 import com.homney.app.Utilidades;
 import com.homney.app.loginActivity;
 import com.homney.app.VolleyMultipartRequest;
@@ -88,6 +92,25 @@ public class fragment_mi_perfil extends Fragment {
     private EditText  etNombre, etTelefono, etFechaNac;
     private Spinner   spinnerSexo;
     private Button    btnCancelar, btnGuardar, btnCambiarPass, btnEliminarCuenta;
+
+    /* ── Recordatorio diario ─────────────────────────── */
+    private SwitchMaterial switchRecordatorio;
+    private TextView       tvHoraRecordatorio;
+    private boolean        actualizandoRecordatorioUi = false;
+    /* Los cambios del recordatorio quedan pendientes hasta pulsar "Guardar" */
+    private boolean origRecActivo, pendRecActivo;
+    private int     origRecHora, origRecMinuto, pendRecHora, pendRecMinuto;
+
+    private final ActivityResultLauncher<String> lanzadorPermisoNotif =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), concedido -> {
+                if (!isAdded()) return;
+                pendRecActivo = concedido; // se aplicará al pulsar "Guardar"
+                if (!concedido) {
+                    Toast.makeText(requireContext(), getString(R.string.recordatorio_sin_permiso),
+                            Toast.LENGTH_LONG).show();
+                }
+                refrescarRecordatorioUi();
+            });
 
     /* ── Sesión ──────────────────────────────────────── */
     private int    idUsuario = -1;
@@ -165,6 +188,9 @@ public class fragment_mi_perfil extends Fragment {
         btnGuardar       = v.findViewById(R.id.btn_guardar_perfil);
         btnCambiarPass   = v.findViewById(R.id.btn_cambiar_pass_perfil);
         btnEliminarCuenta = v.findViewById(R.id.btn_eliminar_cuenta);
+        switchRecordatorio = v.findViewById(R.id.switch_recordatorio);
+        tvHoraRecordatorio = v.findViewById(R.id.tv_hora_recordatorio);
+        configurarRecordatorio();
 
         SharedPreferences prefs = requireContext()
                 .getSharedPreferences("sesion", Context.MODE_PRIVATE);
@@ -423,7 +449,77 @@ public class fragment_mi_perfil extends Fragment {
         avatarUri    = null; // nueva foto descartada del snapshot
     }
 
-    private boolean hayCambios() {
+    /* ════════════════════════════════════════════
+       RECORDATORIO DIARIO
+       Los cambios quedan pendientes y se aplican al pulsar "Guardar".
+    ════════════════════════════════════════════ */
+
+    private void configurarRecordatorio() {
+        Context ctx = requireContext();
+        origRecActivo  = Recordatorios.estaActivado(ctx) && Recordatorios.tienePermisoNotificaciones(ctx);
+        origRecHora    = Recordatorios.getHora(ctx);
+        origRecMinuto  = Recordatorios.getMinuto(ctx);
+        pendRecActivo  = origRecActivo;
+        pendRecHora    = origRecHora;
+        pendRecMinuto  = origRecMinuto;
+        refrescarRecordatorioUi();
+
+        switchRecordatorio.setOnCheckedChangeListener((btn, marcado) -> {
+            if (actualizandoRecordatorioUi) return;
+            if (marcado && !Recordatorios.tienePermisoNotificaciones(requireContext())) {
+                // El callback del permiso fija el estado pendiente y refresca la UI
+                lanzadorPermisoNotif.launch(Manifest.permission.POST_NOTIFICATIONS);
+                return;
+            }
+            pendRecActivo = marcado;
+            refrescarRecordatorioUi();
+        });
+
+        tvHoraRecordatorio.setOnClickListener(x -> {
+            MaterialTimePicker picker = new MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(pendRecHora)
+                    .setMinute(pendRecMinuto)
+                    .setTitleText(R.string.recordatorio_picker_titulo)
+                    .build();
+            picker.addOnPositiveButtonClickListener(btn -> {
+                if (!isAdded()) return;
+                pendRecHora = picker.getHour();
+                pendRecMinuto = picker.getMinute();
+                refrescarRecordatorioUi();
+            });
+            picker.show(getParentFragmentManager(), "hora_recordatorio_perfil");
+        });
+    }
+
+    private void refrescarRecordatorioUi() {
+        if (!isAdded() || switchRecordatorio == null) return;
+        actualizandoRecordatorioUi = true;
+        switchRecordatorio.setChecked(pendRecActivo);
+        actualizandoRecordatorioUi = false;
+        tvHoraRecordatorio.setText(getString(R.string.perfil_recordatorio_hora,
+                Recordatorios.formatoHora(pendRecHora, pendRecMinuto)));
+        tvHoraRecordatorio.setAlpha(pendRecActivo ? 1f : 0.5f);
+    }
+
+    private boolean hayCambiosRecordatorio() {
+        return pendRecActivo != origRecActivo
+                || pendRecHora != origRecHora
+                || pendRecMinuto != origRecMinuto;
+    }
+
+    /** Aplica el recordatorio pendiente (programa o cancela el aviso) y lo toma como nuevo punto de partida. */
+    private void aplicarRecordatorio() {
+        if (!hayCambiosRecordatorio()) return;
+        Context ctx = requireContext();
+        Recordatorios.guardar(ctx, pendRecActivo, pendRecHora, pendRecMinuto);
+        Recordatorios.marcarDialogoMostrado(ctx); // ya lo ha configurado: no ofrecer el diálogo inicial
+        origRecActivo = pendRecActivo;
+        origRecHora   = pendRecHora;
+        origRecMinuto = pendRecMinuto;
+    }
+
+    private boolean hayCambiosPerfil() {
         String currentSexo = spinnerSexo.getSelectedItem() != null
                 ? spinnerSexo.getSelectedItem().toString() : "";
         return !etNombre.getText().toString().trim().equals(origNombre)
@@ -431,6 +527,10 @@ public class fragment_mi_perfil extends Fragment {
                 || !currentSexo.equals(origSexo)
                 || !etFechaNac.getText().toString().trim().equals(origFechaNac)
                 || avatarUri != null;
+    }
+
+    private boolean hayCambios() {
+        return hayCambiosPerfil() || hayCambiosRecordatorio();
     }
 
     /* ════════════════════════════════════════════════════
@@ -463,6 +563,14 @@ public class fragment_mi_perfil extends Fragment {
     ════════════════════════════════════════════════════ */
 
     private void procesarGuardado() {
+        aplicarRecordatorio();
+        if (!hayCambiosPerfil()) {
+            // Solo ha cambiado el recordatorio: no hace falta llamar al servidor
+            Toast.makeText(requireContext(), getString(R.string.perfil_actualizado),
+                    Toast.LENGTH_SHORT).show();
+            navegarAtras();
+            return;
+        }
         btnGuardar.setEnabled(false);
         loadingDialog.show();
         if (avatarUri != null) {

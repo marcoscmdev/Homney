@@ -14,6 +14,7 @@ import com.homney.app.webservice.PeticionesRed;
             super.onCreate();
             PeticionesRed.getInstancia(this); // inicializa con Application context
             AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_NO);
+            Recordatorios.crearCanal(this);
         }
     }
 

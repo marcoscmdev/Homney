@@ -497,4 +497,17 @@
     <string name="error_selecciona_habitacion">Selecciona una habitación o elige General</string>
     <string name="tarea_creada_asignada">¡Tarea creada y asignada! ✓</string>
 
+    <string name="notif_canal_nombre">Recordatorios de tareas</string>
+    <string name="notif_titulo">Homney</string>
+    <string name="notif_texto_recordatorio">¿Has hecho ya tus tareas de hoy?</string>
+    <string name="recordatorio_dialogo_titulo">Recordatorio diario</string>
+    <string name="recordatorio_dialogo_msg">¿Quieres que te avisemos cada día para que no se te olvide ninguna tarea? Elige a qué hora.</string>
+    <string name="recordatorio_elegir_hora">Elegir hora</string>
+    <string name="recordatorio_ahora_no">Ahora no</string>
+    <string name="recordatorio_picker_titulo">¿A qué hora quieres el recordatorio?</string>
+    <string name="recordatorio_activado_toast">Recordatorio diario activado a las %1$s</string>
+    <string name="recordatorio_sin_permiso">Sin permiso de notificaciones. Puedes activarlas en los Ajustes del móvil y luego en Mi perfil.</string>
+    <string name="perfil_recordatorio_titulo">Recordatorio de tareas</string>
+    <string name="perfil_recordatorio_switch">Avisarme cada día de mis tareas</string>
+    <string name="perfil_recordatorio_hora">Hora del aviso: %1$s (toca para cambiar)</string>
 </resources>
